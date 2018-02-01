@@ -8,12 +8,11 @@ tracksTableFile = abspath('./test/seeds/music_logger_tracks.sql')
 groupsDataFile = abspath('./test/data/groups_data.sql')
 tracksDataFile = abspath('./test/data/tracks_data.sql')
 
-connection = pymysql.connect(host=app.db_host,
-                             user=app.db_user,
-                             password=app.db_password,
-                             db=app.db_name,
+connection = pymysql.connect(host=app.config['DB_HOST'],
+                             user=app.config['DB_USER'],
+                             password=app.config['DB_PASSWORD'],
+                             db=app.config['DB_NAME'],
                              charset='utf8mb4',
-
                              cursorclass=pymysql.cursors.DictCursor)
 
 
@@ -43,7 +42,7 @@ def seed_tracks():
 
 
 def read_sql_file(connect, file):
-    with connect.cursor(), as cursor:
+    with connect.cursor() as cursor:
         with open(file) as f:
             for x in f.read().strip().split(';'):
                 x.strip()
@@ -51,4 +50,4 @@ def read_sql_file(connect, file):
                     cursor.execute(x)
     connection.commit()
 
-create(argv)
+seed_tracks()

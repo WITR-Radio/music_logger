@@ -20,18 +20,24 @@
         $("#" + id.toString()).fadeOut().remove();
     });
 
+    socket.on('results', function(tracks) {
+        JSON.parse(tracks).forEach(addTrackToTop);
+    })
+
     /* pagination: store date range client side and query */
     function nextRange() {
         socket.send();
         $("tr").fadeOut("fast").remove();
     }
 
-    $("#Search").onclick(function () {
-        socket.send('search', {'title': title, 'artist': artist, 'start': start.toString(), 'end': end.toString()});
+    $("#Search").on('click', function () {
+        // socket.send('search', {'title': title, 'artist': artist, 'start': start.toString(), 'end': end.toString()});
+        var artist = $('#artistInput').val();
+        var title = $('#titleInput').val();
+        socket.emit('query', {'artist': artist, 'title': title});
     });
 
     function addTrackToTop(track) {
-        console.log(track);
         $("<tr id='" + track.id + "' >" +
             "<td class='text-center'>" + track.artist + "</td>" +
             "<td  class='text-center'>" + track.title + "</td>" +

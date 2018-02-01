@@ -67,17 +67,18 @@ def remove_track(track_id):
 
 
 @socketio.on('query')
-def search_track(start=None, end=None, title=None, artist=None):
+def search_track(data):
     results = Track.query
-    if start is not None:
-        results = results.filter_by(Track.time >= start)
-    if end is not None:
-        results = results.filter_by(Track.time <= end)
-    if artist is not None:
-        results = results.filter(Track.artist.like(artist))
-    if title is not None:
-        results = results.filter(Track.title.like(artist))
-    emit('results', tracks_to_json(results.limit().all()), json=True)
+    # if start is not None:
+    #     results = results.filter_by(Track.time >= start)
+    # if end is not None:
+    #     results = results.filter_by(Track.time <= end)
+    if data['artist'] is not None:
+        results = results.filter(Track.artist.like('%' + data['artist'] + '%'))
+    if data['title'] is not None:
+        results = results.filter(Track.title.like('%' + data['title'] + '%'))
+
+    emit('results', tracks_to_json(results.limit(20).all()), json=True)
 
 
 # watch over the database and push updates when rvdl or another source updates and it does not go through the server.

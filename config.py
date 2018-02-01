@@ -33,7 +33,7 @@ class Development(Config):
     TESTING = True
     DEBUG = True
     DB_USER = 'root'
-    DB_HOST = 'localhost'
+    DB_HOST = '127.0.0.1'
     DB_NAME = 'music_logger'
     DB_PASSWORD = 'Ax^2+Bx+C=y'
     SQLALCHEMY_TRACK_MODIFICATIONS = False

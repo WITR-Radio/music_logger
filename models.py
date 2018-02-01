@@ -43,4 +43,4 @@ class Track(db.Model):
         self.requester = requester
 
     def __repr__(self):
-        return '<Track:artist %r, title %r, time %r>' % self.artist, self.title, self.created_at
+        return '<Track:artist %r, title %r, time %r>' % (self.artist, self.title, self.created_at)

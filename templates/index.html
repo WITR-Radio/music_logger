@@ -20,8 +20,6 @@
         <script>var detailed = false</script>
     {% endif %}
     <!--    <script rel="foundation-js" src="{{ url_for('static', filename='logger/controls.js') }}"></script> -->
-    <script rel="logger-js" src="{{ url_for('static', filename='logger/main.js') }}"></script>
-
 </head>
 <body>
 <script> $(document).foundation(); </script>
@@ -49,11 +47,11 @@
                         <th><h4>rvdl</h4></th>
                         <th><h4>group</h4></th>
                         <th><h4>Requester</h4></th>
-    {% endif %}
+                    {% endif %}
                 </tr>
                 </thead>
             </table>
-</div>
+        </div>
     </div>
 <!-- the tracks -->
     <div class="row align-center">
@@ -68,4 +66,5 @@
     </div>
 </div>
 </body>
+<script rel="logger-js" src="{{ url_for('static', filename='logger/main.js') }}"></script>
 </html>

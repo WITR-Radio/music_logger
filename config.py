@@ -1,5 +1,8 @@
-"""configs of the music logger, to change which config is loaded(Production, Staging, Development) go to music_logger.py
- and change the class in the app.config.from_object()"""
+"""
+    Configs of the music logger, to change which 
+    config is loaded(Production, Staging, Development) go to music_logger.py
+    and change the class in the app.config.from_object().
+"""
 
 
 class Config(object):

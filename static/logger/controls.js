@@ -5,5 +5,4 @@
     dis.socket.send('newTrack');
     dis.socket.send('updateTrack');
     dis.socket.send('deleteTrack');
-
 })(display);

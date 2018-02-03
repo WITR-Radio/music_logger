@@ -1,3 +1,8 @@
+"""
+    Initializes the database with 'tracks' and 'groups' tables
+    as well as seed data for both tables.
+"""
+
 import pymysql.cursors
 from music_logger import app
 from os.path import abspath

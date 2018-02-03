@@ -1,3 +1,12 @@
+"""
+    Created by Ben Reynolds
+    Modified by Colin Reilly 2/3/18
+
+    Main Flask server file, contains all client routes as well as
+    Sockets hit by clients. Handles search queries as well as 
+    updating, removing, and adding tracks to the database.
+"""
+
 import threading
 from datetime import datetime
 from json import dumps, loads
@@ -17,6 +26,7 @@ socketio = SocketIO(app)
 
 @app.route('/')
 def page():
+    """ Renders the home/root url page. """
     return render_template("index.html")
 
 
@@ -28,11 +38,13 @@ def latest():
 
 @app.route('/Details')
 def details():
+    """ Renders the home/root page and displays additional song details. """
     return render_template("index.html", detailed=True)
 
 
 @socketio.on('connect')
 def startup():
+    """ Socket hit once a client connects to the server. """
     tracks = Track.query.order_by(Track.created_at).limit(20).all()
     print("got signal")
     emit('connected', tracks_to_json(tracks), json=True)
@@ -40,6 +52,7 @@ def startup():
 
 @socketio.on('addTrack')
 def add_track(track):
+    """ Socket used to add a track to the database. """
     a_track = loads(track)
     db_track = Track(a_track['artist'], a_track['title'], a_track['group'],
                      a_track['time'], a_track['request'], a_track['requester'])
@@ -50,6 +63,7 @@ def add_track(track):
 
 @socketio.on('updateTrack')
 def update_track(track):
+    """ Socket used to update a track in the database. """
     dict_track = loads(track)
     track_to_update = Track.query.get(dict_track['id'])
     for column in dict_track:
@@ -60,6 +74,7 @@ def update_track(track):
 
 @socketio.on('removeTrack')
 def remove_track(track_id):
+    """ Socket used to remove a track from the database. """
     track = Track.query.get(track_id)
     db.session.delete(track)
     db.session.commit()
@@ -68,6 +83,7 @@ def remove_track(track_id):
 
 @socketio.on('query')
 def search_track(data):
+    """ Socket used to search the database using parameters in @data. """
     results = Track.query
     # if start is not None:
     #     results = results.filter_by(Track.time >= start)
@@ -78,7 +94,7 @@ def search_track(data):
     if data['title'] is not None:
         results = results.filter(Track.title.like('%' + data['title'] + '%'))
 
-    emit('results', tracks_to_json(results.limit(20).all()), json=True)
+    emit('search_results', tracks_to_json(results.limit(20).all()), json=True)
 
 
 # watch over the database and push updates when rvdl or another source updates and it does not go through the server.
@@ -104,8 +120,9 @@ def db_overwatch():
 
 
 def tracks_to_json(query):
-    """function for converting tracks to json and prettifying the
-    json while debugging, switch to compact for deployment"""
+    """ function for converting tracks to json and prettifying the
+        json while debugging, switch to compact for deployment 
+    """
     obj = []
     if isinstance(query, list):
         for track in query:

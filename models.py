@@ -4,6 +4,7 @@ db = SQLAlchemy()
 
 
 class Group(db.Model):
+    """ Model for groups such as: Feature, Recurrent, Library, New Bin, etc... """
     __tablename__ = 'groups'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
     name = db.Column(db.String(255), nullable=True)
@@ -18,6 +19,7 @@ class Group(db.Model):
 
 
 class Track(db.Model):
+    """ Model for music tracks """
     __tablename__ = 'tracks'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
     artist = db.Column(db.String(255), nullable=True)

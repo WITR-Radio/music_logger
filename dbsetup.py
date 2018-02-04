@@ -1,6 +1,9 @@
 """
     Initializes the database with 'tracks' and 'groups' tables
     as well as seed data for both tables.
+
+    You may have to manually run the groups_data.sql and tracks_data.sql
+    scripts manually in a sql environment after running this python script.
 """
 
 import pymysql.cursors
@@ -33,17 +36,14 @@ def create(args):
         read_sql_file(connection, groupsTableFile)
         read_sql_file(connection, tracksTableFile)
         read_sql_file(connection, groupsDataFile)
+        if any(x in args for x in ['-s', '--seed']):
+            seed_tracks()
     finally:
         connection.close()
-    if any(x in args for x in ['-s', '--seed']):
-        seed_tracks()
 
 
 def seed_tracks():
-    try:
-        read_sql_file(connection, tracksDataFile)
-    finally:
-        connection.close()
+    read_sql_file(connection, tracksDataFile)
 
 
 def read_sql_file(connect, file):
@@ -55,4 +55,4 @@ def read_sql_file(connect, file):
                     cursor.execute(x)
     connection.commit()
 
-seed_tracks()
+create(argv)

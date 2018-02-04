@@ -4,7 +4,7 @@
 
 LOCK TABLES `tracks` WRITE;
 /*!40000 ALTER TABLE `tracks`
-  DISABLE KEYS */;
+  DISABLE KEYS */
 INSERT INTO `tracks` VALUES
   (497416, 'Telegram', 'Inside/Outside', NULL, 1, 2, '2016-04-07 08:23:57', '2016-04-07 08:23:57', NULL, NULL, 121819),
   (497417, 'Junip', 'Your Life Your Call', NULL, 1, 3, '2016-04-07 08:26:58', '2016-04-07 08:26:58', NULL, NULL, 121821),

@@ -1,70 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WITR 89.7 almost endless music logger</title>
-    <!-- replace links with either nginx serving them or pulling from internet source -->
-    <link rel="foundation-css" type="text/css"
-          href="{{ url_for('static', filename='foundation/css/foundation.min.css') }}"/>
-    <link rel="logger-css" type="text/css" href=http://127.0.0.1"{{ url_for('static', filename='logger/main.css') }}"/>
-    <script rel="foundation-js" src="{{ url_for('static', filename='foundation/js/vendor/jquery.js') }}"></script>
-    <script rel="foundation-js" src="{{ url_for('static', filename='socketIO/socket.io.min.js') }}"></script>
+{% extends "layout.html" %}
 
-    <script rel="foundation-js" src="{{ url_for('static', filename='foundation/js/vendor/what-input.js') }}"></script>
-    <script rel="foundation-js"
-            src="{{ url_for('static', filename='foundation/js/vendor/foundation.min.js') }}"></script>
-    {% if detailed == true %}
+{% block head %}
+    {% if detailed %}
         <script>var detailed = true</script>
     {% else %}
         <script>var detailed = false</script>
     {% endif %}
-    <!--    <script rel="foundation-js" src="{{ url_for('static', filename='logger/controls.js') }}"></script> -->
-</head>
-<body>
-<script> $(document).foundation(); </script>
-<div class="grid-frame vertical">
-    <div id="title" class="row">
-        <div class="large-3 columns"><a href="https://witr.rit.edu"><h1>WITR 89.7</h1></a></div>
-        <div class="large-9 columns"><h2 class="text-right">(Near) Endless Song Logger</h2></div>
-    </div>
-<div class="row">
-    <div class="input-group">
-        <input id='artistInput' class="input-group-field" type="text" placeholder="Artist">
-        <input id='titleInput' class="input-group-field" type="text" placeholder="Title">
-        <input id="Search" class="button" type="submit" value="Search">
-    </div>
-</div>
+{% endblock %}
+
+{% block body  %}
+    <div class="grid-frame vertical">
+        <div id="title" class="row">
+            <div class="large-3 columns"><a href="https://witr.rit.edu"><h1>WITR 89.7</h1></a></div>
+            <div class="large-9 columns"><h2 class="text-right">(Near) Endless Song Logger</h2></div>
+        </div>
     <div class="row">
-        <div class="large-11 column float-center">
-            <table>
-                <thead id="column_headers">
-                <tr>
-                    <th><h4>Artist</h4></th>
-                    <th><h4>Title</h4></th>
-                    <th><h4>Play Time</h4></th>
-                    {% if detailed == true %}
-                        <th><h4>rvdl</h4></th>
-                        <th><h4>group</h4></th>
-                        <th><h4>Requester</h4></th>
-                    {% endif %}
-                </tr>
-                </thead>
-            </table>
+        <div class="input-group">
+            <input id='artistInput' class="input-group-field" type="text" placeholder="Artist">
+            <input id='titleInput' class="input-group-field" type="text" placeholder="Title">
+            <input id="Search" class="button" type="submit" value="Search">
         </div>
     </div>
-<!-- the tracks -->
-    <div class="row align-center">
-        <ul class="pagination" role="navigation" aria-label="Pagination">
-            <li class="pagination-previous disabled">Previous <span class="show-for-sr">page</span></li>
-            <li class="current"><span class="show-for-sr">You're on page</span> 1</li>
-            <li><a href="#" aria-label="Page 2">2</a></li>
-            <li class="ellipsis" aria-hidden="true"></li>
-            <li class="pagination-next"><a href="#" aria-label="Next page">Next <span
-                    class="show-for-sr">page</span></a></li>
-        </ul>
+        <div class="row">
+            <div class="large-11 column float-center">
+                <table>
+                    <thead id="column_headers">
+                    <tr>
+                        <th><h4>Artist</h4></th>
+                        <th><h4>Title</h4></th>
+                        <th><h4>Play Time</h4></th>
+                        {% if detailed == true %}
+                            <th><h4>rvdl</h4></th>
+                            <th><h4>group</h4></th>
+                            <th><h4>Requester</h4></th>
+                        {% endif %}
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    <!-- the tracks -->
+        <div class="row align-center">
+            <ul class="pagination" role="navigation" aria-label="Pagination">
+                <li class="pagination-previous disabled">Previous <span class="show-for-sr">page</span></li>
+                <li class="current"><span class="show-for-sr">You're on page</span> 1</li>
+                <li><a href="#" aria-label="Page 2">2</a></li>
+                <li class="ellipsis" aria-hidden="true"></li>
+                <li class="pagination-next"><a href="#" aria-label="Next page">Next <span
+                        class="show-for-sr">page</span></a></li>
+            </ul>
+        </div>
     </div>
-</div>
-</body>
-<script rel="logger-js" src="{{ url_for('static', filename='logger/main.js') }}"></script>
-</html>
+{% endblock %}
+
+{% block html_end %}
+    <script rel="logger-js" src="{{ url_for('static', filename='logger/main.js') }}"></script>
+{% endblock %}

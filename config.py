@@ -6,6 +6,7 @@
 
 
 class Config(object):
+
     DEBUG = False
     TESTING = False
     SECRET_KEY = "secret?"
@@ -18,6 +19,7 @@ class Config(object):
 
 
 class Production(Config):
+
     DB_USER = ''
     DB_PASSWORD = ''
     DB_HOST = ''
@@ -25,6 +27,7 @@ class Production(Config):
 
 
 class Staging(Config):
+
     DB_USER = ''
     DB_PASSWORD = ''
     DB_HOST = ''
@@ -33,6 +36,7 @@ class Staging(Config):
 
 
 class Development(Config):
+    
     TESTING = True
     DEBUG = True
     DB_USER = 'root'

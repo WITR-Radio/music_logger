@@ -13,7 +13,7 @@ from json import dumps, loads
 from time import sleep
 
 from flask import Flask, render_template
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, emit, send
 
 from config import Development
 from models import Track, db
@@ -95,6 +95,13 @@ def search_track(data):
         results = results.filter(Track.title.like('%' + data['title'] + '%'))
 
     emit('search_results', tracks_to_json(results.limit(20).all()), json=True)
+
+
+@socketio.on('message')
+def on_message_test(message):
+    """ Used for testing sockets - simply sends the message back """
+    send(message)
+
 
 
 # watch over the database and push updates when rvdl or another source updates and it does not go through the server.

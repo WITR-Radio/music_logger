@@ -12,18 +12,19 @@ from datetime import datetime
 from json import dumps, loads
 from time import sleep
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit, send
+from sqlalchemy import desc
 
 from config import Development
-from models import Track, db
+from models import db, Group, Track
 
 app = Flask(__name__)
 app.config.from_object(Development)  # change loaded config name to change attributes
 db.init_app(app)
 socketio = SocketIO(app)
 
-
+### ROUTES ###
 @app.route('/')
 def page():
     """ Renders the home/root url page. """
@@ -36,29 +37,51 @@ def latest():
     return tracks_to_json(Track.query.order_by(Track.created_at).first())
 
 
-@app.route('/Details')
+@app.route('/details')
 def details():
     """ Renders the home/root page and displays additional song details. """
     return render_template("index.html", detailed=True)
 
 
+@app.route('/dj')
+def dj():
+    """ Renders the dj page for submitting/updating/deleting tracks """
+    return render_template("dj_view.html")
+
+
+@app.route('/add_track', methods=['POST'])
+def add_track():
+    """ Handles a POST request to submit a new track to the db """
+    group = Group.query.get(1)
+
+    track = Track(
+        request.form['artist'],
+        request.form['title'],
+        group,
+        None
+    )
+    db.session.add(track)
+    db.session.commit()
+    return render_template('dj_view.html')
+
+
+### SOCKETS ###
 @socketio.on('connect')
 def startup():
     """ Socket hit once a client connects to the server. """
-    tracks = Track.query.order_by(Track.created_at).limit(20).all()
-    print("got signal")
+    tracks = Track.query.order_by(desc(Track.created_at)).limit(20).all()
     emit('connected', tracks_to_json(tracks), json=True)
 
 
-@socketio.on('addTrack')
-def add_track(track):
-    """ Socket used to add a track to the database. """
-    a_track = loads(track)
-    db_track = Track(a_track['artist'], a_track['title'], a_track['group'],
-                     a_track['time'], a_track['request'], a_track['requester'])
-    db.session.add(db_track)
-    db.session.commit()
-    emit('addTracks', track, json=True, broadcast=True)
+# @socketio.on('addTrack')
+# def add_track(track):
+#     """ Socket used to add a track to the database. """
+#     a_track = loads(track)
+#     db_track = Track(a_track['artist'], a_track['title'], a_track['group'],
+#                      a_track['time'], a_track['request'], a_track['requester'])
+#     db.session.add(db_track)
+#     db.session.commit()
+#     emit('addTracks', track, json=True, broadcast=True)
 
 
 @socketio.on('updateTrack')
@@ -103,21 +126,24 @@ def on_message_test(message):
     send(message)
 
 
-
-# watch over the database and push updates when rvdl or another source updates and it does not go through the server.
-# note: this might not be a good idea if the application ever has to scale since constantly checking for updates to rows
-# is taxing on databases, especially mysql. If performance is bad you will have to have this server listen to rvdl's
-# command output over udp instead of querying the database directly for changes. This will increase performance in all
-# accept a few edge cases. However whatever you do, DO NOT OPEN UP A TRANSACTION FOR EVERY REQUEST. This leads to
-# a security and memory leak issue this application was designed to fix compared to the php version.
+### HELPER ###
 def db_overwatch():
-    # TODO: have threaded function that connects to database, make updated tracks
-    # query: SELECT * FROM Tracks JOIN Groups ON Tracks.group_id=Groups.id WHERE Tracks.created_at >= time;
-    # repeat this query every few seconds, .
-    # If not will have to keep a local copy cached to make sure duplicates are not sent.
+    """ Watch over the database and push updates when rvdl or another source updates and it does not go through the server.
+        note: this might not be a good idea if the application ever has to scale since constantly checking for updates to rows
+        is taxing on databases, especially mysql. If performance is bad you will have to have this server listen to rvdl's
+        command output over udp instead of querying the database directly for changes. This will increase performance in all
+        except a few edge cases. However whatever you do, DO NOT OPEN UP A TRANSACTION FOR EVERY REQUEST. This leads to
+        a security and memory leak issue this application was designed to fix compared to the php version.
+
+        TODO: have threaded function that connects to database, make updated tracks
+        query: SELECT * FROM Tracks JOIN Groups ON Tracks.group_id=Groups.id WHERE Tracks.created_at >= time;
+        repeat this query every few seconds.
+        If not will have to keep a local copy cached to make sure duplicates are not sent.
+    """
     time = datetime.now()
     old_tracks = Track.query(Track.created_at >= time).all()
     while True:
+        print("overwatch")
         new_tracks = Track.query(Track.created_at >= time).all()  # get all newly created tracks since last check
         new_tracks = [track for track in new_tracks if track not in old_tracks]  # filter out already emitted tracks
         emit("addTracks", tracks_to_json(new_tracks))
@@ -133,11 +159,11 @@ def tracks_to_json(query):
     obj = []
     if isinstance(query, list):
         for track in query:
-            obj.append({'id': track.id, 'artist': track.artist, 'title': track.title,
+            obj.insert(0, {'id': track.id, 'artist': track.artist, 'title': track.title,
                         'time': track.created_at.strftime("%x %I:%M %p"), 'requester': track.requester,
                         'group': track.group.name})
     else:
-        obj.append({'id': query.id, 'artist': query.artist, 'title': query.title,
+        obj.insert(0, {'id': query.id, 'artist': query.artist, 'title': query.title,
                     'time': query.created_at.strftime("%x %I:%M %p"), 'requester': query.requester,
                     'group': query.group.name})
     if app.testing:
@@ -149,4 +175,4 @@ def tracks_to_json(query):
 if __name__ == '__main__':
     app.run()
     socketio.run(app)
-    threading.Thread(db_overwatch())
+    db_overwatch()

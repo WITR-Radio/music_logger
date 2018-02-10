@@ -1,11 +1,13 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import func
+from datetime import datetime
 
 db = SQLAlchemy()
 
 
 class Group(db.Model):
 
-    """ Model for groups such as: Feature, Recurrent, Library, New Bin, etc... """
+    """ Model for groups such as: Feature, New Bin, Library, Recurrent, Specialty Show """
     __tablename__ = 'groups'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
     name = db.Column(db.String(255), nullable=True)
@@ -31,8 +33,8 @@ class Track(db.Model):
     group_id = db.Column(db.Integer, db.ForeignKey('groups.id'), nullable=True)
     # check performance of select and dynamic vs join for forward ref, back ref will need dynamic
     group = db.relationship('Group', lazy='joined', backref=db.backref('tracks', lazy='dynamic'))
-    created_at = db.Column(db.DateTime, nullable=False)
-    updated_at = db.Column(db.DateTime, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=func.now())
+    updated_at = db.Column(db.DateTime, nullable=False, default=func.now(), onupdate=func.now())
     request = db.Column(db.Boolean, nullable=True)
     requester = db.Column(db.String(255), nullable=True)
 

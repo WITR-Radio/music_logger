@@ -2,11 +2,11 @@
 
 {% block body %}
     <h3>Submit a new track</h3>
-    <form action="/add_track" method="post">
+    <form action="/add_track_to_db" method="post">
         Artist:<br>
         <input type="text" name="artist"><br>
         Title:<br>
         <input type="text" name="title"><br>
-        <input type="submit" id="add_new_track"/>
+        <input type="submit"/>
     </form>
 {% endblock %}

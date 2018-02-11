@@ -10,7 +10,8 @@
 
     socket.on('addTracks', function (Tracks) {
         /* Socket used to add a track to the currently displayed page */
-        JSON.parse(Tracks).forEach(addTrack);
+        console.log(Tracks);
+        JSON.parse(Tracks).forEach(addTrackToTop);
     });
 
     socket.on('updateTrack', function (id, time, title, artist, group, rivendell, requester) {
@@ -29,12 +30,6 @@
         JSON.parse(tracks).forEach(addTrackToTop);
     })
 
-    function nextRange() {
-        /* pagination: store date range client side and query */
-        socket.send();
-        $("tr").fadeOut("fast").remove();
-    }
-
     $("#Search").on('click', function () {
         /* Sends search query to the server */
         // socket.send('search', {'title': title, 'artist': artist, 'start': start.toString(), 'end': end.toString()});
@@ -42,6 +37,12 @@
         var title = $('#titleInput').val();
         socket.emit('query', {'artist': artist, 'title': title});
     });
+
+    function nextRange() {
+        /* pagination: store date range client side and query */
+        socket.send();
+        $("tr").fadeOut("fast").remove();
+    }
 
     function addTrackToTop(track) {
         /* Takes JSON dictionary @tracks and each tracks stored in it as a row of html on the page */

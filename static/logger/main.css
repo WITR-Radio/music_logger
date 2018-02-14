@@ -1,7 +1,3 @@
-table td, tr {
-    border: 1px solid #909090;
-}
-
-#column_headers {
-    text-align: center;
+#container {
+    width: 60rem;
 }

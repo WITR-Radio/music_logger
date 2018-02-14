@@ -1,5 +1,6 @@
 /**
  * Created by Benjamin Reynolds on 5/1/2016.
+ * Edited by Colin Reilly on 2/1/18.
  */
 (function display($, d) {
     var socket = io.connect('http://' + document.domain + ':' + location.port);
@@ -10,7 +11,6 @@
 
     socket.on('addTracks', function (Tracks) {
         /* Socket used to add a track to the currently displayed page */
-        console.log(Tracks);
         JSON.parse(Tracks).forEach(addTrackToTop);
     });
 
@@ -38,24 +38,18 @@
         socket.emit('query', {'artist': artist, 'title': title});
     });
 
-    function nextRange() {
-        /* pagination: store date range client side and query */
-        socket.send();
-        $("tr").fadeOut("fast").remove();
-    }
-
     function addTrackToTop(track) {
         /* Takes JSON dictionary @tracks and each tracks stored in it as a row of html on the page */
         $("<tr id='" + track.id + "' >" +
-            "<td class='text-center'>" + track.artist + "</td>" +
-            "<td  class='text-center'>" + track.title + "</td>" +
-            "<td  class='text-center'>" + track.time + "</td>" +
+            "<td>" + track.artist + "</td>" +
+            "<td>" + track.title + "</td>" +
+            "<td>" + track.time + "</td>" +
             (detailed ?
-            "<td  class='text-center'>" +
-            ( track.rvdl ? "<a class='button tiny disabled round alert'>rvdl</a>" : "") +
+            "<td>" +
+            ( track.rvdl ? "<a>rvdl</a>" : "") +
             "</td>" +
-            "<td  class='text-center'>" + track.group + "</td>" +
-            "<td  class='text-center'>" + (track.requester ? track.requester : "" ) + "</td>" : "") +
+            "<td>" + track.group + "</td>" +
+            "<td>" + (track.requester ? track.requester : "" ) + "</td>" : "") +
             "</tr>").hide().insertAfter($("#column_headers")).fadeIn("slow");
     }
 })(jQuery, detailed);

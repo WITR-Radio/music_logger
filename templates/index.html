@@ -9,48 +9,28 @@
 {% endblock %}
 
 {% block body  %}
-    <div class="grid-frame vertical">
-        <div id="title" class="row">
-            <div class="large-3 columns"><a href="https://witr.rit.edu"><h1>WITR 89.7</h1></a></div>
-            <div class="large-9 columns"><h2 class="text-right">(Near) Endless Song Logger</h2></div>
-        </div>
-    <div class="row">
-        <div class="input-group">
-            <input id='artistInput' class="input-group-field" type="text" placeholder="Artist">
-            <input id='titleInput' class="input-group-field" type="text" placeholder="Title">
-            <input id="Search" class="button" type="submit" value="Search">
-        </div>
-    </div>
-        <div class="row">
-            <div class="large-11 column float-center">
-                <table>
-                    <thead id="column_headers">
-                    <tr>
-                        <th><h4>Artist</h4></th>
-                        <th><h4>Title</h4></th>
-                        <th><h4>Play Time</h4></th>
-                        {% if detailed == true %}
-                            <th><h4>rvdl</h4></th>
-                            <th><h4>group</h4></th>
-                            <th><h4>Requester</h4></th>
-                        {% endif %}
-                    </tr>
-                    </thead>
-                </table>
-            </div>
-        </div>
-    <!-- the tracks -->
-        <div class="row align-center">
-            <ul class="pagination" role="navigation" aria-label="Pagination">
-                <li class="pagination-previous disabled">Previous <span class="show-for-sr">page</span></li>
-                <li class="current"><span class="show-for-sr">You're on page</span> 1</li>
-                <li><a href="#" aria-label="Page 2">2</a></li>
-                <li class="ellipsis" aria-hidden="true"></li>
-                <li class="pagination-next"><a href="#" aria-label="Next page">Next <span
-                        class="show-for-sr">page</span></a></li>
-            </ul>
-        </div>
-    </div>
+<div id="container"> 
+    <div><a href="https://witr.rit.edu"><h1>WITR 89.7</h1></a></div>
+    <div><h2 class="text-right">(Near) Endless Song Logger</h2></div>
+    <input id='artistInput' type="text" placeholder="Artist">
+    <input id='titleInput' type="text" placeholder="Title">
+    <input id="Search" class="button" type="submit" value="Search">
+    <table>
+        <thead id="column_headers">
+        <tr>
+            <th><h4>Artist</h4></th>
+            <th><h4>Title</h4></th>
+            <th><h4>Play Time</h4></th>
+            {% if detailed == true %}
+                <th><h4>rvdl</h4></th>
+                <th><h4>group</h4></th>
+                <th><h4>Requester</h4></th>
+            {% endif %}
+        </tr>
+        </thead>
+        <!-- the tracks -->
+    </table>
+</div>
 {% endblock %}
 
 {% block html_end %}

@@ -1,3 +1,41 @@
+/* Container */
 #container {
     width: 60rem;
+    margin: auto auto;
 }
+
+/* Tracks */
+table {
+    width: 100%;
+}
+
+tr {
+    display: flex;
+    padding: 7px;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+th {
+    text-align: left;
+}
+
+.artist_clmn, .title_clmn, .play_time_clmn, .delete_clmn {
+    flex: 1;
+}
+
+.delete_btn {
+    background-color: red;
+}
+
+/* Search Bar */
+#search_container {
+    display: flex;
+    float: right;
+}
+
+/* #artist_search_input, #title_search_input, #search_btn {
+    flex: 1;
+} */

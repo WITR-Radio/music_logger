@@ -10,22 +10,25 @@
 
 {% block body  %}
 <div id="container"> 
-    <div><a href="https://witr.rit.edu"><h1>WITR 89.7</h1></a></div>
-    <div><h2 class="text-right">(Near) Endless Song Logger</h2></div>
-    <input id='artistInput' type="text" placeholder="Artist">
-    <input id='titleInput' type="text" placeholder="Title">
-    <input id="Search" class="button" type="submit" value="Search">
+    <a href="https://witr.rit.edu"><h1>WITR 89.7</h1></a>
+    <h2>(Near) Endless Song Logger</h2>
+    <div id="search_container">
+        <input id="artist_search_input" type="text" placeholder="Artist">
+        <input id="title_search_input" type="text" placeholder="Title">
+        <input id="search_btn" type="submit" value="search">
+    </div>
     <table>
         <thead id="column_headers">
         <tr>
-            <th><h4>Artist</h4></th>
-            <th><h4>Title</h4></th>
-            <th><h4>Play Time</h4></th>
+            <th class="artist_clmn"><h4>Artist</h4></th>
+            <th class="title_clmn"><h4>Title</h4></th>
+            <th class="play_time_clmn"><h4>Play Time</h4></th>
             {% if detailed == true %}
                 <th><h4>rvdl</h4></th>
                 <th><h4>group</h4></th>
                 <th><h4>Requester</h4></th>
             {% endif %}
+            <th class="delete_clmn"></th>
         </tr>
         </thead>
         <!-- the tracks -->

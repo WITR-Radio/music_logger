@@ -30,6 +30,7 @@ socketio = SocketIO(app)
 def thread_db_overwatch():
     t = Thread(target = db_overwatch, args = (app, db, socketio))
     t.start()
+    print('db_overwatch threaded')
 
 
 ### ROUTES ###
@@ -102,17 +103,6 @@ def startup():
     emit('connected', tracks_to_json(tracks), json=True)
 
 
-@socketio.on('updateTrack')
-def update_track(track):
-    """ Socket used to update a track in the database. """
-    dict_track = loads(track)
-    track_to_update = Track.query.get(dict_track['id'])
-    for column in dict_track:
-        setattr(track_to_update, column, dict_track[column])
-    db.session.commit()
-    emit('updateTrack', track, json=True, broadcast=True)
-
-
 @socketio.on('removeTrack')
 def remove_track(track_id):
     """ Socket used to remove a track from the database. """
@@ -159,15 +149,16 @@ def db_overwatch(app, db, socketio):
         while True:
             new_time = datetime.now()
 
-            
-            session = db.create_scoped_session()  # Keep session up-to-date by reinitializing.
+            # Keep session up-to-date by reinitializing.
+            # TODO This is possibly very taxing on the database.
+            session = db.create_scoped_session()  
             # Check the db for new tracks submitted in the last 3 seconds.
             new_tracks = \
                 session.query(Track).filter(Track.created_at.between(old_time, new_time)).all()
             session.close()
 
             # If there are new tracks send a post request to the main Flask thread
-            # so it can 'emit' a web socket message to clients.
+            # so it can emit a web socket message to clients.
             if new_tracks: 
                 requests.post(url_for('add_track_to_client'), 
                             json = tracks_to_json(new_tracks))

@@ -9,9 +9,7 @@
 
 from threading import Thread
 from datetime import datetime
-from json import dumps, loads
-from time import sleep
-import requests
+from json import loads
 
 from flask import Flask, render_template, request, url_for, redirect
 from flask_socketio import SocketIO, emit, send
@@ -19,6 +17,8 @@ from sqlalchemy import desc
 
 from config import Development
 from models import db, Group, Track
+from db_overwatch import start_db_overwatch
+from tracks_to_json import tracks_to_json
 
 app = Flask(__name__)
 app.config.from_object(Development)  # change loaded config name to change attributes
@@ -28,7 +28,12 @@ socketio = SocketIO(app)
 
 @app.before_first_request
 def thread_db_overwatch():
-    t = Thread(target = db_overwatch, args = (app, db, socketio))
+    # Threads the db_overwatch function BEFORE THE FIRST REQUEST. 
+    # The app.before_first_request decorator will only run this function
+    # no sooner than directly before the first request. 
+    # So if the server is started and nobody connects, db_overwatch will
+    # not be run.
+    t = Thread(target = start_db_overwatch, args = (app, db, socketio))
     t.start()
     print('db_overwatch threaded')
 
@@ -132,58 +137,3 @@ def search_track(data):
 def on_message_test(message):
     """ Used for testing sockets - simply sends the message back """
     send(message)
-
-
-### HELPER ###
-def db_overwatch(app, db, socketio):
-    """ Watch over the database and push updates when rvdl or another source updates and it does not go through the server.
-        note: this might not be a good idea if the application ever has to scale since constantly checking for updates to rows
-        is taxing on databases, especially mysql. If performance is bad you will have to have this server listen to rvdl's
-        command output over udp instead of querying the database directly for changes. This will increase performance in all
-        except a few edge cases. However whatever you do, DO NOT OPEN UP A TRANSACTION FOR EVERY REQUEST. This leads to
-        a security and memory leak issue this application was designed to fix compared to the php version.
-    """
-    with app.app_context():  # This background thread needs the Flask context from the main thread.
-        old_time = datetime.now()
-
-        while True:
-            new_time = datetime.now()
-
-            # Keep session up-to-date by reinitializing.
-            # TODO This is possibly very taxing on the database.
-            session = db.create_scoped_session()  
-            # Check the db for new tracks submitted in the last 3 seconds.
-            new_tracks = \
-                session.query(Track).filter(Track.created_at.between(old_time, new_time)).all()
-            session.close()
-
-            # If there are new tracks send a post request to the main Flask thread
-            # so it can emit a web socket message to clients.
-            if new_tracks: 
-                requests.post(url_for('add_track_to_client'), 
-                            json = tracks_to_json(new_tracks))
-
-            old_time = new_time  # Old time and new time are always 3 seconds apart
-            sleep(3)
-
-        return db_overwatch()
-
-
-def tracks_to_json(query):
-    """ function for converting tracks to json and prettifying the
-        json while debugging, switch to compact for deployment 
-    """
-    obj = []
-    if isinstance(query, list):
-        for track in query:
-            obj.insert(0, {'id': track.id, 'artist': track.artist, 'title': track.title,
-                        'time': track.created_at.strftime("%x %I:%M %p"), 'requester': track.requester,
-                        'group': track.group.name})
-    else:
-        obj.insert(0, {'id': query.id, 'artist': query.artist, 'title': query.title,
-                    'time': query.created_at.strftime("%x %I:%M %p"), 'requester': query.requester,
-                    'group': query.group.name})
-    if app.testing:
-        return dumps(obj, sort_keys=True, indent=4)
-    else:
-        return dumps(obj, separators=(',', ':'))

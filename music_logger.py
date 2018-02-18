@@ -7,6 +7,7 @@
     updating, removing, and adding tracks to the database.
 """
 
+import sys
 from threading import Thread
 from datetime import datetime
 from json import loads
@@ -15,6 +16,7 @@ from flask import Flask, render_template, request, url_for, redirect
 from flask_socketio import SocketIO, emit, send
 from sqlalchemy import desc
 
+sys.path.append('C:/Users/colin/WITR/music_logger/helper_modules')  # so we can import our modules
 from config import Development
 from models import db, Group, Track
 from db_overwatch import start_db_overwatch
@@ -35,7 +37,7 @@ def thread_db_overwatch():
     # not be run.
     t = Thread(target = start_db_overwatch, args = (app, db, socketio))
     t.start()
-    print('db_overwatch threaded')
+    print('***** db_overwatch threaded *****')
 
 
 ### ROUTES ###

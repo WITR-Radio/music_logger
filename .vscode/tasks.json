@@ -1,0 +1,31 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run tests",
+            "type": "shell",
+            "command": "python C:/Users/colin/WITR/music_logger/test/music_logger_test.py",
+            "windows": {
+                "command": "python C:\\Users\\colin\\WITR\\music_logger\\test\\music_logger_test.py"
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Start music_logger",
+            "type": "shell",
+            "command": "./run.ps1",
+            "windows": {
+                "command": ".\\run.ps1"
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        }
+    ]
+}

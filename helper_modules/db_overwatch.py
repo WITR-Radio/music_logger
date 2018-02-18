@@ -20,10 +20,12 @@ keep_looping = True
 
 
 def stop_db_overwatch():
+    global keep_looping
     keep_looping = False
 
 
 def start_db_overwatch(app, db, socketio):
+    global keep_looping
     keep_looping = True
 
     with app.app_context():  # This background thread needs the Flask context from the main thread.

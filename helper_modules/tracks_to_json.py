@@ -1,5 +1,6 @@
 """ This function is in a separate module since both db_ovewatch.py 
-    and music_logger.py need to use it"""
+    and music_logger.py need to use it
+"""
 
 from json import dumps
 

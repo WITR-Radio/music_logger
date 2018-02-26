@@ -123,16 +123,20 @@ def remove_track(track_id):
 def search_track(data):
     """ Socket used to search the database using parameters in @data. """
     results = Track.query
-    # if start is not None:
-    #     results = results.filter_by(Track.time >= start)
-    # if end is not None:
-    #     results = results.filter_by(Track.time <= end)
-    if data['artist'] is not None:
+    
+    if data['artist'] is not '':
         results = results.filter(Track.artist.like('%' + data['artist'] + '%'))
-    if data['title'] is not None:
+    if data['title'] is not '':
         results = results.filter(Track.title.like('%' + data['title'] + '%'))
+    if data['date'] is not '':
+        start = datetime.strptime(data['date'] + ' ' + data['start'], '%m/%d/%Y %I:%M%p') 
+        end = datetime.strptime(data['date'] + ' ' + data['end'], '%m/%d/%Y %I:%M%p')
+        results = results.filter(Track.created_at.between(start, end))
 
-    emit('search_results', tracks_to_json(results.limit(20).all()), json=True)
+    emit('search_results', 
+        tracks_to_json(results.order_by(desc(Track.created_at)).limit(20).all()), 
+        json=True
+    )
 
 
 @socketio.on('message')

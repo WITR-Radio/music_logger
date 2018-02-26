@@ -10,11 +10,42 @@
 
 {% block body  %}
 <div id="container"> 
-    <a href="https://witr.rit.edu"><h1>WITR 89.7</h1></a>
+    <h1><a href="https://witr.rit.edu">WITR 89.7</a></h1>
     <h2>(Near) Endless Song Logger</h2>
     <div id="search_container">
         <input id="artist_search_input" type="text" placeholder="Artist">
         <input id="title_search_input" type="text" placeholder="Title">
+        <input id="date_search_input" type="text" class="datepicker-here"        
+            data-position="bottom left"
+            data-language="en"
+            placeholder="Date">
+        <div class="time_dropdown">
+            <input id="start_search_input" type="text" placeholder="time">
+            <div class="time_dropdown_content">
+                <span>12:00am</span>
+                {% for n in range(11) %}
+                    <span>{{n+1}}:00am</span>
+                {% endfor %}
+                <span>12:00pm</span>
+                {% for n in range(11) %}
+                    <span>{{n+1}}:00pm</span>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="time_dropdown">
+            <input id="end_search_input" type="text" placeholder="time">
+            <div class="time_dropdown_content">
+                <span>12:00am</span>
+                {% for n in range(11) %}
+                    <span>{{n+1}}:00am</span>
+                {% endfor %}
+                <span>12:00pm</span>
+                {% for n in range(11) %}
+                    <span>{{n+1}}:00pm</span>
+                {% endfor %}
+                <span>11:59pm</span>
+            </div>
+        </div>
         <input id="search_btn" type="submit" value="search">
     </div>
     <table>
@@ -28,6 +59,7 @@
                 <th><h4>group</h4></th>
                 <th><h4>Requester</h4></th>
             {% endif %}
+            <th class="update_clmn"></th>
             <th class="delete_clmn"></th>
         </tr>
         </thead>
@@ -38,4 +70,18 @@
 
 {% block html_end %}
     <script rel="logger-js" src="{{ url_for('static', filename='logger/main.js') }}"></script>
+
+    <!-- <script rel="init-datepicker">
+        /* Initialized the search bar datetime picker
+            makes sure the minutes portion is 00 */
+        
+        $(document).ready(function() {
+            var dp = $('.datepicker-here').data('datepicker');
+            var date = new Date();
+            date.setMinutes(00);
+            dp.selectDate(date);
+
+            $('.datepicker-here').val('');
+        });
+    </script> -->
 {% endblock %}

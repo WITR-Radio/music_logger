@@ -36,6 +36,34 @@ th {
     float: right;
 }
 
-/* #artist_search_input, #title_search_input, #search_btn {
-    flex: 1;
+.time_dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.time_dropdown_content {
+    display: none;
+    position: absolute;
+    min-width: 160px;
+    z-index: 1;
+    background-color: white;
+    border: 1px solid black;
+}
+
+.time_dropdown_content:hover {
+    cursor: pointer;
+}
+
+.time_dropdown_content span {
+    display: block;
+}
+
+.show {
+    display: block;
+}
+
+/* Datetime Picker */
+/* #datepickers-container > div > div.datepicker--time.-am-pm- > div.datepicker--time-sliders > div:nth-child(2), 
+#datepickers-container > div > div.datepicker--time.-am-pm- > div.datepicker--time-sliders > div:nth-child(2) > input[type="range"] {
+    display: none;
 } */

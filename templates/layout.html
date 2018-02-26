@@ -8,8 +8,19 @@
         <!-- replace links with either nginx serving them or pulling from internet source -->
         <link rel="stylesheet" type="text/css" 
             href="{{ url_for('static', filename='logger/main.css') }}"/>
+
+        <link rel="stylesheet" type="text/css" 
+            href="{{ url_for('static', filename='air-datepicker/css/datepicker.min.css') }}">
+
+
         <script rel="jquery" 
             src="{{ url_for('static', filename='jQuery/jquery.js') }}"></script>
+
+        <script rel="airdatepicker-js" 
+            src="{{ url_for('static', filename='air-datepicker/js/datepicker.min.js') }}"></script>
+        <script rel="airdatepicker-en-js" 
+            src="{{ url_for('static', filename='air-datepicker/js/datepicker.en.js') }}"></script>
+
         <script rel="socketIO" 
             src="{{ url_for('static', filename='socketIO/socket.io.min.js') }}"></script>
 

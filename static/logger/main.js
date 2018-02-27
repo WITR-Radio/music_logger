@@ -73,6 +73,30 @@
         });
     });
 
+    $('#add_track_btn').on('click', function () {
+        $("<tr id='-1' >" +
+            "<td><input class='adding_artist' type='text'></td>" +
+            "<td><input class='adding_title'  type='text'></td>" +
+            "<td><input class='adding_time'   type='text'></td>" +
+            "<td class='submit_update_clmn'><button class='submit_add_btn'>SUBMIT</button></td>" +
+            "<td class='cancel_update_clmn'><button class='cancel_add_btn'>CANCEL</button></td>" +
+            "</tr>").insertAfter($("#column_headers"));
+    });
+
+    $('table').on('click', '.cancel_add_btn', function () {
+        $(this).parent().parent().remove();
+    });
+
+    $('table').on('click', '.submit_add_btn', function () {
+        var row = $(this).parent().parent();
+
+        socket.emit('add', {
+            'new_artist': row.find('.adding_artist').val(),
+            'new_title' : row.find('.adding_title').val(),
+            'new_time'  : row.find('.adding_time').val()
+        });
+    });
+
     $('table').on('click', '.update_btn', function () {
         var row = $(this).parent().parent();
         
@@ -83,8 +107,8 @@
         row.find('.updating_artist').val(artist_clmn.html()).show();
         row.find('.updating_title' ).val(title_clmn.html()).show();
         row.find('.updating_time'  ).val(play_time_clmn.html()).show();
-        row.find('.submit_btn').show();
-        row.find('.cancel_btn').show();
+        row.find('.submit_update_btn').show();
+        row.find('.cancel_update_btn').show();
 
         artist_clmn.hide();
         title_clmn.hide();
@@ -92,7 +116,7 @@
         row.find('.update_btn').hide();
     });
 
-    $('table').on('click', '.cancel_btn', function () {
+    $('table').on('click', '.cancel_update_btn', function () {
         var row = $(this).parent().parent();
 
         row.find('.artist_clmn'   ).show();
@@ -100,14 +124,14 @@
         row.find('.play_time_clmn').show();
         row.find('.update_btn'    ).show();  
 
-        row.find('.updating_artist').hide();
-        row.find('.updating_title' ).hide();
-        row.find('.updating_time'  ).hide();
-        row.find('.submit_btn'     ).hide();
-        row.find('.cancel_btn'     ).hide();
+        row.find('.updating_artist'   ).hide();
+        row.find('.updating_title'    ).hide();
+        row.find('.updating_time'     ).hide();
+        row.find('.submit_update_btn' ).hide();
+        row.find('.cancel_update_btn' ).hide();
     });
 
-    $('table').on('click', '.submit_btn', function () {
+    $('table').on('click', '.submit_update_btn', function () {
         var row = $(this).parent().parent();
 
         socket.emit('update', {
@@ -140,8 +164,8 @@
             "</td>" +
             "<td>" + track.group + "</td>" +
             "<td>" + (track.requester ? track.requester : "" ) + "</td>" : "") +
-            "<td class='submit_clmn'><button class='submit_btn'>SUBMIT</button></td>" +
-            "<td class='cancel_clmn'><button class='cancel_btn'>CANCEL</button></td>" +            
+            "<td class='submit_clmn'><button class='submit_update_btn'>SUBMIT</button></td>" +
+            "<td class='cancel_clmn'><button class='cancel_update_btn'>CANCEL</button></td>" +            
             "<td class='update_clmn'><button class='update_btn'>UPDATE</button></td>" +            
             "<td class='delete_clmn'><button class='delete_btn'>DELETE</button></td>" +
             "</tr>").hide().insertAfter($("#column_headers")).fadeIn("slow");

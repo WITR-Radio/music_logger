@@ -54,7 +54,7 @@ th {
     flex: 1;
 }
 
-.updating_artist, .updating_title, .updating_time, .submit_btn, .cancel_btn {
+.updating_artist, .updating_title, .updating_time, .submit_update_btn, .cancel_update_btn {
     display: none;
 }
 

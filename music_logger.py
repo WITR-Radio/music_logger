@@ -150,6 +150,20 @@ def update_track(data):
 
     db.session.commit()
 
+
+@socketio.on('add')
+def add_track(data):
+    """ Socket used to add a track from a client to the database. """
+    track = Track(
+        artist = data['new_artist'],
+        title = data['new_title'],
+        group = Group.query.first(),
+        time = None
+    )
+
+    db.session.add(track)
+    db.session.commit()
+
 @socketio.on('message')
 def on_message_test(message):
     """ Used for testing sockets - simply sends the message back """

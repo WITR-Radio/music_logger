@@ -129,8 +129,8 @@ def search_track(data):
     if data['title'] is not '':
         results = results.filter(Track.title.like('%' + data['title'] + '%'))
     if data['date'] is not '':
-        start = datetime.strptime(data['date'] + ' ' + data['start'], '%m/%d/%Y %I:%M%p') 
-        end = datetime.strptime(data['date'] + ' ' + data['end'], '%m/%d/%Y %I:%M%p')
+        start = datetime.strptime(data['date'] + ' ' + data['start'], '%m/%d/%Y %I:%M %p') 
+        end   = datetime.strptime(data['date'] + ' ' + data['end'  ], '%m/%d/%Y %I:%M %p')
         results = results.filter(Track.created_at.between(start, end))
 
     emit('search_results', 
@@ -138,6 +138,17 @@ def search_track(data):
         json=True
     )
 
+
+@socketio.on('update')
+def update_track(data):
+    """ Socket used to update a track in the database. """
+    track = Track.query.get(data['track_id'])
+
+    track.artist     = data['new_artist']
+    track.title      = data['new_title']
+    track.created_at = datetime.strptime(data['new_time'], '%m/%d/%y %I:%M %p'), 
+
+    db.session.commit()
 
 @socketio.on('message')
 def on_message_test(message):

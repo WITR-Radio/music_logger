@@ -4,32 +4,6 @@
     margin: auto auto;
 }
 
-/* Tracks */
-table {
-    width: 100%;
-}
-
-tr {
-    display: flex;
-    padding: 7px;
-}
-
-tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-th {
-    text-align: left;
-}
-
-.artist_clmn, .title_clmn, .play_time_clmn, .delete_clmn {
-    flex: 1;
-}
-
-.delete_btn {
-    background-color: red;
-}
-
 /* Search Bar */
 #search_container {
     display: flex;
@@ -58,12 +32,32 @@ th {
     display: block;
 }
 
-.show {
-    display: block;
+/* Tracks */
+table {
+    width: 100%;
 }
 
-/* Datetime Picker */
-/* #datepickers-container > div > div.datepicker--time.-am-pm- > div.datepicker--time-sliders > div:nth-child(2), 
-#datepickers-container > div > div.datepicker--time.-am-pm- > div.datepicker--time-sliders > div:nth-child(2) > input[type="range"] {
+tr {
+    display: flex;
+    padding: 7px;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+th {
+    text-align: left;
+}
+
+.artist_clmn, .title_clmn, .play_time_clmn, .delete_clmn {
+    flex: 1;
+}
+
+.updating_artist, .updating_title, .updating_time, .submit_btn, .cancel_btn {
     display: none;
-} */
+}
+
+.delete_btn {
+    background-color: red;
+}

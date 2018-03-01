@@ -26,11 +26,11 @@ class Track(db.Model):
     
     __tablename__ = 'tracks'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
-    artist = db.Column(db.String(255), nullable=True)
-    title = db.Column(db.String(255), nullable=True)
-    time = db.Column(db.DateTime, nullable=True)
-    rivendell = db.Column(db.Boolean, nullable=True)
-    group_id = db.Column(db.Integer, db.ForeignKey('groups.id'), nullable=True)
+    artist = db.Column(db.String(255),                               nullable=True)
+    title = db.Column(db.String(255),                                nullable=True)
+    time = db.Column(db.DateTime,                                    nullable=True)
+    rivendell = db.Column(db.Boolean,                                nullable=True)
+    group_id = db.Column(db.Integer, db.ForeignKey('groups.id'),     nullable=True)
     # check performance of select and dynamic vs join for forward ref, back ref will need dynamic
     group = db.relationship('Group', lazy='joined', backref=db.backref('tracks', lazy='dynamic'))
     created_at = db.Column(db.DateTime, nullable=False, default=func.now())

@@ -59,20 +59,14 @@ def details():
     return render_template("index.html", detailed=True)
 
 
-@app.route('/dj')
-def dj():
-    """ Renders the dj page for submitting/updating/deleting tracks """
-    return render_template("dj_view.html")
-
-
 @app.route('/add_track_to_db', methods=['POST'])
 def add_track_to_db():
     """ Handles a POST request to submit a new track to the db """
     group = Group.query.get(1)
 
     track = Track(
-        request.form['artist'],
-        request.form['title'],
+        request.form['new_artist'],
+        request.form['new_title'],
         group,
         None
     )
@@ -80,7 +74,7 @@ def add_track_to_db():
     db.session.add(track)
     db.session.commit()
 
-    return redirect(url_for('dj'))
+    return "success"
 
 
 @app.route('/add_track_to_client', methods=['POST'])
@@ -98,7 +92,7 @@ def add_track_to_client():
     to emit to clients from background threads we would need a messaging queue
     between the main thread and all other threads, something I think is best avoided.
     """
-    socketio.emit('addTracks', request.get_json(force=True), json=True)
+    socketio.emit('add_tracks', request.get_json(force=True), json=True)
     return 'success'  # Flask doesn't like returning None.
 
 
@@ -140,7 +134,7 @@ def search_track(data):
 
 
 @socketio.on('update')
-def update_track(data):
+def commit_update(data):
     """ Socket used to update a track in the database. """
     track = Track.query.get(data['track_id'])
 
@@ -150,21 +144,16 @@ def update_track(data):
 
     db.session.commit()
 
+    update_clients(track, data)
 
-@socketio.on('add')
-def add_track(data):
-    """ Socket used to add a track from a client to the database. """
-    track = Track(
-        artist = data['new_artist'],
-        title = data['new_title'],
-        group = Group.query.first(),
-        time = None
-    )
-
-    db.session.add(track)
-    db.session.commit()
 
 @socketio.on('message')
 def on_message_test(message):
     """ Used for testing sockets - simply sends the message back """
     send(message)
+
+
+### HELPERS ###
+def update_clients(track, data):
+    data['id'] = track.id
+    socketio.emit('update_track', data, json=True)

@@ -10,15 +10,17 @@
         JSON.parse(tracks).forEach(add_track_to_top);
     });
 
-    socket.on('addTracks', function (Tracks) {
+    socket.on('add_tracks', function (Tracks) {
         /* Socket used to add a track to the currently displayed page */
         JSON.parse(Tracks).forEach(add_track_to_top);
     });
 
-    socket.on('updateTrack', function (id, time, title, artist, group, rivendell, requester) {
+    socket.on('update_track', function (data) {
         /* Socket used to update a track on the currently displayed page */
-        var row = $("tr#" + id.toString()).fadeOut();
-        row.propertyIsEnumerable()
+        var row = $("tr#" + data['id'].toString());
+        row.find('.artist_clmn').html(data['new_artist']);
+        row.find('.title_clmn').html(data['new_title']);
+        row.find('.play_time_clmn').html(data['new_time']);        
     });
 
     socket.on('search_results', function(tracks) {
@@ -90,11 +92,13 @@
     $('table').on('click', '.submit_add_btn', function () {
         var row = $(this).parent().parent();
 
-        socket.emit('add', {
+        $.ajax({url: '/add_track_to_db', type: 'POST', data: {
             'new_artist': row.find('.adding_artist').val(),
             'new_title' : row.find('.adding_title').val(),
             'new_time'  : row.find('.adding_time').val()
-        });
+        }});
+
+        row.remove();
     });
 
     $('table').on('click', '.update_btn', function () {
@@ -137,9 +141,20 @@
         socket.emit('update', {
             'track_id'  : row.attr('id'),
             'new_artist': row.find('.updating_artist').val(),
-            'new_title' : row.find('.updating_title').val(),
-            'new_time'  : row.find('.updating_time').val()            
+            'new_title' : row.find('.updating_title' ).val(),
+            'new_time'  : row.find('.updating_time'  ).val()            
         })
+
+        row.find('.artist_clmn'   ).show();
+        row.find('.title_clmn'    ).show();
+        row.find('.play_time_clmn').show();
+        row.find('.update_btn'    ).show();  
+
+        row.find('.updating_artist'   ).hide();
+        row.find('.updating_title'    ).hide();
+        row.find('.updating_time'     ).hide();
+        row.find('.submit_update_btn' ).hide();
+        row.find('.cancel_update_btn' ).hide();
     });
 
     $('table').on('click', '.delete_btn', function () {
@@ -173,6 +188,6 @@
 
     function remove_all_tracks() {
         /* Removes all tracks from the page */
-        $('tr:not(:first)').fadeOut();
+        $('tr:not(:first)').remove();
     }
 })(jQuery, detailed);

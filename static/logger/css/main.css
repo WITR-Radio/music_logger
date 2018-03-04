@@ -61,3 +61,8 @@ th {
 .delete_btn {
     background-color: red;
 }
+
+/* Input Validation */
+.error {
+    display: block;
+}

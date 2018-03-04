@@ -44,13 +44,17 @@ function has_no_blank_inputs(row) {
     return ret;
 };
 
-function add_blank_input_error(row, input) {
-    /* Highlights blank inputs and shows the user an error message. */
+function get_or_create_error_box(row) {
     if (row.prev().find(".error_box").length == 0)
         /* If there is no 'error_box' for this row, add one. */
         $("<tr><td><div class='error_box'></div></td></tr>").insertBefore(row);
 
-    var error_box = row.prev().find(".error_box");
+    return row.prev().find(".error_box");
+}
+
+function add_blank_input_error(row, input) {
+    /* Highlights blank inputs and shows the user an error message. */
+    var error_box = get_or_create_error_box(row);
     var name = input.attr("name");
     name = name.charAt(0).toUpperCase() + name.slice(1);
 
@@ -72,3 +76,23 @@ function remove_errors_for(row) {
         $(this).css("background-color", "white");
     });
 };
+
+function add_search_datetime_error() {
+    /* Adds an 'invalid datetime' error the search bar. */
+    $(".search_error_box").html(
+        "<span>Invalid date or time format.</span>"
+    )
+};
+
+function add_update_datetime_error(id) {
+    /* Adds an 'invalid datetime' error to the correct track on the page. */
+    var row = $('tr#' + id);
+    var error_box = get_or_create_error_box(row);
+
+    row.find(".updating_time").css("background-color", "red");
+
+    error_box.html(
+        error_box.html() +
+        "<span class='error'>Invalid Date or Time format.</span>"
+    );
+}

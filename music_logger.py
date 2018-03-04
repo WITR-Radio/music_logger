@@ -15,6 +15,7 @@ from json import loads
 from flask import Flask, render_template, request, url_for, redirect
 from flask_socketio import SocketIO, emit, send
 from sqlalchemy import desc
+from sassutils.wsgi import SassMiddleware
 
 sys.path.append('C:/Users/colin/WITR/music_logger/helper_modules')  # so we can import our modules
 from config import Development
@@ -26,6 +27,10 @@ app = Flask(__name__)
 app.config.from_object(Development)  # change loaded config name to change attributes
 db.init_app(app)
 socketio = SocketIO(app)
+
+app.wsgi_app = SassMiddleware(app.wsgi_app, {
+    'music_logger': ('static/logger/sass', 'static/logger/css', 'static/logger/css')
+})
 
 
 @app.before_first_request
@@ -59,24 +64,6 @@ def details():
     return render_template("index.html", detailed=True)
 
 
-@app.route('/add_track_to_db', methods=['POST'])
-def add_track_to_db():
-    """ Handles a POST request to submit a new track to the db """
-    group = Group.query.get(1)
-
-    track = Track(
-        request.form['new_artist'],
-        request.form['new_title'],
-        group,
-        None
-    )
-
-    db.session.add(track)
-    db.session.commit()
-
-    return "success"
-
-
 @app.route('/add_track_to_client', methods=['POST'])
 def add_track_to_client():
     """ Handles a POST request to emit a message to all clients
@@ -104,6 +91,21 @@ def startup():
     emit('connected', tracks_to_json(tracks), json=True)
 
 
+@socketio.on('add_track_to_db')
+def add_track_to_db(data):
+    group = Group.query.get(1)
+
+    track = Track(
+        data.new_artist,
+        data.new_title,
+        group,
+        None
+    )
+
+    db.session.add(track)
+    db.session.commit()
+
+
 @socketio.on('removeTrack')
 def remove_track(track_id):
     """ Socket used to remove a track from the database. """
@@ -113,7 +115,7 @@ def remove_track(track_id):
     emit('removeTrack', track_id, broadcast=True)
 
 
-@socketio.on('query')
+@socketio.on('search_track')
 def search_track(data):
     """ Socket used to search the database using parameters in @data. """
     results = Track.query
@@ -123,9 +125,13 @@ def search_track(data):
     if data['title'] is not '':
         results = results.filter(Track.title.like('%' + data['title'] + '%'))
     if data['date'] is not '':
-        start = datetime.strptime(data['date'] + ' ' + data['start'], '%m/%d/%Y %I:%M %p') 
-        end   = datetime.strptime(data['date'] + ' ' + data['end'  ], '%m/%d/%Y %I:%M %p')
-        results = results.filter(Track.created_at.between(start, end))
+        try:
+            start = datetime.strptime(data['date'] + ' ' + data['start'], '%m/%d/%Y %I:%M %p') 
+            end   = datetime.strptime(data['date'] + ' ' + data['end'  ], '%m/%d/%Y %I:%M %p')
+            results = results.filter(Track.created_at.between(start, end))
+        except ValueError:
+            emit('invalid_search_datetime')
+            return
 
     emit('search_results', 
         tracks_to_json(results.order_by(desc(Track.created_at)).limit(20).all()), 
@@ -133,18 +139,23 @@ def search_track(data):
     )
 
 
-@socketio.on('update')
+@socketio.on('commit_update')
 def commit_update(data):
     """ Socket used to update a track in the database. """
-    track = Track.query.get(data['track_id'])
+    try:
+        track = Track.query.get(data['track_id'])
 
-    track.artist     = data['new_artist']
-    track.title      = data['new_title']
-    track.created_at = datetime.strptime(data['new_time'], '%m/%d/%y %I:%M %p'), 
+        track.artist     = data['new_artist']
+        track.title      = data['new_title']
+        track.created_at = datetime.strptime(data['new_time'], '%m/%d/%y %I:%M %p'), 
 
-    db.session.commit()
+        db.session.commit()
 
-    update_clients(track, data)
+        emit('successful_update', track.id)
+        update_clients(track, data)
+    except ValueError:
+        # Invalid datetime format.
+        emit('invalid_update_datetime', data['track_id'])
 
 
 @socketio.on('message')

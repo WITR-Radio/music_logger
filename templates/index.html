@@ -8,19 +8,20 @@
     {% endif %}
 {% endblock %}
 
-{% block body  %}
-<div id="container"> 
-    <h1><a href="https://witr.rit.edu">WITR 89.7</a></h1>
-    <h2>(Near) Endless Song Logger</h2>
+{% block body %}
+<div id="container">
+    <header>
+        <h1>FM Playlist</h1>
+        <h2>Crap, what was that song they played?</h2>
+    </header>
     <div id="search_container">
-        <input id="artist_search_input" type="text" placeholder="Artist">
-        <input id="title_search_input" type="text" placeholder="Title">
+        <div class="search_error_box"></div>
         <input id="date_search_input" type="text" class="datepicker-here"        
             data-position="bottom left"
             data-language="en"
             placeholder="Date">
         <div class="time_dropdown">
-            <input id="start_search_input" type="text" placeholder="time">
+            <input id="start_search_input" type="text" placeholder="Start Time">
             <div class="time_dropdown_content">
                 <span>12:00 am</span>
                 {% for n in range(11) %}
@@ -33,7 +34,7 @@
             </div>
         </div>
         <div class="time_dropdown">
-            <input id="end_search_input" type="text" placeholder="time">
+            <input id="end_search_input" type="text" placeholder="Start Time">
             <div class="time_dropdown_content">
                 <span>12:00 am</span>
                 {% for n in range(11) %}
@@ -46,23 +47,25 @@
                 <span>11:59 pm</span>
             </div>
         </div>
+        <input id="artist_search_input" type="text" placeholder="Artist">
+        <input id="title_search_input" type="text" placeholder="Title">
         <input id="search_btn" type="submit" value="search">
     </div>
     <button id="add_track_btn">Add Track</button>
     <table>
         <thead id="column_headers">
-        <tr>
-            <th class="artist_clmn"><h4>Artist</h4></th>
-            <th class="title_clmn"><h4>Title</h4></th>
-            <th class="play_time_clmn"><h4>Play Time</h4></th>
-            {% if detailed == true %}
-                <th><h4>rvdl</h4></th>
-                <th><h4>group</h4></th>
-                <th><h4>Requester</h4></th>
-            {% endif %}
-            <th class="update_clmn"></th>
-            <th class="delete_clmn"></th>
-        </tr>
+            <tr>
+                <th class="artist_clmn"><h4>ARTIST</h4></th>
+                <th class="title_clmn"><h4>TITLE</h4></th>
+                <th class="play_time_clmn"><h4>PLAY TIME</h4></th>
+                {% if detailed == true %}
+                    <th><h4>rvdl</h4></th>
+                    <th><h4>group</h4></th>
+                    <th><h4>Requester</h4></th>
+                {% endif %}
+                <th class="update_clmn"></th>
+                <th class="delete_clmn"></th>
+            </tr>
         </thead>
         <!-- the tracks -->
     </table>

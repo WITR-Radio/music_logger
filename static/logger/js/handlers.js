@@ -24,12 +24,14 @@ $('.time_dropdown_content > span').on('click', function () {
 
 $('#search_btn').on('click', function () {
     /* Sends search query to the server. */
+    $(".search_error_box").html("");
+
     var artist = $('#artist_search_input').val();
     var title  = $('#title_search_input').val();
     var date   = $('#date_search_input').val();
     var start  = $('#start_search_input').val();
     var end    = $('#end_search_input').val();        
-    socket.emit('query', {
+    socket.emit('search_track', {
         'artist': artist, 
         'title' : title, 
         'date'  : date, 
@@ -62,18 +64,21 @@ $('table').on('click', '.cancel_add_btn', function () {
 $('table').on('click', '.submit_add_btn', function () {
     /* Submits the new track to the logger and checks for errors. */
     var row = $(this).parent().parent();
+    var datetime = row.find(".updating_time");
 
-    remove_errors_for(row); // Make sure duplicate erros aren't shown.
+    remove_errors_for(row); // Prevent duplicate errors being shown
 
     if (has_no_blank_inputs(row)) {
-        $.ajax({url: '/add_track_to_db', type: 'POST', data: {
+        socket.emit('add_track_to_db', {
             'new_artist': row.find('.adding_artist').val(),
             'new_title' : row.find('.adding_title').val(),
             'new_time'  : row.find('.adding_time').val()
-        }});
-        
+        })
+    
         row.remove();
     }
+    /* Take care of removing errors and showing correct fields in the 
+        track row once the server decides the datetime is valid or not */
 });
 
 /* Updating Tracks */
@@ -128,26 +133,12 @@ $('table').on('click', '.submit_update_btn', function () {
 
     if (has_no_blank_inputs(row)) {
         /* Send updates via socket. */
-        socket.emit('update', {
+        socket.emit('commit_update', {
             'track_id'  : row.attr('id'),
             'new_artist': row.find('.updating_artist').val(),
             'new_title' : row.find('.updating_title' ).val(),
             'new_time'  : row.find('.updating_time'  ).val()            
         })
-
-        /* Show non 'update mode' columns. */
-        row.find('.artist_clmn'   ).show();
-        row.find('.title_clmn'    ).show();
-        row.find('.play_time_clmn').show();
-        row.find('.update_btn'    ).show();  
-
-        /* Hide 'update mode' columns. */
-        row.find('.updating_artist'   ).hide();
-        row.find('.updating_title'    ).hide();
-        row.find('.updating_time'     ).hide();
-        row.find('.submit_update_btn' ).hide();
-        row.find('.cancel_update_btn' ).hide();
-            
     };
 });
 

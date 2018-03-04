@@ -7,36 +7,35 @@
 
         <!-- replace links with either nginx serving them or pulling from internet source -->
         <link rel="stylesheet" type="text/css" 
-            href="{{ url_for('static', filename='logger/css/main.css') }}"/>
+            href="{{ url_for('static', filename='logger/css/main.sass.css') }}"/>
 
         <link rel="stylesheet" type="text/css" 
             href="{{ url_for('static', filename='air-datepicker/css/datepicker.min.css') }}">
-
-
-        <script rel="jquery" 
-            src="{{ url_for('static', filename='jQuery/jquery.js') }}"></script>
-
-        <script rel="airdatepicker-js" 
-            src="{{ url_for('static', filename='air-datepicker/js/datepicker.min.js') }}"></script>
-        <script rel="airdatepicker-en-js" 
-            src="{{ url_for('static', filename='air-datepicker/js/datepicker.en.js') }}"></script>
-
-        <script rel="socketIO" 
-            src="{{ url_for('static', filename='socketIO/socket.io.min.js') }}"></script>
 
         {% block head %}{% endblock %}
     </head>
     <body>
         {% block body %}{% endblock %}
     </body>        
+    <script rel="jquery" 
+        src="{{ url_for('static', filename='jQuery/jquery.js') }}"></script>
+
+    <script rel="airdatepicker-js" 
+        src="{{ url_for('static', filename='air-datepicker/js/datepicker.min.js') }}"></script>
+    <script rel="airdatepicker-en-js" 
+        src="{{ url_for('static', filename='air-datepicker/js/datepicker.en.js') }}"></script>
+
+    <script rel="socketIO" 
+        src="{{ url_for('static', filename='socketIO/socket.io.min.js') }}"></script>
+        
     <script rel="helpers" 
-            src="{{ url_for('static', filename='logger/js/helpers.js') }}"></script>
+        src="{{ url_for('static', filename='logger/js/helpers.js') }}"></script>
 
     <script rel="sockets" 
-            src="{{ url_for('static', filename='logger/js/sockets.js') }}"></script>
+        src="{{ url_for('static', filename='logger/js/sockets.js') }}"></script>
 
     <script rel="handlers" 
-            src="{{ url_for('static', filename='logger/js/handlers.js') }}"></script>
+        src="{{ url_for('static', filename='logger/js/handlers.js') }}"></script>
 
     {% block html_end %}{% endblock %}
 </html>

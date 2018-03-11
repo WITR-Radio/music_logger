@@ -23,21 +23,29 @@ $('.time_dropdown_content > span').on('click', function () {
 });
 
 $('#search_btn').on('click', function () {
-    /* Sends search query to the server. */
-    $(".search_error_box").html("");
+    /* If search inputs are hidden reveals them, 
+        else sends search query to the server.*/
+    var search_revealer = $('div.search_revealer');
 
-    var artist = $('#artist_search_input').val();
-    var title  = $('#title_search_input').val();
-    var date   = $('#date_search_input').val();
-    var start  = $('#start_search_input').val();
-    var end    = $('#end_search_input').val();        
-    socket.emit('search_track', {
-        'artist': artist, 
-        'title' : title, 
-        'date'  : date, 
-        'start' : start, 
-        'end'   : end
-    });
+    if (search_revealer.is(':visible')) {
+        $('.search_error_box').html('');
+
+        var artist = $('#artist_search_input').val();
+        var title  = $('#title_search_input').val();
+        var date   = $('#date_search_input').val();
+        var start  = $('#start_search_input').val();
+        var end    = $('#end_search_input').val();        
+        socket.emit('search_track', {
+            'artist': artist, 
+            'title' : title, 
+            'date'  : date, 
+            'start' : start, 
+            'end'   : end
+        });
+    }
+    else {
+        search_revealer.slideDown();
+    }
 });
 
 /* Adding Tracks */

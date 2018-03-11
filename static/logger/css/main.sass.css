@@ -1,34 +1,56 @@
+/* Base Layout Module State Theme */
 /***** VARIABLES *****/
 /***** BASE *****/
 /* Container */
 body {
-  font-family: sans-serif; }
+  font-family: sans-serif;
+  margin: 0; }
 
 #container {
-  width: 95vw;
-  margin: auto auto; }
+  margin: 0; }
+  #container a.home_link {
+    display: inline-block;
+    height: 64px;
+    width: 64px; }
 
 /***** LAYOUT *****/
-header h1 {
-  font-size: 5em;
-  width: 100%; }
-
-header h2 {
-  font-size: 1.1em;
-  font-weight: lighter;
-  width: 100%;
-  margin-bottom: 40px; }
+header {
+  padding: 20px; }
+  header h1 {
+    font-size: 5em;
+    width: 100%;
+    margin: 0;
+    margin-bottom: 30px; }
+  header h2 {
+    font-size: 1.1em;
+    font-weight: 400;
+    width: 100%;
+    margin-top: 0;
+    margin-bottom: 20px; }
 
 /***** MODULES *****/
 /* Search Bar */
 #search_container {
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-bottom: 30px;
   /* Tracks */ }
+  #search_container .search_revealer {
+    display: none; }
   #search_container input, #search_container .time_dropdown {
     width: 100%; }
   #search_container input {
-    border-width: 0 0 1px; }
+    border-width: 0 0 1px;
+    height: 35px;
+    font-size: 1em; }
     #search_container input:focus {
       border-color: #06a7e1; }
+  #search_container input#date_search_input {
+    background: url(../../images/cal_glyph.png) no-repeat scroll;
+    background-position: right; }
+  #search_container input#start_search_input, #search_container input#end_search_input {
+    background: url(../../images/down_arrow.png) no-repeat scroll;
+    background-position: right; }
   #search_container .time_dropdown {
     position: relative;
     display: inline-block; }
@@ -43,19 +65,32 @@ header h2 {
       cursor: pointer; }
     #search_container .time_dropdown_content span {
       display: block; }
+  #search_container input#search_btn {
+    height: 40px;
+    background-color: #06a7e1;
+    color: white;
+    font-size: 1.1em;
+    margin-top: 10px; }
 
 table {
   width: 100%;
-  margin-top: 25px; }
+  padding-left: 5px;
+  padding-right: 5px; }
   table thead {
     max-height: 50px;
     background-color: #2A2C2D; }
+    table thead th {
+      padding: 0; }
+    table thead th:not(:first-of-type) {
+      position: relative; }
     table thead h4 {
       margin: 0;
       color: white; }
   table tr {
     display: flex;
     padding: 7px; }
+  table td {
+    padding: 0; }
   table tr:nth-child(even) {
     background-color: #f9f9f9; }
   table th {

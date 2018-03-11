@@ -35,11 +35,11 @@ app.wsgi_app = SassMiddleware(app.wsgi_app, {
 
 @app.before_first_request
 def thread_db_overwatch():
-    # Threads the db_overwatch function BEFORE THE FIRST REQUEST. 
-    # The app.before_first_request decorator will only run this function
-    # no sooner than directly before the first request. 
-    # So if the server is started and nobody connects, db_overwatch will
-    # not be run.
+    """ Threads the db_overwatch function BEFORE THE FIRST REQUEST. 
+        The app.before_first_request decorator will only run this function
+        no sooner than directly before the first request. 
+        So if the server is started and nobody connects, db_overwatch will
+        not be run. """
     t = Thread(target = start_db_overwatch, args = (app, db, socketio))
     t.start()
     print('***** db_overwatch threaded *****')

@@ -6,6 +6,7 @@ Flask-SocketIO		2.3
 pytz	            2016.4
 PyMySQL (for windows development)
 requests
+sass
 
 client-side:
 Foundation 6

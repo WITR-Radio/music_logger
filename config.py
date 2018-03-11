@@ -45,4 +45,4 @@ class Development(Config):
     DB_PASSWORD = 'Ax^2+Bx+C=y'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://' + DB_USER + ':' + DB_PASSWORD + '@' + DB_HOST + '/' + DB_NAME
-    SERVER_NAME = '127.0.0.1:5000'
+    # SERVER_NAME = '127.0.0.1:5000' the hostname is currently supplied by the ./run.ps1 script

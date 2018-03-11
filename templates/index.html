@@ -10,46 +10,51 @@
 
 {% block body %}
 <div id="container">
-    <header>
+    <a class="home_link" href="https://witr.rit.edu">
+        <img class="logo" src="{{ url_for('static', filename='images/WITR_logo.png') }}"/>
+    </a>
+    <header>    
         <h1>FM Playlist</h1>
         <h2>Crap, what was that song they played?</h2>
     </header>
     <div id="search_container">
-        <div class="search_error_box"></div>
-        <input id="date_search_input" type="text" class="datepicker-here"        
-            data-position="bottom left"
-            data-language="en"
-            placeholder="Date">
-        <div class="time_dropdown">
-            <input id="start_search_input" type="text" placeholder="Start Time">
-            <div class="time_dropdown_content">
-                <span>12:00 am</span>
-                {% for n in range(11) %}
-                    <span>{{n+1}}:00 am</span>
-                {% endfor %}
-                <span>12:00 pm</span>
-                {% for n in range(11) %}
-                    <span>{{n+1}}:00 pm</span>
-                {% endfor %}
+        <div class="search_revealer">
+            <div class="search_error_box"></div>
+            <input id="date_search_input" type="text" class="datepicker-here"        
+                data-position="bottom left"
+                data-language="en"
+                placeholder="Date">
+            <div class="time_dropdown">
+                <input id="start_search_input" type="text" placeholder="Start Time">
+                <div class="time_dropdown_content">
+                    <span>12:00 am</span>
+                    {% for n in range(11) %}
+                        <span>{{n+1}}:00 am</span>
+                    {% endfor %}
+                    <span>12:00 pm</span>
+                    {% for n in range(11) %}
+                        <span>{{n+1}}:00 pm</span>
+                    {% endfor %}
+                </div>
             </div>
-        </div>
-        <div class="time_dropdown">
-            <input id="end_search_input" type="text" placeholder="Start Time">
-            <div class="time_dropdown_content">
-                <span>12:00 am</span>
-                {% for n in range(11) %}
-                    <span>{{n+1}}:00 am</span>
-                {% endfor %}
-                <span>12:00 pm</span>
-                {% for n in range(11) %}
-                    <span>{{n+1}}:00 pm</span>
-                {% endfor %}
-                <span>11:59 pm</span>
+            <div class="time_dropdown">
+                <input id="end_search_input" type="text" placeholder="End Time">
+                <div class="time_dropdown_content">
+                    <span>12:00 am</span>
+                    {% for n in range(11) %}
+                        <span>{{n+1}}:00 am</span>
+                    {% endfor %}
+                    <span>12:00 pm</span>
+                    {% for n in range(11) %}
+                        <span>{{n+1}}:00 pm</span>
+                    {% endfor %}
+                    <span>11:59 pm</span>
+                </div>
             </div>
+            <input id="artist_search_input" type="text" placeholder="Artist">
+            <input id="title_search_input" type="text" placeholder="Title">        
         </div>
-        <input id="artist_search_input" type="text" placeholder="Artist">
-        <input id="title_search_input" type="text" placeholder="Title">
-        <input id="search_btn" type="submit" value="search">
+        <input id="search_btn" type="submit" value="SEARCH">
     </div>
     <button id="add_track_btn">Add Track</button>
     <table>

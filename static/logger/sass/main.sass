@@ -1,39 +1,69 @@
+/* Base Layout Module State Theme */
+    
 /***** VARIABLES *****/
 $witr_blue: #06a7e1
     
+
 /***** BASE *****/
     /* Container */
 body
     font-family: sans-serif
+    margin: 0
 
 #container
-    width: 95vw
-    margin: auto auto
+    margin: 0
+
+    a.home_link
+        display: inline-block
+        height: 64px
+        width: 64px
 
 
 /***** LAYOUT *****/
 header 
+    padding: 20px
+
     h1 
         font-size: 5em
         width: 100%
+        margin: 0
+        margin-bottom: 30px
     h2
         font-size: 1.1em
-        font-weight: lighter
+        font-weight: 400
         width: 100%
-        margin-bottom: 40px
+        margin-top: 0
+        margin-bottom: 20px
 
 
 /***** MODULES *****/
     /* Search Bar */
 #search_container
+    padding-left: 20px
+    padding-right: 20px
+    margin-bottom: 30px
+
+    .search_revealer 
+        display: none
+
     input, .time_dropdown
         width: 100%
 
     input 
         border-width: 0 0 1px
+        height: 35px
+        font-size: 1em
 
         &:focus
             border-color: $witr_blue
+
+    input#date_search_input
+        background: url(../../images/cal_glyph.png) no-repeat scroll 
+        background-position: right
+
+    input#start_search_input, input#end_search_input
+        background: url(../../images/down_arrow.png) no-repeat scroll
+        background-position: right
 
     .time_dropdown 
         position: relative
@@ -53,14 +83,28 @@ header
         span 
             display: block
 
+    input#search_btn 
+        height: 40px
+        background-color: $witr_blue
+        color: white
+        font-size: 1.1em
+        margin-top: 10px
+
     /* Tracks */
-table 
+table
     width: 100%
-    margin-top: 25px
+    padding-left: 5px
+    padding-right: 5px
 
     thead
         max-height: 50px
         background-color: #2A2C2D
+
+        & th
+            padding: 0
+
+        & th:not(:first-of-type)
+            position: relative
         
         h4
             margin: 0
@@ -69,6 +113,9 @@ table
     tr
         display: flex
         padding: 7px
+
+    td
+        padding: 0
 
     tr:nth-child(even)
         background-color: #f9f9f9

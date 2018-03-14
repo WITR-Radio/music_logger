@@ -1,4 +1,7 @@
 /*** EVENT HANDLERS ***/
+var witr_blue = '#06a7e1';
+var lbl_clr = '#8b8b8b';
+
 /* Search */
 window.onclick = function(event) {
     /* closes dropdowns when the user clicks off somewhere else on the screen. */
@@ -46,6 +49,12 @@ $('#search_btn').on('click', function () {
     else {
         search_revealer.slideDown();
     }
+});
+
+$('input').focus(function() {
+    $(this).parent().find('label').css('color', witr_blue);
+}).focusout(function() {
+    $(this).parent().find('label').css('color', lbl_clr);    
 });
 
 /* Adding Tracks */
@@ -155,4 +164,44 @@ $('table').on('click', '.delete_btn', function () {
     /* Tells the server to delete the clicked track from the database */
     var track_id = $(this).parent().parent().attr('id');
     socket.emit('removeTrack', track_id);
+});
+
+/* Media Queries */
+function run_media_queries() {
+    var search_revealer = $('.search_revealer');
+
+    if (window.matchMedia('(min-width: 600px').matches) {
+        /* The viewport is at least 600px wide */
+        $('#date_search_input'  ).attr('placeholder', 'Today');
+        $('#start_search_input' ).attr('placeholder', 'Time');
+        $('#end_search_input'   ).attr('placeholder', 'Time');
+        $('#artist_search_input').attr('placeholder', 'Keyword');
+        $('#title_search_input' ).attr('placeholder', 'Keyword');
+
+        $('.search_revealer').css('display', 'flex');
+    } else {
+        /* The viewport is less than 600px wide */
+        $('#date_search_input'  ).attr('placeholder', 'Date');
+        $('#start_search_input' ).attr('placeholder', 'Start Time');
+        $('#end_search_input'   ).attr('placeholder', 'End Time');
+        $('#artist_search_input').attr('placeholder', 'Artist');
+        $('#title_search_input' ).attr('placeholder', 'Title');
+
+    /* Deal with hiding and display the search inputs 
+        when the viewport is resized */
+    if(search_revealer.css('display') == 'flex')
+        search_revealer.css('display', 'none');
+    else if(search_revealer.css('display') == 'block')
+        search_revealer.css('display', 'block');
+    else
+        search_revealer.css('display', 'none')
+    }
+};
+
+$(document).ready(function() {
+    run_media_queries();
+});
+
+window.addEventListener('resize', function(event) {
+    run_media_queries();
 });

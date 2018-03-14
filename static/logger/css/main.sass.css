@@ -13,6 +13,12 @@ body {
     height: 64px;
     width: 64px; }
 
+input {
+  outline: none; }
+
+.transparent {
+  color: transparent !important; }
+
 /***** LAYOUT *****/
 header {
   padding: 20px; }
@@ -34,8 +40,13 @@ header {
   padding-left: 20px;
   padding-right: 20px;
   margin-bottom: 30px;
+  /* Input styles */
+  /* Glyphs in search */
+  /* Dropdown menus */
+  /* Search button */
   /* Tracks */ }
   #search_container .search_revealer {
+    width: 100%;
     display: none; }
   #search_container input, #search_container .time_dropdown {
     width: 100%; }
@@ -45,6 +56,13 @@ header {
     font-size: 1em; }
     #search_container input:focus {
       border-color: #06a7e1; }
+  #search_container ::placeholder {
+    color: #969696; }
+  #search_container .search_label {
+    color: #8b8b8b;
+    font-size: .8em;
+    font-weight: bold;
+    display: none; }
   #search_container input#date_search_input {
     background: url(../../images/cal_glyph.png) no-repeat scroll;
     background-position: right; }
@@ -70,7 +88,8 @@ header {
     background-color: #06a7e1;
     color: white;
     font-size: 1.1em;
-    margin-top: 10px; }
+    margin-top: 10px;
+    flex-basis: 40pxs; }
 
 table {
   width: 100%;
@@ -110,7 +129,42 @@ table {
 .search_error_box {
   display: block;
   float: left;
-  width: 100%; }
+  width: 100%;
+  /* Media Queries */ }
+
+@media (min-width: 600px) {
+  #search_container {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row; }
+    #search_container div.search_revealer {
+      display: flex;
+      width: calc(100% - 40px);
+      flex-direction: row; }
+    #search_container input#search_btn {
+      width: 40px;
+      color: transparent;
+      background: url(../../images/mag_glass.png) no-repeat scroll;
+      background-position: 50% 50%;
+      background-color: #06a7e1; }
+    #search_container .search_label {
+      display: block; }
+    #search_container div.search_error_box {
+      width: 0; }
+    #search_container .ds_container {
+      margin-right: 40px; }
+    #search_container .ss_container {
+      margin-right: 20px; }
+    #search_container .es_container {
+      margin-right: 40px; }
+    #search_container .as_container {
+      margin-right: 20px; }
+    #search_container .ts_container {
+      margin-right: 40px; }
+    #search_container .ds_container, #search_container .ss_container, #search_container .es_container {
+      flex: 1; }
+    #search_container .as_container, #search_container .ts_container {
+      flex: 2; } }
 
 /* Temorary Hiding While Working on Styles */
 #add_track_btn, .update_btn, .delete_clmn {

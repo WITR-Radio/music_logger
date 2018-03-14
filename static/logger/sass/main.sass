@@ -18,6 +18,11 @@ body
         height: 64px
         width: 64px
 
+input 
+    outline: none
+
+.transparent 
+    color: transparent !important
 
 /***** LAYOUT *****/
 header 
@@ -44,8 +49,10 @@ header
     margin-bottom: 30px
 
     .search_revealer 
+        width: 100%
         display: none
 
+    /* Input styles */
     input, .time_dropdown
         width: 100%
 
@@ -57,6 +64,16 @@ header
         &:focus
             border-color: $witr_blue
 
+    ::placeholder
+        color: #969696
+
+    .search_label
+        color: #8b8b8b
+        font-size: .8em
+        font-weight: bold
+        display: none
+
+    /* Glyphs in search */
     input#date_search_input
         background: url(../../images/cal_glyph.png) no-repeat scroll 
         background-position: right
@@ -65,6 +82,7 @@ header
         background: url(../../images/down_arrow.png) no-repeat scroll
         background-position: right
 
+    /* Dropdown menus */
     .time_dropdown 
         position: relative
         display: inline-block
@@ -83,12 +101,14 @@ header
         span 
             display: block
 
+    /* Search button */
     input#search_btn 
         height: 40px
         background-color: $witr_blue
         color: white
         font-size: 1.1em
         margin-top: 10px
+        flex-basis: 40pxs
 
     /* Tracks */
 table
@@ -142,6 +162,57 @@ table
     display: block
     float: left
     width: 100%
+
+    /* Media Queries */
+@media (min-width: 600px) 
+    #search_container
+        display: flex
+        justify-content: space-between
+        flex-direction: row        
+
+        div.search_revealer
+            display: flex
+            width: calc(100% - 40px)
+            flex-direction: row
+
+        input#search_btn
+            width: 40px
+            color: transparent
+            background: url(../../images/mag_glass.png) no-repeat scroll
+            background-position: 50% 50%
+            background-color: $witr_blue
+
+        .si_container 
+            
+
+        .search_label
+            display: block
+
+        div.search_error_box
+            width: 0
+
+        // Space search elements from each other
+        .ds_container
+            margin-right: 40px
+
+        .ss_container
+            margin-right: 20px
+
+        .es_container
+            margin-right: 40px
+
+        .as_container
+            margin-right: 20px
+
+        .ts_container
+            margin-right: 40px
+
+        .ds_container, .ss_container, .es_container
+            flex: 1
+
+        .as_container, .ts_container
+            flex: 2
+    
 
 /* Temorary Hiding While Working on Styles */
 #add_track_btn, .update_btn, .delete_clmn

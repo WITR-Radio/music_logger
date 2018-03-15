@@ -19,6 +19,9 @@ input {
 .transparent {
   color: transparent !important; }
 
+#add_track_btn, .update_btn, .delete_clmn {
+  display: none; }
+
 /***** LAYOUT *****/
 header {
   padding: 20px; }
@@ -89,14 +92,13 @@ header {
     color: white;
     font-size: 1.1em;
     margin-top: 10px;
-    flex-basis: 40pxs; }
+    flex-basis: 40px; }
 
 table {
   width: 100%;
   padding-left: 5px;
   padding-right: 5px; }
   table thead {
-    max-height: 50px;
     background-color: #2A2C2D; }
     table thead th {
       padding: 0; }
@@ -120,6 +122,10 @@ table {
     display: none; }
   table .delete_btn {
     background-color: red; }
+
+.time_dropdown_content {
+  padding: 10px;
+  font-size: 1.1em; }
 
 /***** STATE *****/
 /* Input Validation */
@@ -152,22 +158,51 @@ table {
     #search_container div.search_error_box {
       width: 0; }
     #search_container .ds_container {
+      width: 100px;
       margin-right: 40px; }
     #search_container .ss_container {
+      width: 80px;
       margin-right: 20px; }
     #search_container .es_container {
+      width: 80px;
       margin-right: 40px; }
     #search_container .as_container {
       margin-right: 20px; }
     #search_container .ts_container {
       margin-right: 40px; }
-    #search_container .ds_container, #search_container .ss_container, #search_container .es_container {
-      flex: 1; }
     #search_container .as_container, #search_container .ts_container {
-      flex: 2; } }
+      flex: 1; } }
 
-/* Temorary Hiding While Working on Styles */
-#add_track_btn, .update_btn, .delete_clmn {
-  display: none; }
+@media (min-width: 850px) {
+  header {
+    padding: 40px 100px 40px 100px; }
+    header h1 {
+      font-size: 6em; }
+    header h2 {
+      font-size: 1.5em;
+      margin-bottom: 0; }
+  #search_container {
+    padding: 0 100px 25px 100px; }
+  table {
+    padding: 0 50px 0 50px; }
+    table thead#column_headers tr {
+      height: 20px;
+      padding: 10px 30px 10px 30px; }
+    table tr {
+      padding: 15px 30px 15px 30px;
+      font-size: 1.1em; } }
+
+@media (min-width: 1240px) {
+  header, #search_container {
+    width: 940px;
+    margin: auto auto; }
+  #search_container {
+    margin-bottom: 75px; } }
+
+@media (min-width: 1340px) {
+  table {
+    width: 1240px;
+    margin: auto auto;
+    padding: 0; } }
 
 /*# sourceMappingURL=../css/main.sass.css.map */

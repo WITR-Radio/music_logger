@@ -2,7 +2,7 @@
     
 /***** VARIABLES *****/
 $witr_blue: #06a7e1
-    
+
 
 /***** BASE *****/
     /* Container */
@@ -30,13 +30,19 @@ input
 
 /***** LAYOUT *****/
 header 
-    padding: 20px
+    margin: 20px
 
     h1 
         font-size: 5em
         width: 100%
         margin: 0
         margin-bottom: 30px
+
+        img.signal_glyph
+            width: 50px
+            height: auto
+            margin: 0px 10px 0px 7px
+
     h2
         font-size: 1.1em
         font-weight: 400
@@ -48,13 +54,14 @@ header
 /***** MODULES *****/
     /* Search Bar */
 #search_container
-    padding-left: 20px
-    padding-right: 20px
-    margin-bottom: 30px
+    margin: 0px 20px 30px 20px
 
     .search_revealer 
         width: 100%
         display: none
+
+    .search_content
+        width: 100%
 
     /* Input styles */
     input, .time_dropdown
@@ -79,7 +86,7 @@ header
 
     /* Glyphs in search */
     input#date_search_input
-        background: url(../../images/cal_glyph.png) no-repeat scroll 
+        background: url(../../images/cal.png) no-repeat scroll 
         background-position: right
 
     input#start_search_input, input#end_search_input
@@ -94,10 +101,14 @@ header
     .time_dropdown_content 
         display: none
         position: absolute
-        width: 100%
+        min-width: 80px
+        width: calc(100% - 20px)
         z-index: 1
         background-color: white
         border: 1px solid black
+        padding: 10px
+        font-size: 1.1em
+        line-height: 2em
 
         &:hover 
             cursor: pointer
@@ -137,16 +148,20 @@ table
         display: flex
         padding: 7px
 
+    tr:not(:last-child)
+        border-bottom: 1px solid #e7e7e7
+
     td
         padding: 0
 
-    tr:nth-child(even)
-        background-color: #f9f9f9
+    // ***** TESTING OUT NO HIGHLIHGTS IN TABLE ******** //
+    // tr:nth-child(even)
+    //     background-color: #fbfbfb
 
     th
         text-align: left
 
-    .artist_clmn, .title_clmn, .play_time_clmn, .delete_clmn
+    .artist_clmn, .title_clmn, .play_time_clmn
         flex: 1
 
     .updating_artist, .updating_title, .updating_time, .submit_update_btn, .cancel_update_btn
@@ -155,10 +170,6 @@ table
     .delete_btn
         background-color: red
 
-.time_dropdown_content
-    padding: 10px
-    font-size: 1.1em
-
 /***** STATE *****/
     /* Input Validation */
 .error
@@ -166,20 +177,25 @@ table
 
 .search_error_box
     display: block
-    float: left
     width: 100%
+    color: red
+
+.has_error
+    margin-bottom: 10px
 
     /* Media Queries */
-@media (min-width: 600px) 
+@media (min-width: 600px)
     #search_container
-        display: flex
-        justify-content: space-between
-        flex-direction: row        
+        position: relative
 
         div.search_revealer
-            display: flex
             width: calc(100% - 40px)
-            flex-direction: row
+
+        div.search_content
+            display: flex
+
+        div.search_error_box
+            display: block
 
         input#search_btn
             width: 40px
@@ -187,12 +203,12 @@ table
             background: url(../../images/mag_glass.png) no-repeat scroll
             background-position: 50% 50%
             background-color: $witr_blue
+            position: absolute
+            bottom: 0px
+            right: 0px
 
         .search_label
             display: block
-
-        div.search_error_box
-            width: 0
 
         // Space search elements from each other
         .ds_container
@@ -200,11 +216,11 @@ table
             margin-right: 40px
 
         .ss_container
-            width: 80px
+            width: 85px
             margin-right: 20px
 
         .es_container
-            width: 80px            
+            width: 85px            
             margin-right: 40px
 
         .as_container
@@ -215,21 +231,26 @@ table
 
         .as_container, .ts_container
             flex: 1
-    
+
 @media (min-width: 850px) 
     header
-        padding: 40px 100px 40px 100px
+        margin: 40px 100px 40px 100px
 
         h1 
-            font-size: 6em
+            font-size: 6.5em
+
+            img.signal_glyph
+                width: 61px
+                height: auto
+                margin: 0px 10px 0px 7px
 
         h2
             font-size: 1.5em
             margin-bottom: 0
 
-
     #search_container
-        padding: 0 100px 25px 100px
+        padding: 0px
+        margin: 0px 100px 100px 100px
 
     table
         padding: 0 50px 0 50px
@@ -245,7 +266,7 @@ table
 @media (min-width: 1240px)
     header, #search_container
         width: 940px
-        margin: auto auto
+        margin: 40px auto 40px auto
 
     #search_container
         margin-bottom: 75px

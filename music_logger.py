@@ -96,8 +96,8 @@ def add_track_to_db(data):
     group = Group.query.get(1)
 
     track = Track(
-        data.new_artist,
-        data.new_title,
+        data['new_artist'],
+        data['new_title'],
         group,
         None
     )

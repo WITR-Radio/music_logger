@@ -1,5 +1,5 @@
-.vscode
 .pylintrc
-__pycache__
-.idea
-.vscode
+.vscode/*
+__pycache__/*
+.idea/*
+.vscode/*

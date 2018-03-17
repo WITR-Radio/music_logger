@@ -52,9 +52,10 @@ $('#search_btn').on('click', function () {
 });
 
 $('input').focus(function() {
-    $(this).parent().find('label').css('color', witr_blue);
+    if ($(this).attr('id') != 'search_btn') // don't highlight when clicking search btn
+        $(this).parent().find('label').css('color', witr_blue);
 }).focusout(function() {
-    $(this).parent().find('label').css('color', lbl_clr);    
+        $(this).parent().find('label').css('color', lbl_clr);    
 });
 
 /* Adding Tracks */
@@ -166,9 +167,10 @@ $('table').on('click', '.delete_btn', function () {
     socket.emit('removeTrack', track_id);
 });
 
-/* Media Queries */
+/* Media Queries that require javascript functionality */
 function run_media_queries() {
-    var search_revealer = $('.search_revealer');
+    var search_content = $('.search_content');
+    var search_revealer = $('.search_revealer');    
 
     if (window.matchMedia('(min-width: 600px').matches) {
         /* The viewport is at least 600px wide */
@@ -178,7 +180,9 @@ function run_media_queries() {
         $('#artist_search_input').attr('placeholder', 'Keyword');
         $('#title_search_input' ).attr('placeholder', 'Keyword');
 
-        $('.search_revealer').css('display', 'flex');
+        // Show search inputs and display their container as flex so they are horizontal
+        search_revealer.css('display', 'block');
+        search_content.css( 'display', 'flex');
     } else {
         /* The viewport is less than 600px wide */
         $('#date_search_input'  ).attr('placeholder', 'Date');
@@ -187,14 +191,12 @@ function run_media_queries() {
         $('#artist_search_input').attr('placeholder', 'Artist');
         $('#title_search_input' ).attr('placeholder', 'Title');
 
-    /* Deal with hiding and display the search inputs 
-        when the viewport is resized */
-    if(search_revealer.css('display') == 'flex')
-        search_revealer.css('display', 'none');
-    else if(search_revealer.css('display') == 'block')
-        search_revealer.css('display', 'block');
-    else
-        search_revealer.css('display', 'none')
+        /* If content is displayed as flex, viewport is transitioning from > 600px wide
+            so change content to block and hide inputs */
+        if(search_content.css('display') == 'flex') {
+            search_content.css('display', 'block');
+            search_revealer.css('display', 'none')
+        }
     }
 };
 

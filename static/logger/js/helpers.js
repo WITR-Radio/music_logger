@@ -78,10 +78,10 @@ function remove_errors_for(row) {
 };
 
 function add_search_datetime_error() {
-    /* Adds an 'invalid datetime' error the search bar. */
+    /* Adds an 'invalid datetime' error the search bar.*/
     $(".search_error_box").html(
         "<span>Invalid date or time format.</span>"
-    )
+    ).addClass('has_error');
 };
 
 function add_update_datetime_error(id) {

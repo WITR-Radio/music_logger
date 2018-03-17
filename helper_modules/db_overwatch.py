@@ -45,7 +45,7 @@ def start_db_overwatch(app, db, socketio):
             # If there are new tracks send a post request to the main Flask thread
             # so it can emit a web socket message to clients.
             if new_tracks: 
-                requests.post(url_for('add_track_to_client'), 
+                requests.post('http://localhost:5000/add_track_to_client', 
                             json = tracks_to_json(new_tracks))
 
             old_time = new_time  # Old time and new time are always 3 seconds apart

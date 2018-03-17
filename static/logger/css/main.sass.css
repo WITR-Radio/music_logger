@@ -24,12 +24,16 @@ input {
 
 /***** LAYOUT *****/
 header {
-  padding: 20px; }
+  margin: 20px; }
   header h1 {
     font-size: 5em;
     width: 100%;
     margin: 0;
     margin-bottom: 30px; }
+    header h1 img.signal_glyph {
+      width: 50px;
+      height: auto;
+      margin: 0px 10px 0px 7px; }
   header h2 {
     font-size: 1.1em;
     font-weight: 400;
@@ -40,9 +44,7 @@ header {
 /***** MODULES *****/
 /* Search Bar */
 #search_container {
-  padding-left: 20px;
-  padding-right: 20px;
-  margin-bottom: 30px;
+  margin: 0px 20px 30px 20px;
   /* Input styles */
   /* Glyphs in search */
   /* Dropdown menus */
@@ -51,6 +53,8 @@ header {
   #search_container .search_revealer {
     width: 100%;
     display: none; }
+  #search_container .search_content {
+    width: 100%; }
   #search_container input, #search_container .time_dropdown {
     width: 100%; }
   #search_container input {
@@ -67,7 +71,7 @@ header {
     font-weight: bold;
     display: none; }
   #search_container input#date_search_input {
-    background: url(../../images/cal_glyph.png) no-repeat scroll;
+    background: url(../../images/cal.png) no-repeat scroll;
     background-position: right; }
   #search_container input#start_search_input, #search_container input#end_search_input {
     background: url(../../images/down_arrow.png) no-repeat scroll;
@@ -78,10 +82,14 @@ header {
   #search_container .time_dropdown_content {
     display: none;
     position: absolute;
-    width: 100%;
+    min-width: 80px;
+    width: calc(100% - 20px);
     z-index: 1;
     background-color: white;
-    border: 1px solid black; }
+    border: 1px solid black;
+    padding: 10px;
+    font-size: 1.1em;
+    line-height: 2em; }
     #search_container .time_dropdown_content:hover {
       cursor: pointer; }
     #search_container .time_dropdown_content span {
@@ -110,22 +118,18 @@ table {
   table tr {
     display: flex;
     padding: 7px; }
+  table tr:not(:last-child) {
+    border-bottom: 1px solid #e7e7e7; }
   table td {
     padding: 0; }
-  table tr:nth-child(even) {
-    background-color: #f9f9f9; }
   table th {
     text-align: left; }
-  table .artist_clmn, table .title_clmn, table .play_time_clmn, table .delete_clmn {
+  table .artist_clmn, table .title_clmn, table .play_time_clmn {
     flex: 1; }
   table .updating_artist, table .updating_title, table .updating_time, table .submit_update_btn, table .cancel_update_btn {
     display: none; }
   table .delete_btn {
     background-color: red; }
-
-.time_dropdown_content {
-  padding: 10px;
-  font-size: 1.1em; }
 
 /***** STATE *****/
 /* Input Validation */
@@ -134,37 +138,41 @@ table {
 
 .search_error_box {
   display: block;
-  float: left;
   width: 100%;
+  color: red; }
+
+.has_error {
+  margin-bottom: 10px;
   /* Media Queries */ }
 
 @media (min-width: 600px) {
   #search_container {
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row; }
+    position: relative; }
     #search_container div.search_revealer {
-      display: flex;
-      width: calc(100% - 40px);
-      flex-direction: row; }
+      width: calc(100% - 40px); }
+    #search_container div.search_content {
+      display: flex; }
+    #search_container div.search_error_box {
+      display: block; }
     #search_container input#search_btn {
       width: 40px;
       color: transparent;
       background: url(../../images/mag_glass.png) no-repeat scroll;
       background-position: 50% 50%;
-      background-color: #06a7e1; }
+      background-color: #06a7e1;
+      position: absolute;
+      bottom: 0px;
+      right: 0px; }
     #search_container .search_label {
       display: block; }
-    #search_container div.search_error_box {
-      width: 0; }
     #search_container .ds_container {
       width: 100px;
       margin-right: 40px; }
     #search_container .ss_container {
-      width: 80px;
+      width: 85px;
       margin-right: 20px; }
     #search_container .es_container {
-      width: 80px;
+      width: 85px;
       margin-right: 40px; }
     #search_container .as_container {
       margin-right: 20px; }
@@ -175,14 +183,19 @@ table {
 
 @media (min-width: 850px) {
   header {
-    padding: 40px 100px 40px 100px; }
+    margin: 40px 100px 40px 100px; }
     header h1 {
-      font-size: 6em; }
+      font-size: 6.5em; }
+      header h1 img.signal_glyph {
+        width: 61px;
+        height: auto;
+        margin: 0px 10px 0px 7px; }
     header h2 {
       font-size: 1.5em;
       margin-bottom: 0; }
   #search_container {
-    padding: 0 100px 25px 100px; }
+    padding: 0px;
+    margin: 0px 100px 100px 100px; }
   table {
     padding: 0 50px 0 50px; }
     table thead#column_headers tr {
@@ -195,7 +208,7 @@ table {
 @media (min-width: 1240px) {
   header, #search_container {
     width: 940px;
-    margin: auto auto; }
+    margin: 40px auto 40px auto; }
   #search_container {
     margin-bottom: 75px; } }
 

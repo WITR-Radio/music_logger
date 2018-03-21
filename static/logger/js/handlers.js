@@ -2,6 +2,7 @@
 var witr_blue = '#06a7e1';
 var lbl_clr = '#8b8b8b';
 
+
 /* Search */
 window.onclick = function(event) {
     /* closes dropdowns when the user clicks off somewhere else on the screen. */
@@ -52,6 +53,7 @@ $('#search_btn').on('click', function () {
 });
 
 $('input').focus(function() {
+    /* Handlers to highlight search inputs when they are focused */
     if ($(this).attr('id') != 'search_btn') // don't highlight when clicking search btn
         $(this).parent().find('label').css('color', witr_blue);
 }).focusout(function() {
@@ -98,6 +100,7 @@ $('table').on('click', '.submit_add_btn', function () {
     /* Take care of removing errors and showing correct fields in the 
         track row once the server decides the datetime is valid or not */
 });
+
 
 /* Updating Tracks */
 $('table').on('click', '.update_btn', function () {
@@ -160,6 +163,7 @@ $('table').on('click', '.submit_update_btn', function () {
     };
 });
 
+
 /* Deleting Tracks */
 $('table').on('click', '.delete_btn', function () {
     /* Tells the server to delete the clicked track from the database */
@@ -167,8 +171,11 @@ $('table').on('click', '.delete_btn', function () {
     socket.emit('removeTrack', track_id);
 });
 
+
 /* Media Queries that require javascript functionality */
 function run_media_queries() {
+    /* Javascript function to simulate css media queries; Used to
+        do things css media queries can't */
     var search_content = $('.search_content');
     var search_revealer = $('.search_revealer');    
 
@@ -201,9 +208,43 @@ function run_media_queries() {
 };
 
 $(document).ready(function() {
+    /* Run javascript media queries when the page loads */
     run_media_queries();
 });
 
 window.addEventListener('resize', function(event) {
+    /* Run javscript media queries when the page is resized */
     run_media_queries();
 });
+
+
+/* Infinite scrolling */
+$(window).scroll(function() {
+    /* Runs a function when the use scrolls to the bottom of the page */
+    if($(window).scrollTop() + $(window).height() >= $(document).height() - 100 &&
+        $('table#tracks').data('detect_scroll')) {
+        load_more();
+    }
+});
+
+function load_more() {
+    /* Loads 20 more tracks to the bottom of the page */
+
+    // Lock detection of scrolling to bottom of page
+    $('table#tracks').data('detect_scroll', false);
+
+    // Send search query and amount of tracks currently shown on the page
+    var artist = $('table#tracks').data('lsq_date')
+    var title  = $('table#tracks').data('lsq_start_time')
+    var date   = $('table#tracks').data('lsq_end_time')
+    var start  = $('table#tracks').data('lsq_artist')
+    var end    = $('table#tracks').data('lsq_song')
+    socket.emit('load_more', {
+        'artist': artist, 
+        'title' : title, 
+        'date'  : date, 
+        'start' : start, 
+        'end'   : end,
+        'n_tracks_shown': $('table#tracks').data('n_tracks_shown')
+    });
+};

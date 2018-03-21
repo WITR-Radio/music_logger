@@ -3,6 +3,22 @@ var socket = io.connect('http://' + document.domain + ':' + location.port);
 socket.on('connected', function (tracks) {
     /* Socket hit by the server once it has confirmed the client is connected. */
     JSON.parse(tracks).forEach(add_track_to_top);
+
+    // Set the amount of tracks shown on page
+    // used for infinite scrolling
+    $('table#tracks').data('n_tracks_shown', 20);
+
+    // Set the 'last search query' to nothing
+    // also used for infinite scrolling
+    $('table#tracks')
+        .data('lsq_date',       '')
+        .data('lsq_start_time', '')
+        .data('lsq_end_time',   '')
+        .data('lsq_artist',     '')
+        .data('lsq_song',       '');
+
+    // Unlock scrolling to bottom detection
+    $('table#tracks').data('detect_scroll', true);
 });
 
 socket.on('add_tracks', function (Tracks) {
@@ -46,10 +62,17 @@ socket.on('invalid_update_datetime', function(id) {
     add_update_datetime_error(id);
 });
 
-socket.on('search_results', function(tracks) {
+socket.on('search_results', function(data) {
     /* Socket hit once the server has our search results and is ready to display them. */
     remove_all_tracks()
-    JSON.parse(tracks).forEach(add_track_to_top);
+    JSON.parse(data['tracks']).forEach(add_track_to_top);
+    
+    $('table#tracks')
+        .data('lsq_date',       data['query']['date'])
+        .data('lsq_start_time', data['query']['start'])
+        .data('lsq_end_time',   data['query']['end'])
+        .data('lsq_artist',     data['query']['artist'])
+        .data('lsq_song',       data['query']['title']);
 });
 
 socket.on('invalid_search_datetime', function() {
@@ -63,4 +86,17 @@ socket.on('removeTrack', function(track) {
         from the database this socket is hit to remove the track
         from the page. */
     $('#' + track).fadeOut();
+});
+
+socket.on('load_more_results', function(tracks) {
+    /* Hit by server once it has retreived 20 new tracks from the database */
+    JSON.parse(tracks).forEach(add_track_to_bottom);
+
+    // Increment number of tracks shown on page
+    $('table#tracks').data('n_tracks_shown',
+        $('table#tracks').data('n_tracks_shown') + 20
+    )
+
+    // Unlock scrolling to bottom detection
+    $('table#tracks').data('detect_scroll', true);
 });

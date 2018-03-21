@@ -14,7 +14,7 @@ from json import loads
 
 from flask import Flask, render_template, request, url_for, redirect
 from flask_socketio import SocketIO, emit, send
-from sqlalchemy import desc
+from sqlalchemy import desc, asc
 from sassutils.wsgi import SassMiddleware
 
 sys.path.append('C:/Users/colin/WITR/music_logger/helper_modules')  # so we can import our modules
@@ -133,8 +133,11 @@ def search_track(data):
             emit('invalid_search_datetime')
             return
 
-    emit('search_results', 
-        tracks_to_json(results.order_by(desc(Track.created_at)).limit(20).all()), 
+    emit('search_results',
+        {
+            'tracks': tracks_to_json(results.order_by(desc(Track.created_at)).limit(20).all()),
+            'query':  data
+        },
         json=True
     )
 
@@ -156,6 +159,39 @@ def commit_update(data):
     except ValueError:
         # Invalid datetime format.
         emit('invalid_update_datetime', data['track_id'])
+
+
+@socketio.on('load_more')
+def load_more(data):
+    """ *** Infinite Scrolling ***
+        Hit when a user scrolls to the bottom of thier page and needs 20 new tracks.
+        User sends how many tracks are on their client as well as the last used 
+        search query. Server runs search query and slices result for next 20 tracks. 
+    """
+    
+    results = Track.query
+    
+    if data['artist'] is not '':
+        results = results.filter(Track.artist.like('%' + data['artist'] + '%'))
+    if data['title'] is not '':
+        results = results.filter(Track.title.like('%' + data['title'] + '%'))
+    if data['date'] is not '':
+        start = datetime.strptime(data['date'] + ' ' + data['start'], '%m/%d/%Y %I:%M %p')
+        end   = datetime.strptime(data['date'] + ' ' + data['end'  ], '%m/%d/%Y %I:%M %p')
+        results = results.filter(Track.created_at.between(start, end))
+
+    num_t = data['n_tracks_shown']
+
+    emit('load_more_results',
+    tracks_to_json(
+        results.order_by(
+            desc(Track.created_at)
+        )
+        .slice(num_t, num_t + 20)
+        .all()
+        [::-1]  # Reverse result query so tracks show up in correct order when appended.
+    ),
+    json=True)
 
 
 @socketio.on('message')

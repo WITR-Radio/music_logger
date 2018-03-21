@@ -122,6 +122,8 @@ table {
     border-bottom: 1px solid #e7e7e7; }
   table td {
     padding: 0; }
+  table tr:nth-child(even) {
+    background-color: #e9f6fb; }
   table th {
     text-align: left; }
   table .artist_clmn, table .title_clmn, table .play_time_clmn {

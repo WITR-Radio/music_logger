@@ -10,6 +10,11 @@ body
     font-family: sans-serif
     margin: 0
 
+button
+    padding: 0
+    margin: 0
+    border: none
+
 #container
     margin: 0
 
@@ -23,9 +28,6 @@ input
 
 .transparent 
     color: transparent !important
-
-#add_track_btn, .update_btn, .delete_clmn
-    display: none
 
 
 /***** LAYOUT *****/
@@ -133,9 +135,9 @@ table
 
     thead
         background-color: #2A2C2D
-
+       
         & th
-            padding: 0
+            padding: 0 
 
         & th:not(:first-of-type)
             position: relative
@@ -163,12 +165,6 @@ table
 
     .artist_clmn, .title_clmn, .play_time_clmn
         flex: 1
-
-    .updating_artist, .updating_title, .updating_time, .submit_update_btn, .cancel_update_btn
-        display: none
-
-    .delete_btn
-        background-color: red
 
 /***** STATE *****/
     /* Input Validation */
@@ -252,6 +248,9 @@ table
         padding: 0px
         margin: 0px 100px 100px 100px
 
+    #add_track_btn_container 
+        margin-top: -70px
+
     table
         padding: 0 50px 0 50px
 
@@ -269,10 +268,56 @@ table
         margin: 40px auto 40px auto
 
     #search_container
-        margin-bottom: 75px
+        margin-bottom: 100px
 
 @media (min-width: 1340px)
     table
         width: 1240px
         margin: auto auto
         padding: 0
+
+
+/* Priveledged user styles */
+// #add_track_btn_container, .update_clmn, .delete_clmn
+//     display: none
+
+#add_track_btn_container
+    width: 100%
+    margin-bottom: 30px
+    display: flex
+    justify-content: center
+
+    #add_track_btn
+        width: 150px
+        height: 40px
+        background-color: $witr_blue
+        font-size: 1.1em
+        color: white
+
+table 
+    .privileged_btn_clmn
+        width: 75px
+
+        button
+            width: 100%
+            height: 100%
+        
+    .privileged_inpt_clmn
+        flex: 1
+
+    .privileged_btn_clmn, .privileged_inpt_clmn
+        display: none
+
+    .update_clmn, .delete_clmn
+        display: table-cell
+
+    .delete_btn
+        background-color: red
+
+    input 
+        margin: 0
+        padding: 0
+        font-size: 1em
+        border: none
+        background-color: transparent
+        border-bottom: 1px solid $witr_blue

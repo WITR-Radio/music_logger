@@ -2,7 +2,6 @@
 var witr_blue = '#06a7e1';
 var lbl_clr = '#8b8b8b';
 
-
 /* Search */
 window.onclick = function(event) {
     /* closes dropdowns when the user clicks off somewhere else on the screen. */
@@ -60,16 +59,27 @@ $('input').focus(function() {
         $(this).parent().find('label').css('color', lbl_clr);    
 });
 
+
 /* Adding Tracks */
 $('#add_track_btn').on('click', function () {
     /* Adds a blank row to the top of the page representing a new track input. */
-    $("<tr id='-1' >" +
-        "<td><input class='adding_artist' name='artist' type='text'></td>" +
-        "<td><input class='adding_title'  name='title'  type='text'></td>" +
-        "<td><input class='adding_time'   name='time'   type='text'></td>" +
-        "<td class='submit_update_clmn'><button class='submit_add_btn'>SUBMIT</button></td>" +
-        "<td class='cancel_update_clmn'><button class='cancel_add_btn'>CANCEL</button></td>" +
+    var new_col = $("<tr class='-1' >" +
+        "<td class='artist_clmn'><input class='adding_artist'  name='artist' type='text'></td>" +
+        "<td class='title_clmn'><input class='adding_title'    name='title'  type='text'></td>" +
+        "<td class='play_time_clmn'><input class='adding_time' name='time'   type='text'></td>" +
+        "<td class='privileged_btn_clmn'><button class='submit_add_btn'>SUBMIT</button></td>" +
+        "<td class='privileged_btn_clmn'><button class='cancel_add_btn'>CANCEL</button></td>" +
         "</tr>").insertAfter($("#column_headers"));
+
+    // Display submit and cancel buttons
+    new_col.find('.privileged_btn_clmn').each(function() {
+        $(this).css('display', 'table-cell');
+    });
+
+    new_col.find('.adding_time').datepicker({
+        language: 'en',
+        timepicker: true
+    });
 });
 
 $('table').on('click', '.cancel_add_btn', function () {
@@ -112,18 +122,29 @@ $('table').on('click', '.update_btn', function () {
     var title_clmn     = row.find('.title_clmn');
     var play_time_clmn = row.find('.play_time_clmn');        
 
+    /* The most important line of code in this website.
+        When the track inputs are shown their bottom border adds 1px to the height
+        of the table row. This pixel MUST be accounted for!!!!!! 
+        By saving the height before the inputs are shown and setting it back to that 
+        saved height after the inputs are shown, the row never changes sizes...*/
+    var h = row.height();
+
     /* Show and fill in the 'update mode' columns. */
-    row.find('.updating_artist').val(artist_clmn.html()).show();
-    row.find('.updating_title' ).val(title_clmn.html()).show();
-    row.find('.updating_time'  ).val(play_time_clmn.html()).show();
-    row.find('.submit_update_btn').show();
-    row.find('.cancel_update_btn').show();
+    row.find('.updating_artist').val(artist_clmn.html()).parent().show();
+    row.find('.updating_title' ).val(title_clmn.html()).parent().show();
+    row.find('.updating_time'  ).val(play_time_clmn.html()).parent().show();
+    row.find('.submit_update_btn').parent().show();
+    row.find('.cancel_update_btn').parent().show();
+
+    /* Set the height back to what it was before the inputs were shown. */
+    row.height(h);
 
     /* Hide the non 'update mode' columns. */
     artist_clmn.hide();
     title_clmn.hide();
     play_time_clmn.hide();
-    row.find('.update_btn').hide();
+    row.find('.update_btn').parent().hide();
+    row.find('.delete_btn').parent().hide();
 });
 
 $('table').on('click', '.cancel_update_btn', function () {
@@ -136,14 +157,15 @@ $('table').on('click', '.cancel_update_btn', function () {
     row.find('.artist_clmn'   ).show();
     row.find('.title_clmn'    ).show();
     row.find('.play_time_clmn').show();
-    row.find('.update_btn'    ).show();  
+    row.find('.update_btn'    ).parent().show();
+    row.find('.delete_btn'    ).parent().show();
 
     /* Hide the 'update mode' columns. */
-    row.find('.updating_artist'   ).hide();
-    row.find('.updating_title'    ).hide();
-    row.find('.updating_time'     ).hide();
-    row.find('.submit_update_btn' ).hide();
-    row.find('.cancel_update_btn' ).hide();
+    row.find('.updating_artist'   ).parent().hide();
+    row.find('.updating_title'    ).parent().hide();
+    row.find('.updating_time'     ).parent().hide();
+    row.find('.submit_update_btn' ).parent().hide();
+    row.find('.cancel_update_btn' ).parent().hide();
 });
 
 $('table').on('click', '.submit_update_btn', function () {
@@ -161,6 +183,8 @@ $('table').on('click', '.submit_update_btn', function () {
             'new_time'  : row.find('.updating_time'  ).val()            
         })
     };
+
+    // ***Sequence continues through server into 'successful_update' socket
 });
 
 

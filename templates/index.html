@@ -69,7 +69,9 @@
         </div>
         <input id="search_btn" type="submit" value="SEARCH">
     </div>
-    <button id="add_track_btn">Add Track</button>
+    <div id="add_track_btn_container">
+        <button id="add_track_btn">ADD TRACK</button>
+    </div>
     <table id="tracks">
         <thead id="column_headers">
             <tr>
@@ -81,8 +83,8 @@
                     <th><h4>group</h4></th>
                     <th><h4>Requester</h4></th>
                 {% endif %}
-                <th class="update_clmn"></th>
-                <th class="delete_clmn"></th>
+                <th class="update_clmn privileged_btn_clmn"></th>
+                <th class="delete_clmn privileged_btn_clmn"></th>
             </tr>
         </thead>
         <!-- the tracks -->

@@ -46,14 +46,15 @@ socket.on('successful_update', function (id) {
     row.find('.artist_clmn'   ).show();
     row.find('.title_clmn'    ).show();
     row.find('.play_time_clmn').show();
-    row.find('.update_btn'    ).show();  
+    row.find('.update_btn'    ).parent().show();
+    row.find('.delete_btn'    ).parent().show();
 
     /* Hide 'update mode' columns. */
-    row.find('.updating_artist'  ).hide();
-    row.find('.updating_title'   ).hide();
-    row.find('.updating_time'    ).hide();
-    row.find('.submit_update_btn').hide();
-    row.find('.cancel_update_btn').hide();
+    row.find('.updating_artist'  ).parent().hide();
+    row.find('.updating_title'   ).parent().hide();
+    row.find('.updating_time'    ).parent().hide();
+    row.find('.submit_update_btn').parent().hide();
+    row.find('.cancel_update_btn').parent().hide();
 });
 
 socket.on('invalid_update_datetime', function(id) {

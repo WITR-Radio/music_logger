@@ -6,9 +6,9 @@ function add_track_to_top(track) {
         "<td class='artist_clmn'>"    + track.artist + "</td>" +
         "<td class='title_clmn'>"     + track.title  + "</td>" +
         "<td class='play_time_clmn'>" + track.time   + "</td>" +
-        "<td><input class='updating_artist' type='text' name='artist'></td>" +
-        "<td><input class='updating_title'  type='text' name='title'></td>" +
-        "<td><input class='updating_time'   type='text' name='time'></td>" +
+        "<td class='privileged_inpt_clmn'><input class='updating_artist' type='text' name='artist'></td>" +
+        "<td class='privileged_inpt_clmn'><input class='updating_title'  type='text' name='title'></td>" +
+        "<td class='privileged_inpt_clmn'><input class='updating_time'   type='text' name='time'></td>" +
         (detailed ?
             "<td>" +
             ( track.rvdl ? "<a>rvdl</a>" : "") +
@@ -16,24 +16,23 @@ function add_track_to_top(track) {
             "<td>" + track.group + "</td>" +
             "<td>" + (track.requester ? track.requester : "" ) + "</td>" 
             : "") +
-        "<td class='submit_clmn'><button class='submit_update_btn'>SUBMIT</button></td>" +
-        "<td class='cancel_clmn'><button class='cancel_update_btn'>CANCEL</button></td>" +            
-        "<td class='update_clmn'><button class='update_btn'>       UPDATE</button></td>" +            
-        "<td class='delete_clmn'><button class='delete_btn'>       DELETE</button></td>" +
+        "<td class='submit_clmn privileged_btn_clmn'><button class='submit_update_btn'>SUBMIT</button></td>" +
+        "<td class='cancel_clmn privileged_btn_clmn'><button class='cancel_update_btn'>CANCEL</button></td>" +            
+        "<td class='update_clmn privileged_btn_clmn'><button class='update_btn'>       UPDATE</button></td>" +            
+        "<td class='delete_clmn privileged_btn_clmn'><button class='delete_btn'>       DELETE</button></td>" +
         "</tr>").hide().insertAfter($("#column_headers")).fadeIn("slow");
 };
 
 function add_track_to_bottom(track) {
     /* Takes JSON dictionary @track 
         and puts each track stored in it as a <tr> on the bottom of the tracks table */
-        console.log(track);
     $("<tr id='" + track.id + "' >" +
         "<td class='artist_clmn'>"    + track.artist + "</td>" +
         "<td class='title_clmn'>"     + track.title  + "</td>" +
         "<td class='play_time_clmn'>" + track.time   + "</td>" +
-        "<td><input class='updating_artist' type='text' name='artist'></td>" +
-        "<td><input class='updating_title'  type='text' name='title'></td>" +
-        "<td><input class='updating_time'   type='text' name='time'></td>" +
+        "<td class='privileged_inpt_clmn'><input class='updating_artist' type='text' name='artist'></td>" +
+        "<td class='privileged_inpt_clmn'><input class='updating_title'  type='text' name='title'></td>" +
+        "<td class='privileged_inpt_clmn'><input class='updating_time'   type='text' name='time'></td>" +
         (detailed ?
             "<td>" +
             ( track.rvdl ? "<a>rvdl</a>" : "") +
@@ -41,10 +40,10 @@ function add_track_to_bottom(track) {
             "<td>" + track.group + "</td>" +
             "<td>" + (track.requester ? track.requester : "" ) + "</td>" 
             : "") +
-        "<td class='submit_clmn'><button class='submit_update_btn'>SUBMIT</button></td>" +
-        "<td class='cancel_clmn'><button class='cancel_update_btn'>CANCEL</button></td>" +            
-        "<td class='update_clmn'><button class='update_btn'>       UPDATE</button></td>" +            
-        "<td class='delete_clmn'><button class='delete_btn'>       DELETE</button></td>" +
+        "<td class='submit_clmn privileged_btn_clmn'><button class='submit_update_btn'>SUBMIT</button></td>" +
+        "<td class='cancel_clmn privileged_btn_clmn'><button class='cancel_update_btn'>CANCEL</button></td>" +            
+        "<td class='update_clmn privileged_btn_clmn'><button class='update_btn'>       UPDATE</button></td>" +            
+        "<td class='delete_clmn privileged_btn_clmn'><button class='delete_btn'>       DELETE</button></td>" +
         "</tr>").hide().insertAfter($("table#tracks").find('tr').last()).fadeIn("slow");
 }
 
@@ -99,7 +98,7 @@ function remove_errors_for(row) {
         row.prev().remove();
 
     row.find("input").each(function () {
-        $(this).css("background-color", "white");
+        $(this).css("background-color", row.css('background-color'));
     });
 };
 

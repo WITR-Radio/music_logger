@@ -6,9 +6,9 @@ function add_track_to_top(track) {
         "<td class='artist_clmn'>"    + track.artist + "</td>" +
         "<td class='title_clmn'>"     + track.title  + "</td>" +
         "<td class='play_time_clmn'>" + track.time   + "</td>" +
-        "<td class='privileged_inpt_clmn'><input class='updating_artist' type='text' name='artist'></td>" +
-        "<td class='privileged_inpt_clmn'><input class='updating_title'  type='text' name='title'></td>" +
-        "<td class='privileged_inpt_clmn'><input class='updating_time'   type='text' name='time'></td>" +
+        "<td class='privileged_inpt_clmn'><input class='artist_input' type='text' name='artist'></td>" +
+        "<td class='privileged_inpt_clmn'><input class='title_input'  type='text' name='title'></td>" +
+        "<td class='privileged_inpt_clmn'><input class='time_input'   type='text' name='time'></td>" +
         (detailed ?
             "<td>" +
             ( track.rvdl ? "<a>rvdl</a>" : "") +
@@ -30,9 +30,9 @@ function add_track_to_bottom(track) {
         "<td class='artist_clmn'>"    + track.artist + "</td>" +
         "<td class='title_clmn'>"     + track.title  + "</td>" +
         "<td class='play_time_clmn'>" + track.time   + "</td>" +
-        "<td class='privileged_inpt_clmn'><input class='updating_artist' type='text' name='artist'></td>" +
-        "<td class='privileged_inpt_clmn'><input class='updating_title'  type='text' name='title'></td>" +
-        "<td class='privileged_inpt_clmn'><input class='updating_time'   type='text' name='time'></td>" +
+        "<td class='privileged_inpt_clmn'><input class='artist_input' type='text' name='artist'></td>" +
+        "<td class='privileged_inpt_clmn'><input class='title_input'  type='text' name='title'></td>" +
+        "<td class='privileged_inpt_clmn'><input class='time_input'   type='text' name='time'></td>" +
         (detailed ?
             "<td>" +
             ( track.rvdl ? "<a>rvdl</a>" : "") +
@@ -114,7 +114,7 @@ function add_update_datetime_error(id) {
     var row = $('tr#' + id);
     var error_box = get_or_create_error_box(row);
 
-    row.find(".updating_time").css("background-color", "red");
+    row.find(".time_input").css("background-color", "red");
 
     error_box.html(
         error_box.html() +

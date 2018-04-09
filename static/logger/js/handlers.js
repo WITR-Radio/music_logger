@@ -26,7 +26,7 @@ $('.time_dropdown_content > span').on('click', function () {
 });
 
 $('#search_btn').on('click', function () {
-    /* If search inputs are hidden reveals them, 
+    /* If search inputs are hidden, reveals them, 
         else sends search query to the server.*/
     var search_revealer = $('div.search_revealer');
 
@@ -45,6 +45,9 @@ $('#search_btn').on('click', function () {
             'start' : start, 
             'end'   : end
         });
+
+        // Allow page to ask server for more tracks
+        $('table#tracks').data('more_results', true);
     }
     else {
         search_revealer.slideDown();
@@ -78,7 +81,8 @@ $('#add_track_btn').on('click', function () {
 
     new_col.find('.time_input').datepicker({
         language: 'en',
-        timepicker: true
+        timepicker: true,
+        dateFormat: 'mm/dd/yy'
     });
 });
 
@@ -129,7 +133,7 @@ $('table').on('click', '.update_btn', function () {
         When the track inputs are shown their bottom border adds 1px to the height
         of the table row. This pixel MUST be accounted for!!!!!! 
         By saving the height before the inputs are shown and setting the height back to that 
-        saved height after the inputs are shown, the row never changes sizes...*/
+        saved height after the inputs are shown, the row never changes sizes...(sarcasm)*/
     var h = row.height();
 
     /* Show and fill-in the 'update mode' columns. */
@@ -156,7 +160,8 @@ $('table').on('click', '.update_btn', function () {
         var dp = time_input.datepicker({
             language: 'en',
             timepicker: true,
-            startDate: new Date(play_time_clmn.html())
+            startDate: new Date(play_time_clmn.html()),
+            dateFormat: 'mm/dd/yy'
         });
     }
 });
@@ -211,40 +216,6 @@ $('table').on('click', '.delete_btn', function () {
 
 
 /* Media Queries that require javascript functionality */
-function run_media_queries() {
-    /* Javascript function to simulate css media queries; Used to
-        do things css media queries can't */
-    var search_content = $('.search_content');
-    var search_revealer = $('.search_revealer');    
-
-    if (window.matchMedia('(min-width: 600px').matches) {
-        /* The viewport is at least 600px wide */
-        $('#date_search_input'  ).attr('placeholder', 'Today');
-        $('#start_search_input' ).attr('placeholder', 'Time');
-        $('#end_search_input'   ).attr('placeholder', 'Time');
-        $('#artist_search_input').attr('placeholder', 'Keyword');
-        $('#title_search_input' ).attr('placeholder', 'Keyword');
-
-        // Show search inputs and display their container as flex so they are horizontal
-        search_revealer.css('display', 'block');
-        search_content.css( 'display', 'flex');
-    } else {
-        /* The viewport is less than 600px wide */
-        $('#date_search_input'  ).attr('placeholder', 'Date');
-        $('#start_search_input' ).attr('placeholder', 'Start Time');
-        $('#end_search_input'   ).attr('placeholder', 'End Time');
-        $('#artist_search_input').attr('placeholder', 'Artist');
-        $('#title_search_input' ).attr('placeholder', 'Title');
-
-        /* If content is displayed as flex, viewport is transitioning from > 600px wide
-            so change content to block and hide inputs */
-        if(search_content.css('display') == 'flex') {
-            search_content.css('display', 'block');
-            search_revealer.css('display', 'none')
-        }
-    }
-};
-
 $(document).ready(function() {
     /* Run javascript media queries when the page loads */
     run_media_queries();
@@ -264,25 +235,3 @@ $(window).scroll(function() {
         load_more();
     }
 });
-
-function load_more() {
-    /* Loads 20 more tracks to the bottom of the page */
-
-    // Lock detection of scrolling to bottom of page
-    $('table#tracks').data('detect_scroll', false);
-
-    // Send search query and amount of tracks currently shown on the page
-    var artist = $('table#tracks').data('lsq_date')
-    var title  = $('table#tracks').data('lsq_start_time')
-    var date   = $('table#tracks').data('lsq_end_time')
-    var start  = $('table#tracks').data('lsq_artist')
-    var end    = $('table#tracks').data('lsq_song')
-    socket.emit('load_more', {
-        'artist': artist, 
-        'title' : title, 
-        'date'  : date, 
-        'start' : start, 
-        'end'   : end,
-        'n_tracks_shown': $('table#tracks').data('n_tracks_shown')
-    });
-};

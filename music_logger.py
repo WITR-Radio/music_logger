@@ -18,16 +18,18 @@ from sqlalchemy import desc, asc
 from sassutils.wsgi import SassMiddleware
 
 sys.path.append('C:/Users/colin/WITR/music_logger/helper_modules')  # so we can import our modules
-from config import Development
 from models import db, Group, Track
 from db_overwatch import start_db_overwatch
 from tracks_to_json import tracks_to_json
 
-app = Flask(__name__)
-app.config.from_object(Development)  # change loaded config name to change attributes
+# instance_relative_config=True tells app.config.from_pyfile to look in the instance
+# folder for the config.py file
+app = Flask(__name__, instance_relative_config=True)
+app.config.from_pyfile('development_config.py')
 db.init_app(app)
 socketio = SocketIO(app)
 
+# Tells sass to recompile css every time the server refreshes
 app.wsgi_app = SassMiddleware(app.wsgi_app, {
     'music_logger': ('static/logger/sass', 'static/logger/css', 'static/logger/css')
 })
@@ -170,7 +172,7 @@ def load_more(data):
     """
     
     results = Track.query
-    
+
     if data['artist'] is not '':
         results = results.filter(Track.artist.like('%' + data['artist'] + '%'))
     if data['title'] is not '':
@@ -182,16 +184,19 @@ def load_more(data):
 
     num_t = data['n_tracks_shown']
 
-    emit('load_more_results',
-    tracks_to_json(
+    results = tracks_to_json(
         results.order_by(
             desc(Track.created_at)
         )
         .slice(num_t, num_t + 20)
         .all()
-        [::-1]  # Reverse result query so tracks show up in correct order when appended.
-    ),
-    json=True)
+        [::-1]  # Reverse result query so tracks show up in correct order on page.
+    )
+
+    if results != '[]':
+        emit('load_more_results', results, json=True)
+    else:
+        emit('no_more_results')
 
 
 @socketio.on('message')

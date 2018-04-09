@@ -4,10 +4,6 @@ socket.on('connected', function (tracks) {
     /* Socket hit by the server once it has confirmed the client is connected. */
     JSON.parse(tracks).forEach(add_track_to_top);
 
-    // Set the amount of tracks shown on page
-    // used for infinite scrolling
-    $('table#tracks').data('n_tracks_shown', 20);
-
     // Set the 'last search query' to nothing
     // also used for infinite scrolling
     $('table#tracks')
@@ -19,6 +15,9 @@ socket.on('connected', function (tracks) {
 
     // Unlock scrolling to bottom detection
     $('table#tracks').data('detect_scroll', true);
+
+    // Allows client to ask server for more tracks.
+    $('table#tracks').data('more_results', true);
 });
 
 socket.on('add_tracks', function (Tracks) {
@@ -27,16 +26,19 @@ socket.on('add_tracks', function (Tracks) {
 });
 
 socket.on('update_track', function (data) {
-    /* Socket used to update a track on the currently displayed page. */
-    var row = $("tr#" + data['id'].toString());
-    row.find('.artist_clmn').html(data['new_artist']);
-    row.find('.title_clmn').html(data['new_title']);
-    row.find('.play_time_clmn').html(data['new_time']);        
+    /* Socket hit once the server validates and accepts the datetime format
+        given by the client. In comparison to the 'successful_update' socket
+        also in this file, this socket is emitted to all connected clients and
+        updates everybodies track list to reflect the changes in the database. */
+    $("tr#" + data['id'].toString()).remove();
+    
+    insert_based_on_date(data);
 });
 
 socket.on('successful_update', function (id) {
     /* Socket hit once the server validates and accepts the datetime format given
-        by the client. */
+        by the client. In comparison to the 'update_track' socket also in this 
+        file, this socket is emitted only to the client which submitted the update.*/
 
     var row = $("tr#" + id.toString());
     var error_box = get_or_create_error_box(row);
@@ -50,11 +52,11 @@ socket.on('successful_update', function (id) {
     row.find('.delete_btn'    ).parent().show();
 
     /* Hide 'update mode' columns. */
-    row.find('.updating_artist'  ).parent().hide();
-    row.find('.updating_title'   ).parent().hide();
-    row.find('.updating_time'    ).parent().hide();
-    row.find('.submit_update_btn').parent().hide();
-    row.find('.cancel_update_btn').parent().hide();
+    row.find('.artist_input'   ).parent().hide();
+    row.find('.title_input'    ).parent().hide();
+    row.find('.time_input'     ).parent().hide();
+    row.find('.submit_update_btn' ).parent().hide();
+    row.find('.cancel_update_btn' ).parent().hide();
 });
 
 socket.on('invalid_update_datetime', function(id) {
@@ -86,18 +88,21 @@ socket.on('removeTrack', function(track) {
     /* Once the server has successfully deleted the track 
         from the database this socket is hit to remove the track
         from the page. */
-    $('#' + track).fadeOut();
+    $('#' + track).fadeOut( 400, function () {
+        update_row_highlights();
+    });
 });
 
 socket.on('load_more_results', function(tracks) {
     /* Hit by server once it has retreived 20 new tracks from the database */
     JSON.parse(tracks).forEach(add_track_to_bottom);
 
-    // Increment number of tracks shown on page
-    $('table#tracks').data('n_tracks_shown',
-        $('table#tracks').data('n_tracks_shown') + 20
-    )
-
     // Unlock scrolling to bottom detection
     $('table#tracks').data('detect_scroll', true);
+});
+
+socket.on('no_more_results', function() {
+    /* Hit by server when it has run out of tracks to display for the current search query. */
+    $('table#tracks').data('detect_scroll', true);  // Turns back on scroll detection. 
+    $('table#tracks').data('more_results', false);  // Restricts page from asking server for more tracks.
 });

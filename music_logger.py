@@ -235,6 +235,6 @@ signal.signal(signal.SIGINT, signal_handler)
 if __name__ == '__main__':
     """ Starts the socketio production server """
     print('starting socketio')
-    app.debug = False
-    app.host = '0.0.0.0'
-    socketio.run(app)
+    # app.debug = False
+    # app.host = '0.0.0.0'
+    socketio.run(app, host='0.0.0.0', port='5000', debug=False)

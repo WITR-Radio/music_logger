@@ -50,3 +50,6 @@ def start_db_overwatch(app, db, socketio):
 
             old_time = new_time  # Old time and new time are always 3 seconds apart
             sleep(3)
+
+    print('***** db_overwatch thread stopped *****')
+    return None

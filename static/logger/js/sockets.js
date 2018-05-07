@@ -1,5 +1,7 @@
 /*** SOCKETS ***/
-var socket = io.connect('http://' + document.domain + ':' + location.port);
+// var socket = io.connect('http://' + document.domain + ':' + location.port);
+var socket = io.connect(null, {port: location.port, rememberTransport: false});
+
 socket.on('connected', function (tracks) {
     /* Socket hit by the server once it has confirmed the client is connected. */
     JSON.parse(tracks).forEach(add_track_to_top);

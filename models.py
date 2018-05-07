@@ -38,13 +38,14 @@ class Track(db.Model):
     request = db.Column(db.Boolean, nullable=True)
     requester = db.Column(db.String(255), nullable=True)
 
-    def __init__(self, artist, title, group, time, request=False, requester=None):
+    def __init__(self, artist, title, group, created_at, request=False, requester=None):
         self.artist = artist
         self.title = title
         # since the server will only create new entries if a DJ adds new tracks then rivendell will always be false
         self.rivendell = False
         self.group = group
-        self.time = time
+        self.time = None
+        self.created_at = created_at
         self.request = request
         self.requester = requester
 

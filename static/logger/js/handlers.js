@@ -229,7 +229,7 @@ window.addEventListener('resize', function(event) {
 
 /* Infinite scrolling */
 $(window).scroll(function() {
-    /* Runs a function when the use scrolls to the bottom of the page */
+    /* Runs a function when the user scrolls to the bottom of the page */
     if($(window).scrollTop() + $(window).height() >= $(document).height() - 100 &&
         $('table#tracks').data('detect_scroll')) {
         load_more();

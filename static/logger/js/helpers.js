@@ -1,5 +1,5 @@
 /*** HELPERS ***/
-var table_highlight = '#e9f6fb';
+var table_highlight = '#fbfbfb';
 
 function add_track_to_top(track) {
     /* Takes JSON dictionary @track 
@@ -50,6 +50,8 @@ function add_track_to_bottom(track) {
 };
 
 function add_track_before(row, data) {
+    /* Takes JSON dictionary @track
+        and puts the track stored in it before the specified @row */
     $("<tr id='" + data['id'] + "' >" +
                 "<td class='artist_clmn'>"    + data['new_artist'] + "</td>" +
                 "<td class='title_clmn'>"     + data['new_title']  + "</td>" +
@@ -94,6 +96,8 @@ function has_no_blank_inputs(row) {
 };
 
 function get_or_create_error_box(row) {
+    /* Get or create a row above @row representing a container
+        for errors for @row */
     if (row.prev().find(".error_box").length == 0)
         /* If there is no 'error_box' for this row, add one. */
         $("<tr><td><div class='error_box'></div></td></tr>").insertBefore(row);

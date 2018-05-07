@@ -3,11 +3,14 @@
     Modified by Colin Reilly 2/3/18
 
     Main Flask server file, contains all client routes as well as
-    Sockets hit by clients. Handles search queries as well as 
+    Sockets hit by clients. Handles search queries as well as
     updating, removing, and adding tracks to the database.
 """
+import os
+DIR_PATH = os.path.dirname(os.path.realpath(__file__))  # full cwd path
 
 import sys
+import signal
 from threading import Thread
 from datetime import datetime
 from json import loads
@@ -17,17 +20,20 @@ from flask_socketio import SocketIO, emit, send
 from sqlalchemy import desc, asc
 from sassutils.wsgi import SassMiddleware
 
-sys.path.append('C:/Users/colin/WITR/music_logger/helper_modules')  # so we can import our modules
+sys.path.append(DIR_PATH + '\helper_modules')  # so we can import our modules
 from models import db, Group, Track
-from db_overwatch import start_db_overwatch
+from db_overwatch import start_db_overwatch, stop_db_overwatch
 from tracks_to_json import tracks_to_json
 
 # instance_relative_config=True tells app.config.from_pyfile to look in the instance
 # folder for the config.py file
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_pyfile('development_config.py')
+
 db.init_app(app)
 socketio = SocketIO(app)
+
+global keep_looping
 
 # Tells sass to recompile css every time the server refreshes
 app.wsgi_app = SassMiddleware(app.wsgi_app, {
@@ -95,17 +101,25 @@ def startup():
 
 @socketio.on('add_track_to_db')
 def add_track_to_db(data):
-    group = Group.query.get(1)
+    """ Socket used to update a track in the database. """
+    try:
+        group = Group.query.get(1)
 
-    track = Track(
-        data['new_artist'],
-        data['new_title'],
-        group,
-        None
-    )
+        track = Track(
+            artist = data['new_artist'],
+            title = data['new_title'],
+            group = group,
+            created_at = datetime.strptime(data['new_time'], '%m/%d/%y %I:%M %p')        
+        )
 
-    db.session.add(track)
-    db.session.commit()
+        print(data)
+        print(track)
+
+        db.session.add(track)
+        db.session.commit()
+    except ValueError:
+        # Invalid datetime format.
+        emit('invalid_add_datetime')
 
 
 @socketio.on('removeTrack')
@@ -152,7 +166,7 @@ def commit_update(data):
 
         track.artist     = data['new_artist']
         track.title      = data['new_title']
-        track.created_at = datetime.strptime(data['new_time'], '%m/%d/%y %I:%M %p'), 
+        track.created_at = datetime.strptime(data['new_time'], '%m/%d/%y %I:%M %p')
 
         db.session.commit()
 
@@ -207,5 +221,22 @@ def on_message_test(message):
 
 ### HELPERS ###
 def update_clients(track, data):
+    """ Emits track update to all connected clients """
     data['id'] = track.id
     socketio.emit('update_track', data, json=True)
+
+
+def signal_handler(signal, frame):
+    """ Listens for Ctrl+C and closes the db_overwatch thread """
+    print('You pressed Ctrl+C!')
+    stop_db_overwatch()
+    sys.exit(0)
+signal.signal(signal.SIGINT, signal_handler)
+
+
+if __name__ == '__main__':
+    """ Starts the socketio production server """
+    print('starting socketio')
+    app.debug = False
+    app.host = '0.0.0.0'
+    socketio.run(app)

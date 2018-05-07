@@ -13,7 +13,7 @@ import requests
 from flask import url_for
 
 from models import Track
-from tracks_to_json import tracks_to_json
+from .tracks_to_json import tracks_to_json
 
 
 keep_looping = True

@@ -7,7 +7,7 @@
     updating, removing, and adding tracks to the database.
 """
 import os
-DIR_PATH = os.path.dirname(os.path.realpath(__file__))  # full cwd path
+# DIR_PATH = os.path.dirname(os.path.realpath(__file__))  # full cwd path
 
 import sys
 import signal
@@ -19,11 +19,11 @@ from flask import Flask, render_template, request, url_for, redirect
 from flask_socketio import SocketIO, emit, send
 from sqlalchemy import desc, asc
 from sassutils.wsgi import SassMiddleware
-
-sys.path.append(DIR_PATH + '\helper_modules')  # so we can import our modules
+# sys.path.append(DIR_PATH + '\helper_modules')  # so we can import our modules
 from models import db, Group, Track
-from db_overwatch import start_db_overwatch, stop_db_overwatch
-from tracks_to_json import tracks_to_json
+
+from helper_modules.db_overwatch import start_db_overwatch, stop_db_overwatch
+from helper_modules.tracks_to_json import tracks_to_json
 
 # instance_relative_config=True tells app.config.from_pyfile to look in the instance
 # folder for the config.py file
@@ -32,8 +32,6 @@ app.config.from_pyfile('development_config.py')
 
 db.init_app(app)
 socketio = SocketIO(app)
-
-global keep_looping
 
 # Tells sass to recompile css every time the server refreshes
 app.wsgi_app = SassMiddleware(app.wsgi_app, {

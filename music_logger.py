@@ -28,7 +28,7 @@ from helper_modules.tracks_to_json import tracks_to_json
 # instance_relative_config=True tells app.config.from_pyfile to look in the instance
 # folder for the config.py file
 app = Flask(__name__, instance_relative_config=True)
-app.config.from_pyfile('development_config.py')
+app.config.from_pyfile('ferg_data_config.py')
 
 db.init_app(app)
 socketio = SocketIO(app)
@@ -226,7 +226,6 @@ def update_clients(track, data):
 
 def signal_handler(signal, frame):
     """ Listens for Ctrl+C and closes the db_overwatch thread """
-    print('You pressed Ctrl+C!')
     stop_db_overwatch()
     sys.exit(0)
 signal.signal(signal.SIGINT, signal_handler)
@@ -235,6 +234,4 @@ signal.signal(signal.SIGINT, signal_handler)
 if __name__ == '__main__':
     """ Starts the socketio production server """
     print('starting socketio')
-    # app.debug = False
-    # app.host = '0.0.0.0'
     socketio.run(app, host='0.0.0.0', port='5000', debug=False)

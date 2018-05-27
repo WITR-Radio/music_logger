@@ -49,7 +49,7 @@ def thread_db_overwatch():
         not be run. """
     t = Thread(target = start_db_overwatch, args = (app, db, socketio))
     t.start()
-    print('***** db_overwatch threaded *****')
+    print('Music Logger: db_overwatch() threaded')
 
 
 ### ROUTES ###
@@ -247,21 +247,21 @@ def udp_server():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     server_address = ('localhost', 5001)
-    print('UDP server starting up on ' + server_address[0] + ' port ' + str(server_address[1]))
+    print('ML UDP Server: UDP server starting up on ' + server_address[0] + ' port ' + str(server_address[1]))
     sock.bind(server_address)
 
     while True:
-        print('waiting to receive message')
+        print('ML UDP Server: waiting to receive message')
         data, address = sock.recvfrom(4096)
 
-        print('received ' + str(len(data)) + 'bytes from ' + str(address))
-        print(str(data))
+        print('ML UDP Server: received ' + str(len(data)) + ' bytes from ' + str(address))
+        print('ML UDP Server: ' + str(data))
 
 
 if __name__ == '__main__':
     """ Starts the socketio production server and threads the UDP server """
     t = Thread(target = udp_server)
     t.start()
-    print('UDP server threaded')
-    print('starting socketio')
+    print('Music Logger: UDP server threaded')
+    print('Music Logger: starting socketio')
     socketio.run(app, host='0.0.0.0', port='5000', debug=False)

@@ -237,26 +237,32 @@ signal.signal(signal.SIGINT, signal_handler)
 
 
 ### UDP SERVER ###
-# Used to accept UDP packets from Rivendell containing the songs played on the
-#   radio station, then log them in the music_logger database
+def udp_server():
+    """ Used to accept UDP packets from Rivendell containing the songs played on the
+        radio station, then log them in the music_logger database.
+        This function starts the server that listens for the UDP packets. 
+        Usually this function is threaded in the 'main' function of music_logger.py.
+    """
 
-# Craete a UDP socket
-sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    # Create a UDP socket
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-server_address = ('localhost', 5001)
-print('UDP server starting up on ' + server_address[0] + ' port ' + str(server_address[1]))
-sock.bind(server_address)
+    server_address = ('localhost', 5001)
+    print('UDP server starting up on ' + server_address[0] + ' port ' + str(server_address[1]))
+    sock.bind(server_address)
 
-while True:
-    print('waiting to receive message')
-    data, address = sock.recvfrom(4096)
+    while True:
+        print('waiting to receive message')
+        data, address = sock.recvfrom(4096)
 
-    print('received ' + str(len(data)) + 'bytes from ' + str(address))
-    print(str(data))
-
+        print('received ' + str(len(data)) + 'bytes from ' + str(address))
+        print(str(data))
 
 
 if __name__ == '__main__':
-    """ Starts the socketio production server """
+    """ Starts the socketio production server and threads the UDP server """
+    t = Thread(target = udp_server)
+    t.start()
+    print('UDP server threaded')
     print('starting socketio')
     socketio.run(app, host='0.0.0.0', port='5000', debug=False)

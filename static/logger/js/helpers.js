@@ -169,8 +169,6 @@ function load_more() {
         // Lock detection of scrolling to bottom of page
         $('table#tracks').data('detect_scroll', false);
 
-        console.log(document.getElementById('tracks').rows.length - 1);
-
         // Send search query and amount of tracks currently shown on the page
         var artist = $('table#tracks').data('lsq_artist')
         var title  = $('table#tracks').data('lsq_song')

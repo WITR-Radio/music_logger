@@ -12,6 +12,7 @@ import os
 import socket
 import sys
 import signal
+import logging
 from threading import Thread
 from datetime import datetime
 from json import loads
@@ -26,6 +27,9 @@ from models import db, Group, Track
 from helper_modules.db_overwatch import start_db_overwatch, stop_db_overwatch
 from helper_modules.tracks_to_json import tracks_to_json
 from helper_modules.in_subnet import in_subnet
+
+# Set up the Python logger to output to output.log
+logging.basicConfig(filename='output.log', level=logging.DEBUG)
 
 # instance_relative_config=True tells app.config.from_pyfile to look in the instance
 # folder for the config.py file

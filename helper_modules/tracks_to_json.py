@@ -6,7 +6,7 @@ from json import dumps
 
 
 def tracks_to_json(query):
-    """ function for converting tracks to json and prettifying the
+    """ Function for converting tracks to json and prettifying the
         json while debugging, switch to compact for deployment 
     """
     obj = []

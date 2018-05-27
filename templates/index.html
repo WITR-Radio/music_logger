@@ -69,9 +69,11 @@
         </div>
         <input id="search_btn" type="submit" value="SEARCH">
     </div>
-    <div id="add_track_btn_container">
-        <button id="add_track_btn">ADD TRACK</button>
-    </div>
+        {% if in_subnet == true %}
+            <div id="add_track_btn_container">
+                <button id="add_track_btn">ADD TRACK</button>
+            </div>
+        {% endif %}
     <table id="tracks">
         <thead id="column_headers">
             <tr>
@@ -83,8 +85,10 @@
                     <th><h4>group</h4></th>
                     <th><h4>Requester</h4></th>
                 {% endif %}
-                <th class="update_clmn privileged_btn_clmn"></th>
-                <th class="delete_clmn privileged_btn_clmn"></th>
+                {% if in_subnet == true %}
+                    <th class="update_clmn privileged_btn_clmn"></th>
+                    <th class="delete_clmn privileged_btn_clmn"></th>
+                {% endif %}
             </tr>
         </thead>
         <!-- the tracks -->

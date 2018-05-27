@@ -8,9 +8,11 @@ function add_track_to_top(track) {
         "<td class='artist_clmn'>"    + track.artist + "</td>" +
         "<td class='title_clmn'>"     + track.title  + "</td>" +
         "<td class='play_time_clmn'>" + track.time   + "</td>" +
-        "<td class='privileged_inpt_clmn'><input class='artist_input' type='text' name='artist'></td>" +
-        "<td class='privileged_inpt_clmn'><input class='title_input'  type='text' name='title'></td>" +
-        "<td class='privileged_inpt_clmn'><input class='time_input'   type='text' name='time'></td>" +
+        (in_subnet ?
+            "<td class='privileged_inpt_clmn'><input class='artist_input' type='text' name='artist'></td>" +
+            "<td class='privileged_inpt_clmn'><input class='title_input'  type='text' name='title'></td>" +
+            "<td class='privileged_inpt_clmn'><input class='time_input'   type='text' name='time'></td>"
+            : "") +
         (detailed ?
             "<td>" +
             ( track.rvdl ? "<a>rvdl</a>" : "") +
@@ -18,10 +20,12 @@ function add_track_to_top(track) {
             "<td>" + track.group + "</td>" +
             "<td>" + (track.requester ? track.requester : "" ) + "</td>" 
             : "") +
-        "<td class='submit_clmn privileged_btn_clmn'><button class='submit_update_btn'>SUBMIT</button></td>" +
-        "<td class='cancel_clmn privileged_btn_clmn'><button class='cancel_update_btn'>CANCEL</button></td>" +            
-        "<td class='update_clmn privileged_btn_clmn'><button class='update_btn'>       UPDATE</button></td>" +            
-        "<td class='delete_clmn privileged_btn_clmn'><button class='delete_btn'>       DELETE</button></td>" +
+        (in_subnet ? 
+            "<td class='submit_clmn privileged_btn_clmn'><button class='submit_update_btn'>SUBMIT</button></td>" +
+            "<td class='cancel_clmn privileged_btn_clmn'><button class='cancel_update_btn'>CANCEL</button></td>" +            
+            "<td class='update_clmn privileged_btn_clmn'><button class='update_btn'>       UPDATE</button></td>" +            
+            "<td class='delete_clmn privileged_btn_clmn'><button class='delete_btn'>       DELETE</button></td>"
+            : "") +
         "</tr>").hide().insertAfter($("#column_headers")).fadeIn("slow");
 };
 
@@ -32,9 +36,11 @@ function add_track_to_bottom(track) {
         "<td class='artist_clmn'>"    + track.artist + "</td>" +
         "<td class='title_clmn'>"     + track.title  + "</td>" +
         "<td class='play_time_clmn'>" + track.time   + "</td>" +
-        "<td class='privileged_inpt_clmn'><input class='artist_input' type='text' name='artist'></td>" +
-        "<td class='privileged_inpt_clmn'><input class='title_input'  type='text' name='title'></td>" +
-        "<td class='privileged_inpt_clmn'><input class='time_input'   type='text' name='time'></td>" +
+        (in_subnet ?
+            "<td class='privileged_inpt_clmn'><input class='artist_input' type='text' name='artist'></td>" +
+            "<td class='privileged_inpt_clmn'><input class='title_input'  type='text' name='title'></td>" +
+            "<td class='privileged_inpt_clmn'><input class='time_input'   type='text' name='time'></td>"
+            : "") +
         (detailed ?
             "<td>" +
             ( track.rvdl ? "<a>rvdl</a>" : "") +
@@ -42,10 +48,12 @@ function add_track_to_bottom(track) {
             "<td>" + track.group + "</td>" +
             "<td>" + (track.requester ? track.requester : "" ) + "</td>" 
             : "") +
-        "<td class='submit_clmn privileged_btn_clmn'><button class='submit_update_btn'>SUBMIT</button></td>" +
-        "<td class='cancel_clmn privileged_btn_clmn'><button class='cancel_update_btn'>CANCEL</button></td>" +            
-        "<td class='update_clmn privileged_btn_clmn'><button class='update_btn'>       UPDATE</button></td>" +            
-        "<td class='delete_clmn privileged_btn_clmn'><button class='delete_btn'>       DELETE</button></td>" +
+        (in_subnet ?
+            "<td class='submit_clmn privileged_btn_clmn'><button class='submit_update_btn'>SUBMIT</button></td>" +
+            "<td class='cancel_clmn privileged_btn_clmn'><button class='cancel_update_btn'>CANCEL</button></td>" +            
+            "<td class='update_clmn privileged_btn_clmn'><button class='update_btn'>       UPDATE</button></td>" +            
+            "<td class='delete_clmn privileged_btn_clmn'><button class='delete_btn'>       DELETE</button></td>"
+            : "") +
         "</tr>").hide().insertAfter($("table#tracks").find('tr').last()).fadeIn("slow");
 };
 
@@ -53,24 +61,28 @@ function add_track_before(row, data) {
     /* Takes JSON dictionary @track
         and puts the track stored in it before the specified @row */
     $("<tr id='" + data['id'] + "' >" +
-                "<td class='artist_clmn'>"    + data['new_artist'] + "</td>" +
-                "<td class='title_clmn'>"     + data['new_title']  + "</td>" +
-                "<td class='play_time_clmn'>" + data['new_time']   + "</td>" +
-                "<td class='privileged_inpt_clmn'><input class='artist_input' type='text' name='artist'></td>" +
-                "<td class='privileged_inpt_clmn'><input class='title_input'  type='text' name='title'></td>" +
-                "<td class='privileged_inpt_clmn'><input class='time_input'   type='text' name='time'></td>" +
-                (detailed ?
-                    "<td>" +
-                    ( track.rvdl ? "<a>rvdl</a>" : "") +
-                    "</td>" +
-                    "<td>" + track.group + "</td>" +
-                    "<td>" + (track.requester ? track.requester : "" ) + "</td>" 
-                    : "") +
-                "<td class='submit_clmn privileged_btn_clmn'><button class='submit_update_btn'>SUBMIT</button></td>" +
-                "<td class='cancel_clmn privileged_btn_clmn'><button class='cancel_update_btn'>CANCEL</button></td>" +            
-                "<td class='update_clmn privileged_btn_clmn'><button class='update_btn'>       UPDATE</button></td>" +            
-                "<td class='delete_clmn privileged_btn_clmn'><button class='delete_btn'>       DELETE</button></td>" +
-                "</tr>").hide().insertBefore(row).fadeIn("slow");
+        "<td class='artist_clmn'>"    + data['new_artist'] + "</td>" +
+        "<td class='title_clmn'>"     + data['new_title']  + "</td>" +
+        "<td class='play_time_clmn'>" + data['new_time']   + "</td>" +
+        (in_subnet ?
+            "<td class='privileged_inpt_clmn'><input class='artist_input' type='text' name='artist'></td>" +
+            "<td class='privileged_inpt_clmn'><input class='title_input'  type='text' name='title'></td>" +
+            "<td class='privileged_inpt_clmn'><input class='time_input'   type='text' name='time'></td>"
+            : "") +
+        (detailed ?
+            "<td>" +
+            ( track.rvdl ? "<a>rvdl</a>" : "") +
+            "</td>" +
+            "<td>" + track.group + "</td>" +
+            "<td>" + (track.requester ? track.requester : "" ) + "</td>" 
+            : "") +
+        (in_subnet ? 
+            "<td class='submit_clmn privileged_btn_clmn'><button class='submit_update_btn'>SUBMIT</button></td>" +
+            "<td class='cancel_clmn privileged_btn_clmn'><button class='cancel_update_btn'>CANCEL</button></td>" +            
+            "<td class='update_clmn privileged_btn_clmn'><button class='update_btn'>       UPDATE</button></td>" +            
+            "<td class='delete_clmn privileged_btn_clmn'><button class='delete_btn'>       DELETE</button></td>"
+            : "") +
+        "</tr>").hide().insertBefore(row).fadeIn("slow");
 }
 
 function remove_all_tracks() {

@@ -24,11 +24,12 @@ from models import db, Group, Track
 
 from helper_modules.db_overwatch import start_db_overwatch, stop_db_overwatch
 from helper_modules.tracks_to_json import tracks_to_json
+from helper_modules.in_subnet import in_subnet
 
 # instance_relative_config=True tells app.config.from_pyfile to look in the instance
 # folder for the config.py file
 app = Flask(__name__, instance_relative_config=True)
-app.config.from_pyfile('ferg_data_config.py')
+app.config.from_pyfile('development_config.py')
 
 db.init_app(app)
 socketio = SocketIO(app)
@@ -37,7 +38,6 @@ socketio = SocketIO(app)
 app.wsgi_app = SassMiddleware(app.wsgi_app, {
     'music_logger': ('static/logger/sass', 'static/logger/css', 'static/logger/css')
 })
-
 
 @app.before_first_request
 def thread_db_overwatch():
@@ -109,9 +109,6 @@ def add_track_to_db(data):
             group = group,
             created_at = datetime.strptime(data['new_time'], '%m/%d/%y %I:%M %p')        
         )
-
-        print(data)
-        print(track)
 
         db.session.add(track)
         db.session.commit()
@@ -215,6 +212,12 @@ def load_more(data):
 def on_message_test(message):
     """ Used for testing sockets - simply sends the message back """
     send(message)
+
+
+@socketio.on('is_in_subnet')
+def is_in_subnet():
+    """ Socket client uses to check if it is in the WITR Subnet """
+    emit('is_in_subnet', in_subnet(request.remote_addr))
 
 
 ### HELPERS ###

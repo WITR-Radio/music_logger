@@ -30,7 +30,7 @@ from helper_modules.in_subnet import in_subnet
 # instance_relative_config=True tells app.config.from_pyfile to look in the instance
 # folder for the config.py file
 app = Flask(__name__, instance_relative_config=True)
-app.config.from_pyfile('development_config.py')
+app.config.from_pyfile('ferg_data_config.py')
 
 db.init_app(app)
 socketio = SocketIO(app)
@@ -95,7 +95,6 @@ def add_track_to_client():
 def startup():
     """ Socket hit once a client connects to the server. """
     tracks = Track.query.order_by(desc(Track.created_at)).limit(20).all()
-    print(request.remote_addr)
     emit('connected', tracks_to_json(tracks), json=True)
 
 
@@ -251,8 +250,8 @@ while True:
     print('waiting to receive message')
     data, address = sock.recvfrom(4096)
 
-    print('received ' + str(len(data)) + 'bytes from ' + str(address))
-    print(str(data))
+    print('received ' + str(len(data)) + ' bytes from ' + str(address))
+    print(data)
 
 
 

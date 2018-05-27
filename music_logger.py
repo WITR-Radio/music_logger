@@ -9,6 +9,7 @@
 import os
 # DIR_PATH = os.path.dirname(os.path.realpath(__file__))  # full cwd path
 
+import socket
 import sys
 import signal
 from threading import Thread
@@ -232,6 +233,26 @@ def signal_handler(signal, frame):
     stop_db_overwatch()
     sys.exit(0)
 signal.signal(signal.SIGINT, signal_handler)
+
+
+### UDP SERVER ###
+# Used to accept UDP packets from Rivendell containing the songs played on the
+#   radio station, then log them in the music_logger database
+
+# Craete a UDP socket
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+server_address = ('localhost', 5001)
+print('UDP server starting up on ' + server_address[0] + ' port ' + str(server_address[1]))
+sock.bind(server_address)
+
+while True:
+    print('waiting to receive message')
+    data, address = sock.recvfrom(4096)
+
+    print('received ' + str(len(data)) + 'bytes from ' + str(address))
+    print(str(data))
+
 
 
 if __name__ == '__main__':

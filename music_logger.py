@@ -94,6 +94,7 @@ def add_track_to_client():
 def startup():
     """ Socket hit once a client connects to the server. """
     tracks = Track.query.order_by(desc(Track.created_at)).limit(20).all()
+    print(request.remote_addr)
     emit('connected', tracks_to_json(tracks), json=True)
 
 

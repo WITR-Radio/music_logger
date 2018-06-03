@@ -106,6 +106,14 @@ def is_in_subnet():
     return str(in_subnet(request.remote_addr))
 
 
+@app.route('/udpupdate', methods=['POST'])
+def udpupdate():
+    with open('updupdate.txt', 'w') as text_file:
+        print(request.form, file=text_file)
+    
+    return 'success'
+
+
 ### SOCKETS ###
 @socketio.on('connect')
 def startup():

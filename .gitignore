@@ -6,6 +6,7 @@ helper_modules/__pycache__/*
 .vscode/*
 run.ps1
 instance/*
-helper_modules/__pycache__/__init__.cpython-36.pyc
-helper_modules/__pycache__/tracks_to_json.cpython-36.pyc
-helper_modules/__pycache__/db_overwatch.cpython-36.pyc
+app.log
+output.log
+*.pyc
+udpupdate.txt

@@ -13,6 +13,7 @@ import socket
 import sys
 import signal
 import logging
+from logging.handlers import RotatingFileHandler
 from threading import Thread
 from datetime import datetime
 from json import loads
@@ -28,16 +29,21 @@ from helper_modules.db_overwatch import start_db_overwatch, stop_db_overwatch
 from helper_modules.tracks_to_json import tracks_to_json
 from helper_modules.in_subnet import in_subnet
 
-# Set up the Python logger to output to output.log
-logging.basicConfig(filename='output.log', level=logging.DEBUG)
-
 # instance_relative_config=True tells app.config.from_pyfile to look in the instance
 # folder for the config.py file
 app = Flask(__name__, instance_relative_config=True)
-app.config.from_pyfile('ferg_data_config.py')
+app.config.from_pyfile('development_config.py')
 
 db.init_app(app)
 socketio = SocketIO(app)
+
+# Set up the Python logger to output to output.log
+handler = RotatingFileHandler(
+    'app.log',
+    maxBytes=1024*1024
+)
+handler.setLevel(logging.INFO)
+app.logger.addHandler(handler)
 
 # Tells sass to recompile css every time the server refreshes
 app.wsgi_app = SassMiddleware(app.wsgi_app, {
@@ -94,6 +100,12 @@ def add_track_to_client():
     return 'success'  # Flask doesn't like returning None.
 
 
+@app.route('/is_in_subnet', methods=['GET'])
+def is_in_subnet():
+    """ Route client uses to check if it is in the WITR Subnet """
+    return str(in_subnet(request.remote_addr))
+
+
 ### SOCKETS ###
 @socketio.on('connect')
 def startup():
@@ -105,30 +117,32 @@ def startup():
 @socketio.on('add_track_to_db')
 def add_track_to_db(data):
     """ Socket used to update a track in the database. """
-    try:
-        group = Group.query.get(1)
+    if (in_subnet(request.remote_addr)):
+        try:
+            group = Group.query.get(1)
 
-        track = Track(
-            artist = data['new_artist'],
-            title = data['new_title'],
-            group = group,
-            created_at = datetime.strptime(data['new_time'], '%m/%d/%y %I:%M %p')        
-        )
+            track = Track(
+                artist = data['new_artist'],
+                title = data['new_title'],
+                group = group,
+                created_at = datetime.strptime(data['new_time'], '%m/%d/%y %I:%M %p')        
+            )
 
-        db.session.add(track)
-        db.session.commit()
-    except ValueError:
-        # Invalid datetime format.
-        emit('invalid_add_datetime')
+            db.session.add(track)
+            db.session.commit()
+        except ValueError:
+            # Invalid datetime format.
+            emit('invalid_add_datetime')
 
 
 @socketio.on('removeTrack')
 def remove_track(track_id):
     """ Socket used to remove a track from the database. """
-    track = Track.query.get(track_id)
-    db.session.delete(track)
-    db.session.commit()
-    emit('removeTrack', track_id, broadcast=True)
+    if (in_subnet(request.remote_addr)):
+        track = Track.query.get(track_id)
+        db.session.delete(track)
+        db.session.commit()
+        emit('removeTrack', track_id, broadcast=True)
 
 
 @socketio.on('search_track')
@@ -161,20 +175,21 @@ def search_track(data):
 @socketio.on('commit_update')
 def commit_update(data):
     """ Socket used to update a track in the database. """
-    try:
-        track = Track.query.get(data['track_id'])
+    if (in_subnet(request.remote_addr)):
+        try:
+            track = Track.query.get(data['track_id'])
 
-        track.artist     = data['new_artist']
-        track.title      = data['new_title']
-        track.created_at = datetime.strptime(data['new_time'], '%m/%d/%y %I:%M %p')
+            track.artist     = data['new_artist']
+            track.title      = data['new_title']
+            track.created_at = datetime.strptime(data['new_time'], '%m/%d/%y %I:%M %p')
 
-        db.session.commit()
+            db.session.commit()
 
-        emit('successful_update', track.id)
-        update_clients(track, data)
-    except ValueError:
-        # Invalid datetime format.
-        emit('invalid_update_datetime', data['track_id'])
+            emit('successful_update', track.id)
+            update_clients(track, data)
+        except ValueError:
+            # Invalid datetime format.
+            emit('invalid_update_datetime', data['track_id'])
 
 
 @socketio.on('load_more')
@@ -219,12 +234,6 @@ def on_message_test(message):
     send(message)
 
 
-@socketio.on('is_in_subnet')
-def is_in_subnet():
-    """ Socket client uses to check if it is in the WITR Subnet """
-    emit('is_in_subnet', in_subnet(request.remote_addr))
-
-
 ### HELPERS ###
 def update_clients(track, data):
     """ Emits track update to all connected clients """
@@ -264,8 +273,8 @@ def udp_server():
 
 if __name__ == '__main__':
     """ Starts the socketio production server and threads the UDP server """
-    t = Thread(target = udp_server)
-    t.start()
-    print('Music Logger: UDP server threaded')
+    # t = Thread(target = udp_server)
+    # t.start()
+    # print('Music Logger: UDP server threaded')
     print('Music Logger: starting socketio')
     socketio.run(app, host='0.0.0.0', port='5000', debug=False)

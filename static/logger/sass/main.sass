@@ -157,14 +157,13 @@ table
     td
         padding: 0
 
-    // ***** TESTING OUT NO HIGHLIHGTS IN TABLE ******** //
     tr:nth-child(even)
         background-color: $zebra_highlight
 
     th
         text-align: left
 
-    .artist_clmn, .title_clmn, .play_time_clmn
+    .artist_clmn, .title_clmn, .play_time_clmn, .group_clmn
         flex: 1
 
 /***** STATE *****/
@@ -277,11 +276,6 @@ table
         margin: auto auto
         padding: 0
 
-
-/* Priveledged user styles */
-// #add_track_btn_container, .update_clmn, .delete_clmn
-//     display: none
-
 #add_track_btn_container
     width: 100%
     margin-bottom: 30px
@@ -295,7 +289,7 @@ table
         font-size: 1.1em
         color: white
 
-table 
+table
     .privileged_btn_clmn
         width: 75px
 

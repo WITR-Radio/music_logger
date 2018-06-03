@@ -128,7 +128,7 @@ table {
     background-color: #fbfbfb; }
   table th {
     text-align: left; }
-  table .artist_clmn, table .title_clmn, table .play_time_clmn {
+  table .artist_clmn, table .title_clmn, table .play_time_clmn, table .group_clmn {
     flex: 1; }
 
 /***** STATE *****/
@@ -220,7 +220,6 @@ table {
     margin: auto auto;
     padding: 0; } }
 
-/* Priveledged user styles */
 #add_track_btn_container {
   width: 100%;
   margin-bottom: 30px;

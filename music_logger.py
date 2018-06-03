@@ -66,7 +66,7 @@ def thread_db_overwatch():
 @app.route('/')
 def page():
     """ Renders the home/root url page. """
-    return render_template("index.html")
+    return render_template("index.html", in_subnet=in_subnet(request.remote_addr))
 
 
 # for legacy programs
@@ -78,7 +78,7 @@ def latest():
 @app.route('/details')
 def details():
     """ Renders the home/root page and displays additional song details. """
-    return render_template("index.html", detailed=True)
+    return render_template("index.html", detailed=True, in_subnet=in_subnet(request.remote_addr))
 
 
 @app.route('/add_track_to_client', methods=['POST'])
@@ -110,7 +110,7 @@ def is_in_subnet():
 def udpupdate():
     with open('updupdate.txt', 'w') as text_file:
         print(request.form, file=text_file)
-    
+
     return 'success'
 
 

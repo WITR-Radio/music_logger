@@ -14,11 +14,7 @@ function add_track_to_top(track) {
             "<td class='privileged_inpt_clmn'><input class='time_input'   type='text' name='time'></td>"
             : "") +
         (detailed ?
-            "<td>" +
-            ( track.rvdl ? "<a>rvdl</a>" : "") +
-            "</td>" +
-            "<td>" + track.group + "</td>" +
-            "<td>" + (track.requester ? track.requester : "" ) + "</td>" 
+            "<td class='group_clmn'>" + track.group + "</td>"
             : "") +
         (in_subnet ? 
             "<td class='submit_clmn privileged_btn_clmn'><button class='submit_update_btn'>SUBMIT</button></td>" +
@@ -42,11 +38,7 @@ function add_track_to_bottom(track) {
             "<td class='privileged_inpt_clmn'><input class='time_input'   type='text' name='time'></td>"
             : "") +
         (detailed ?
-            "<td>" +
-            ( track.rvdl ? "<a>rvdl</a>" : "") +
-            "</td>" +
-            "<td>" + track.group + "</td>" +
-            "<td>" + (track.requester ? track.requester : "" ) + "</td>" 
+            "<td class='group_clmn'>" + track.group + "</td>"
             : "") +
         (in_subnet ?
             "<td class='submit_clmn privileged_btn_clmn'><button class='submit_update_btn'>SUBMIT</button></td>" +
@@ -70,11 +62,7 @@ function add_track_before(row, data) {
             "<td class='privileged_inpt_clmn'><input class='time_input'   type='text' name='time'></td>"
             : "") +
         (detailed ?
-            "<td>" +
-            ( track.rvdl ? "<a>rvdl</a>" : "") +
-            "</td>" +
-            "<td>" + track.group + "</td>" +
-            "<td>" + (track.requester ? track.requester : "" ) + "</td>" 
+            "<td class='group_clmn'>" + track.group + "</td>"
             : "") +
         (in_subnet ? 
             "<td class='submit_clmn privileged_btn_clmn'><button class='submit_update_btn'>SUBMIT</button></td>" +

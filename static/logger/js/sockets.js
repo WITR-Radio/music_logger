@@ -3,7 +3,9 @@ var socket = io.connect(null, {port: location.port, rememberTransport: false});
 
 socket.on('connected', function (tracks) {
     /* Socket hit by the server once it has confirmed the client is connected. */
-    JSON.parse(tracks).forEach(add_track_to_top);
+    JSON.parse(tracks).forEach(function(track) {
+        add_track($('#column_headers'), 'after', track);
+    });
 
     // Set the 'last search query' to nothing
     // also used for infinite scrolling
@@ -23,7 +25,10 @@ socket.on('connected', function (tracks) {
 
 socket.on('add_tracks', function (Tracks) {
     /* Socket used to add a track to the currently displayed page. */
-    JSON.parse(Tracks).forEach(add_track_to_top);
+    JSON.parse(tracks).forEach(function(track) {
+        console.log(track);
+        add_track($('#column_headers'), 'after', track);
+    });
 });
 
 socket.on('update_track', function (data) {
@@ -69,7 +74,9 @@ socket.on('invalid_update_datetime', function(id) {
 socket.on('search_results', function(data) {
     /* Socket hit once the server has our search results and is ready to display them. */
     remove_all_tracks()
-    JSON.parse(data['tracks']).forEach(add_track_to_top);
+    JSON.parse(tracks).forEach(function(track) {
+        add_track($('#column_headers'), 'after', track);
+    });
     
     $('table#tracks')
         .data('lsq_date',       data['query']['date'])
@@ -96,7 +103,9 @@ socket.on('removeTrack', function(track) {
 
 socket.on('load_more_results', function(tracks) {
     /* Hit by server once it has retreived 20 new tracks from the database */
-    JSON.parse(tracks).forEach(add_track_to_bottom);
+    JSON.parse(tracks).forEach(function(track) {
+        add_track($('table#tracks').find('tr').last(), 'after', track);
+    });
 
     // Unlock scrolling to bottom detection
     $('table#tracks').data('detect_scroll', true);

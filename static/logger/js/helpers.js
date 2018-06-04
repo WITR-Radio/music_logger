@@ -1,54 +1,6 @@
 /*** HELPERS ***/
 var table_highlight = '#fbfbfb';
 
-function add_track_to_top(track) {
-    /* Takes JSON dictionary @track 
-        and puts each track stored in it as a <tr> on the top of the tracks table */
-    $("<tr id='" + track.id + "' >" +
-        "<td class='artist_clmn'>"    + track.artist + "</td>" +
-        "<td class='title_clmn'>"     + track.title  + "</td>" +
-        "<td class='play_time_clmn'>" + track.time   + "</td>" +
-        (in_subnet ?
-            "<td class='privileged_inpt_clmn'><input class='artist_input' type='text' name='artist'></td>" +
-            "<td class='privileged_inpt_clmn'><input class='title_input'  type='text' name='title'></td>" +
-            "<td class='privileged_inpt_clmn'><input class='time_input'   type='text' name='time'></td>"
-            : "") +
-        (detailed ?
-            "<td class='group_clmn'>" + track.group + "</td>"
-            : "") +
-        (in_subnet ? 
-            "<td class='submit_clmn privileged_btn_clmn'><button class='submit_update_btn'>SUBMIT</button></td>" +
-            "<td class='cancel_clmn privileged_btn_clmn'><button class='cancel_update_btn'>CANCEL</button></td>" +            
-            "<td class='update_clmn privileged_btn_clmn'><button class='update_btn'>       UPDATE</button></td>" +            
-            "<td class='delete_clmn privileged_btn_clmn'><button class='delete_btn'>       DELETE</button></td>"
-            : "") +
-        "</tr>").hide().insertAfter($("#column_headers")).fadeIn("slow");
-};
-
-function add_track_to_bottom(track) {
-    /* Takes JSON dictionary @track 
-        and puts each track stored in it as a <tr> on the bottom of the tracks table */
-    $("<tr id='" + track.id + "' >" +
-        "<td class='artist_clmn'>"    + track.artist + "</td>" +
-        "<td class='title_clmn'>"     + track.title  + "</td>" +
-        "<td class='play_time_clmn'>" + track.time   + "</td>" +
-        (in_subnet ?
-            "<td class='privileged_inpt_clmn'><input class='artist_input' type='text' name='artist'></td>" +
-            "<td class='privileged_inpt_clmn'><input class='title_input'  type='text' name='title'></td>" +
-            "<td class='privileged_inpt_clmn'><input class='time_input'   type='text' name='time'></td>"
-            : "") +
-        (detailed ?
-            "<td class='group_clmn'>" + track.group + "</td>"
-            : "") +
-        (in_subnet ?
-            "<td class='submit_clmn privileged_btn_clmn'><button class='submit_update_btn'>SUBMIT</button></td>" +
-            "<td class='cancel_clmn privileged_btn_clmn'><button class='cancel_update_btn'>CANCEL</button></td>" +            
-            "<td class='update_clmn privileged_btn_clmn'><button class='update_btn'>       UPDATE</button></td>" +            
-            "<td class='delete_clmn privileged_btn_clmn'><button class='delete_btn'>       DELETE</button></td>"
-            : "") +
-        "</tr>").hide().insertAfter($("table#tracks").find('tr').last()).fadeIn("slow");
-};
-
 function add_track_before(row, data) {
     /* Takes JSON dictionary @track
         and puts the track stored in it before the specified @row */
@@ -61,7 +13,7 @@ function add_track_before(row, data) {
             "<td class='privileged_inpt_clmn'><input class='title_input'  type='text' name='title'></td>" +
             "<td class='privileged_inpt_clmn'><input class='time_input'   type='text' name='time'></td>"
             : "") +
-        (detailed ?
+        (detailed||in_subnet ?
             "<td class='group_clmn'>" + track.group + "</td>"
             : "") +
         (in_subnet ? 
@@ -71,6 +23,35 @@ function add_track_before(row, data) {
             "<td class='delete_clmn privileged_btn_clmn'><button class='delete_btn'>       DELETE</button></td>"
             : "") +
         "</tr>").hide().insertBefore(row).fadeIn("slow");
+}
+
+function add_track(row, where, track) {
+    var new_row = $("<tr id='" + track.id + "' >" +
+        "<td class='artist_clmn'>"    + track.artist + "</td>" +
+        "<td class='title_clmn'>"     + track.title  + "</td>" +
+        "<td class='play_time_clmn'>" + track.time   + "</td>" +
+        (in_subnet ?
+            "<td class='privileged_inpt_clmn'><input class='artist_input' type='text' name='artist'></td>" +
+            "<td class='privileged_inpt_clmn'><input class='title_input'  type='text' name='title'></td>" +
+            "<td class='privileged_inpt_clmn'><input class='time_input'   type='text' name='time'></td>"
+            : "") +
+        (detailed||in_subnet ?
+            "<td class='group_clmn'>" + track.group + "</td>"
+            : "") +
+        (in_subnet ? 
+            "<td class='submit_clmn privileged_btn_clmn'><button class='submit_update_btn'>SUBMIT</button></td>" +
+            "<td class='cancel_clmn privileged_btn_clmn'><button class='cancel_update_btn'>CANCEL</button></td>" +            
+            "<td class='update_clmn privileged_btn_clmn'><button class='update_btn'>       UPDATE</button></td>" +            
+            "<td class='delete_clmn privileged_btn_clmn'><button class='delete_btn'>       DELETE</button></td>"
+            : "") +
+        "</tr>");
+        
+        if (where == 'before') 
+            new_row.hide().insertBefore(row).fadeIn("slow");
+        else if (where == 'after')
+            new_row.hide().insertAfter(row).fadeIn('slow');
+        else
+            console.error('Invalid value for argument @where');
 }
 
 function remove_all_tracks() {

@@ -13,6 +13,7 @@ import socket
 import sys
 import signal
 import logging
+import eventlet
 from logging.handlers import RotatingFileHandler
 from threading import Thread
 from datetime import datetime
@@ -22,7 +23,6 @@ from flask import Flask, render_template, request, url_for, redirect
 from flask_socketio import SocketIO, emit, send
 from sqlalchemy import desc, asc
 from sassutils.wsgi import SassMiddleware
-# sys.path.append(DIR_PATH + '\helper_modules')  # so we can import our modules
 from models import db, Group, Track
 
 from helper_modules.db_overwatch import start_db_overwatch, stop_db_overwatch
@@ -36,14 +36,6 @@ app.config.from_pyfile('development_config.py')
 
 db.init_app(app)
 socketio = SocketIO(app)
-
-# Set up the Python logger to output to output.log
-handler = RotatingFileHandler(
-    'app.log',
-    maxBytes=1024*1024
-)
-handler.setLevel(logging.INFO)
-app.logger.addHandler(handler)
 
 # Tells sass to recompile css every time the server refreshes
 app.wsgi_app = SassMiddleware(app.wsgi_app, {
@@ -108,7 +100,7 @@ def is_in_subnet():
 
 @app.route('/udpupdate', methods=['POST'])
 def udpupdate():
-    with open('updupdate.txt', 'w') as text_file:
+    with open('udpupdate.txt', 'w') as text_file:
         print(request.form, file=text_file)
 
     return 'success'
@@ -285,4 +277,4 @@ if __name__ == '__main__':
     # t.start()
     # print('Music Logger: UDP server threaded')
     print('Music Logger: starting socketio')
-    socketio.run(app, host='0.0.0.0', port='5000', debug=False)
+    socketio.run(app, host='0.0.0.0', port='5000', debug=False, log_output=True)

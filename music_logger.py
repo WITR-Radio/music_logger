@@ -13,7 +13,6 @@ import socket
 import sys
 import signal
 import logging
-import eventlet
 from logging.handlers import RotatingFileHandler
 from threading import Thread
 from datetime import datetime
@@ -277,4 +276,4 @@ if __name__ == '__main__':
     # t.start()
     # print('Music Logger: UDP server threaded')
     print('Music Logger: starting socketio')
-    socketio.run(app, host='0.0.0.0', port='5000', debug=False, log_output=True)
+    socketio.run(app, host='0.0.0.0', port='5000', debug=False)

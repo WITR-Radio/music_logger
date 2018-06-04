@@ -23,10 +23,9 @@ socket.on('connected', function (tracks) {
     $('table#tracks').data('more_results', true);
 });
 
-socket.on('add_tracks', function (Tracks) {
+socket.on('add_tracks', function (tracks) {
     /* Socket used to add a track to the currently displayed page. */
     JSON.parse(tracks).forEach(function(track) {
-        console.log(track);
         add_track($('#column_headers'), 'after', track);
     });
 });

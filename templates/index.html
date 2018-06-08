@@ -23,37 +23,29 @@
             <div class="search_content">
                 <div class="ds_container">
                     <label class="search_label">DATE</label>
-                    <input id="date_search_input" type="text" class="datepicker-here"        
+                    <input id="date_search_input" readonly type="text" class="datepicker-here"        
                         data-position="bottom left"
                         data-language="en"
                         placeholder="Date">
                 </div>
-                <div class="time_dropdown ss_container">
+                <div class="time_dropdown ss_container dropdown">
                     <label class="search_label">BETWEEN</label>                
-                    <input id="start_search_input" type="text" placeholder="Start Time">
-                    <div class="time_dropdown_content">
+                    <input id="start_search_input" readonly type="text" placeholder="Start Time">
+                    <div class="time_dropdown_content dropdown_content">
                         <span>12:00 am</span>
-                        {% for n in range(11) %}
-                            <span>{{n+1}}:00 am</span>
-                        {% endfor %}
+                        {% for n in range(11) %} <span>{{n+1}}:00 am</span> {% endfor %}
                         <span>12:00 pm</span>
-                        {% for n in range(11) %}
-                            <span>{{n+1}}:00 pm</span>
-                        {% endfor %}
+                        {% for n in range(11) %} <span>{{n+1}}:00 pm</span> {% endfor %}
                     </div>
                 </div>
-                <div class="time_dropdown es_container">
+                <div class="time_dropdown es_container dropdown">
                     <span class='transparent search_label'>nosho</span>                
-                    <input id="end_search_input" type="text" placeholder="End Time">
-                    <div class="time_dropdown_content">
+                    <input id="end_search_input" readonly type="text" placeholder="End Time">
+                    <div class="time_dropdown_content dropdown_content">
                         <span>12:00 am</span>
-                        {% for n in range(11) %}
-                            <span>{{n+1}}:00 am</span>
-                        {% endfor %}
+                        {% for n in range(11) %} <span>{{n+1}}:00 am</span> {% endfor %}
                         <span>12:00 pm</span>
-                        {% for n in range(11) %}
-                            <span>{{n+1}}:00 pm</span>
-                        {% endfor %}
+                        {% for n in range(11) %} <span>{{n+1}}:00 pm</span> {% endfor %}
                         <span>11:59 pm</span>
                     </div>
                 </div>

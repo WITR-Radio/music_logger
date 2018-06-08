@@ -2,27 +2,36 @@
 var witr_blue = '#06a7e1';
 var lbl_clr = '#8b8b8b';
 
-/* Search */
+
+/* Dropdown */
+function toggle_dropdown(input) {
+    $(input).parent().find('.dropdown_content').toggle();
+}
+
+function input_and_hide(span) {
+    $(span).parent().parent().find('input').val($(span).html());
+    $(span).parent().hide();
+}
+
 window.onclick = function(event) {
     /* closes dropdowns when the user clicks off somewhere else on the screen. */
-    if (!event.target.matches('#start_search_input') && 
-        !event.target.matches('#end_search_input')   &&
-        !event.target.matches('.time_dropdown_content > span')) {
+    if (!event.target.matches('.dropdown > input') && 
+        !event.target.matches('.dropdown_content > span')) {
 
-        $('.time_dropdown_content').hide();
+        $('.dropdown_content').hide();
     }
 };
 
+
+/* Search */
 $('.time_dropdown > input').on('click', function () {
     /* toggles dropdown when time input fields are clicked in search bar. */
-    $(this).parent().find('.time_dropdown_content').toggle();
+    toggle_dropdown(this);
 });
 
 $('.time_dropdown_content > span').on('click', function () {
     /* inputs value and hides dropdown when time is selected in search bar. */
-    $(this).parent().parent().find('input').val($(this).html());
-
-    $(this).parent().hide();
+    input_and_hide(this);
 });
 
 $('#search_btn').on('click', function () {
@@ -69,7 +78,15 @@ $('#add_track_btn').on('click', function () {
     var new_col = $("<tr class='-1' >" +
         "<td class='artist_clmn'>   <input class='artist_input' name='artist' type='text'></td>" +
         "<td class='title_clmn'>    <input class='title_input'  name='title'  type='text'></td>" +
-        "<td class='play_time_clmn'><input class='time_input'   name='time'   type='text'></td>" +
+        "<td class='play_time_clmn'><input class='time_input'   name='time'   type='text' readonly></td>" +
+        "<td class='group_clmn'>" +
+            "<div class='group_dropdown dropdown'>" +
+                "<input class='group_input' type='text' readonly>" +
+                "<div class='group_dropdown_content dropdown_content'>" +
+                    groups_dropdown_content() +
+                "</div>" +
+            "</div>" +
+        "</td>" +
         "<td class='privileged_btn_clmn'><button class='submit_add_btn'>SUBMIT</button></td>" +
         "<td class='privileged_btn_clmn'><button class='cancel_add_btn'>CANCEL</button></td>" +
         "</tr>").insertAfter($("#column_headers"));
@@ -106,7 +123,8 @@ $('table').on('click', '.submit_add_btn', function () {
         socket.emit('add_track_to_db', {
             'new_artist': row.find('.artist_input').val(),
             'new_title' : row.find('.title_input').val(),
-            'new_time'  : row.find('.time_input').val()
+            'new_time'  : row.find('.time_input').val(),
+            'new_group' : row.find('.group_input').val()
         })
     
         row.remove();
@@ -125,6 +143,7 @@ $('table').on('click', '.update_btn', function () {
     var artist_clmn    = row.find('.artist_clmn');
     var title_clmn     = row.find('.title_clmn');
     var play_time_clmn = row.find('.play_time_clmn');
+    var group_clmn     = row.find('.group_clmn')
     
     /* Get updating time because it's used a few times. */
     var time_input = row.find('.time_input');
@@ -133,13 +152,14 @@ $('table').on('click', '.update_btn', function () {
         When the track inputs are shown their bottom border adds 1px to the height
         of the table row. This pixel MUST be accounted for!!!!!! 
         By saving the height before the inputs are shown and setting the height back to that 
-        saved height after the inputs are shown, the row never changes sizes...(sarcasm)*/
+        saved height after the inputs are shown, the row never changes sizes.*/
     var h = row.height();
 
     /* Show and fill-in the 'update mode' columns. */
     row.find('.artist_input').val(artist_clmn.html()).parent().show();
     row.find('.title_input' ).val(title_clmn.html() ).parent().show();
     time_input.val(play_time_clmn.html()).parent().show();
+    row.find('.group_input').val(group_clmn.html()).parent().parent().show();
 
     row.find('.submit_update_btn').parent().show();
     row.find('.cancel_update_btn').parent().show();
@@ -151,6 +171,7 @@ $('table').on('click', '.update_btn', function () {
     artist_clmn.hide();
     title_clmn.hide();
     play_time_clmn.hide();
+    group_clmn.hide();
     row.find('.update_btn').parent().hide();
     row.find('.delete_btn').parent().hide();
 
@@ -176,6 +197,7 @@ $('table').on('click', '.cancel_update_btn', function () {
     row.find('.artist_clmn'   ).show();
     row.find('.title_clmn'    ).show();
     row.find('.play_time_clmn').show();
+    row.find('.group_clmn'    ).show();
     row.find('.update_btn'    ).parent().show();
     row.find('.delete_btn'    ).parent().show();
 
@@ -183,6 +205,7 @@ $('table').on('click', '.cancel_update_btn', function () {
     row.find('.artist_input'   ).parent().hide();
     row.find('.title_input'    ).parent().hide();
     row.find('.time_input'     ).parent().hide();
+    row.find('.group_input'     ).parent().parent().hide();
     row.find('.submit_update_btn' ).parent().hide();
     row.find('.cancel_update_btn' ).parent().hide();
 });
@@ -199,11 +222,20 @@ $('table').on('click', '.submit_update_btn', function () {
             'track_id'  : row.attr('id'),
             'new_artist': row.find('.artist_input').val(),
             'new_title' : row.find('.title_input' ).val(),
-            'new_time'  : row.find('.time_input'  ).val()            
+            'new_time'  : row.find('.time_input'  ).val(),
+            'new_group' : row.find('.group_input' ).val()
         })
     };
 
     // ***Sequence continues through server into 'successful_update' socket
+});
+
+$('table').on('click', '.dropdown > input', function() {
+    toggle_dropdown(this);
+});
+
+$('table').on('click', '.dropdown_content > span', function() {
+    input_and_hide(this);
 });
 
 

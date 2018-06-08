@@ -66,14 +66,20 @@ socket.on('successful_update', function (id) {
 
 socket.on('invalid_update_datetime', function(id) {
     /* Socket hit by the server when it decides the given datetime format
-        is invalid. Only applies to 'update track' functionality. */
+        is invalid. */
     add_update_datetime_error(id);
+});
+
+socket.on('invalid_update_group_name', function(id) {
+    /* Socket hit by the server when it decides the given group name
+        is invalid. */
+    add_invalid_group_name_error(id);
 });
 
 socket.on('search_results', function(data) {
     /* Socket hit once the server has our search results and is ready to display them. */
     remove_all_tracks()
-    JSON.parse(tracks).forEach(function(track) {
+    JSON.parse(data['tracks']).forEach((track) => {
         add_track($('#column_headers'), 'after', track);
     });
     

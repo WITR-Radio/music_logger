@@ -32,7 +32,7 @@ from helper_modules.in_subnet import in_subnet
 # instance_relative_config=True tells app.config.from_pyfile to look in the instance
 # folder for the config.py file
 app = Flask(__name__, instance_relative_config=True)
-app.config.from_pyfile('ferg_data_config.py')
+app.config.from_pyfile('development_config.py')
 
 db.init_app(app)
 socketio = SocketIO(app)
@@ -111,15 +111,26 @@ def groups():
 
 @app.route('/udpupdate', methods=['POST'])
 def udpupdate():
-    with open('udpupdate.txt', 'w') as text_file:
-        print(request.data, file=text_file)
-        root = ET.fromstring(request.data)
-        for child in root:
-            print(child.tag, file=text_file)
-            print(child.text, file=text_file)
+    """ Revendell posts to this route with an XML document containing
+        a track. This function then parses that XML and 
+        saves it to the database 
+    """
+    root = ET.fromstring(request.data)
+    data = {}
 
-    return 'success'
+    for child in root:
+        data[child.tag] = child.text
 
+    track = Track(
+        artist = data['artist'],
+        title = data['title'],
+        group = Group.query.get(int(data['group'])),
+        created_at = datetime.now()
+    )
+    db.session.add(track)
+    db.session.commit()
+
+    return 'Added track to logger database'
 
 ### SOCKETS ###
 @socketio.on('connect')
@@ -139,7 +150,7 @@ def add_track_to_db(data):
         track = Track(
             artist = data['new_artist'],
             title = data['new_title'],
-            group = group,
+            group_id = data['group'],
             created_at = datetime.strptime(data['new_time'], '%m/%d/%y %I:%M %p')        
         )
 

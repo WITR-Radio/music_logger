@@ -55,6 +55,37 @@ header
 
 
 /***** MODULES *****/
+    /* Dropdowns */
+.dropdown 
+    width: 100%
+    position: relative
+    display: inline-block
+
+    input 
+        background: url(../../images/down_arrow.png) no-repeat scroll
+        background-position: right
+
+        &:hover
+            cursor: pointer
+
+    .dropdown_content 
+        display: none
+        position: absolute
+        min-width: 80px
+        width: calc(100% - 20px)
+        z-index: 1
+        background-color: white
+        border: 1px solid black
+        padding: 10px
+        font-size: 1.1em
+        line-height: 2em
+
+        &:hover 
+            cursor: pointer
+
+        span 
+            display: block
+
     /* Search Bar */
 #search_container
     margin: 0px 20px 30px 20px
@@ -67,7 +98,7 @@ header
         width: 100%
 
     /* Input styles */
-    input, .time_dropdown
+    input
         width: 100%
 
     input 
@@ -91,33 +122,6 @@ header
     input#date_search_input
         background: url(../../images/cal.png) no-repeat scroll 
         background-position: right
-
-    input#start_search_input, input#end_search_input
-        background: url(../../images/down_arrow.png) no-repeat scroll
-        background-position: right
-
-    /* Dropdown menus */
-    .time_dropdown 
-        position: relative
-        display: inline-block
-
-    .time_dropdown_content 
-        display: none
-        position: absolute
-        min-width: 80px
-        width: calc(100% - 20px)
-        z-index: 1
-        background-color: white
-        border: 1px solid black
-        padding: 10px
-        font-size: 1.1em
-        line-height: 2em
-
-        &:hover 
-            cursor: pointer
-
-        span 
-            display: block
 
     /* Search button */
     input#search_btn 
@@ -165,6 +169,10 @@ table
 
     .artist_clmn, .title_clmn, .play_time_clmn, .group_clmn
         flex: 1
+
+    /* Misc */
+.has_datepicker:hover, .datepicker-here:hover, .time_input:hover
+    cursor: pointer
 
 /***** STATE *****/
     /* Input Validation */

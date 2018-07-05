@@ -44,12 +44,37 @@ header {
     margin-bottom: 20px; }
 
 /***** MODULES *****/
-/* Search Bar */
+/* Dropdowns */
+.dropdown {
+  width: 100%;
+  position: relative;
+  display: inline-block;
+  /* Search Bar */ }
+  .dropdown input {
+    background: url(../../images/down_arrow.png) no-repeat scroll;
+    background-position: right; }
+    .dropdown input:hover {
+      cursor: pointer; }
+  .dropdown .dropdown_content {
+    display: none;
+    position: absolute;
+    min-width: 80px;
+    width: calc(100% - 20px);
+    z-index: 1;
+    background-color: white;
+    border: 1px solid black;
+    padding: 10px;
+    font-size: 1.1em;
+    line-height: 2em; }
+    .dropdown .dropdown_content:hover {
+      cursor: pointer; }
+    .dropdown .dropdown_content span {
+      display: block; }
+
 #search_container {
   margin: 0px 20px 30px 20px;
   /* Input styles */
   /* Glyphs in search */
-  /* Dropdown menus */
   /* Search button */
   /* Tracks */ }
   #search_container .search_revealer {
@@ -57,7 +82,7 @@ header {
     display: none; }
   #search_container .search_content {
     width: 100%; }
-  #search_container input, #search_container .time_dropdown {
+  #search_container input {
     width: 100%; }
   #search_container input {
     border-width: 0 0 1px;
@@ -75,27 +100,6 @@ header {
   #search_container input#date_search_input {
     background: url(../../images/cal.png) no-repeat scroll;
     background-position: right; }
-  #search_container input#start_search_input, #search_container input#end_search_input {
-    background: url(../../images/down_arrow.png) no-repeat scroll;
-    background-position: right; }
-  #search_container .time_dropdown {
-    position: relative;
-    display: inline-block; }
-  #search_container .time_dropdown_content {
-    display: none;
-    position: absolute;
-    min-width: 80px;
-    width: calc(100% - 20px);
-    z-index: 1;
-    background-color: white;
-    border: 1px solid black;
-    padding: 10px;
-    font-size: 1.1em;
-    line-height: 2em; }
-    #search_container .time_dropdown_content:hover {
-      cursor: pointer; }
-    #search_container .time_dropdown_content span {
-      display: block; }
   #search_container input#search_btn {
     height: 40px;
     background-color: #06a7e1;
@@ -107,7 +111,8 @@ header {
 table {
   width: 100%;
   padding-left: 5px;
-  padding-right: 5px; }
+  padding-right: 5px;
+  /* Misc */ }
   table thead {
     background-color: #2A2C2D; }
     table thead th {
@@ -130,6 +135,9 @@ table {
     text-align: left; }
   table .artist_clmn, table .title_clmn, table .play_time_clmn, table .group_clmn {
     flex: 1; }
+
+.has_datepicker:hover, .datepicker-here:hover, .time_input:hover {
+  cursor: pointer; }
 
 /***** STATE *****/
 /* Input Validation */

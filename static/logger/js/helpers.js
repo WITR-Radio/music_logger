@@ -8,13 +8,21 @@ function add_track_before(row, data) {
         "<td class='artist_clmn'>"    + data['new_artist'] + "</td>" +
         "<td class='title_clmn'>"     + data['new_title']  + "</td>" +
         "<td class='play_time_clmn'>" + data['new_time']   + "</td>" +
+        (detailed||in_subnet ?
+            "<td class='group_clmn'>" + data['new_group'] + "</td>"
+            : "") +
         (in_subnet ?
             "<td class='privileged_inpt_clmn'><input class='artist_input' type='text' name='artist'></td>" +
-            "<td class='privileged_inpt_clmn'><input class='title_input'  type='text' name='title'></td>" +
-            "<td class='privileged_inpt_clmn'><input class='time_input'   type='text' name='time'></td>"
-            : "") +
-        (detailed||in_subnet ?
-            "<td class='group_clmn'>" + track.group + "</td>"
+            "<td class='privileged_inpt_clmn'><input class='title_input'  type='text' name='title' ></td>" +
+            "<td class='privileged_inpt_clmn'><input class='time_input'   type='text' name='time' readonly></td>" +
+            "<td class='privileged_inpt_clmn'>" +
+                "<div class='group_dropdown dropdown'>" +
+                    "<input class='group_input' type='text' name='group' readonly>" +
+                    "<div class='group_dropdown_content dropdown_content'>" +
+                        groups_dropdown_content() +
+                    "</div>" +
+                "</div>" +
+            "</td>"
             : "") +
         (in_subnet ? 
             "<td class='submit_clmn privileged_btn_clmn'><button class='submit_update_btn'>SUBMIT</button></td>" +
@@ -30,13 +38,21 @@ function add_track(row, where, track) {
         "<td class='artist_clmn'>"    + track.artist + "</td>" +
         "<td class='title_clmn'>"     + track.title  + "</td>" +
         "<td class='play_time_clmn'>" + track.time   + "</td>" +
-        (in_subnet ?
-            "<td class='privileged_inpt_clmn'><input class='artist_input' type='text' name='artist'></td>" +
-            "<td class='privileged_inpt_clmn'><input class='title_input'  type='text' name='title'></td>" +
-            "<td class='privileged_inpt_clmn'><input class='time_input'   type='text' name='time'></td>"
-            : "") +
         (detailed||in_subnet ?
             "<td class='group_clmn'>" + track.group + "</td>"
+            : "") +
+        (in_subnet ?
+            "<td class='privileged_inpt_clmn'><input class='artist_input' type='text' name='artist'></td>" +
+            "<td class='privileged_inpt_clmn'><input class='title_input'  type='text' name='title' ></td>" +
+            "<td class='privileged_inpt_clmn'><input class='time_input'   type='text' name='time' readonly></td>" +
+            "<td class='privileged_inpt_clmn'>" +
+                "<div class='group_dropdown dropdown'>" +
+                    "<input class='group_input' type='text' name='group' readonly>" +
+                    "<div class='group_dropdown_content dropdown_content'>" +
+                        groups_dropdown_content() +
+                    "</div>" +
+                "</div>" +
+            "</td>"
             : "") +
         (in_subnet ? 
             "<td class='submit_clmn privileged_btn_clmn'><button class='submit_update_btn'>SUBMIT</button></td>" +
@@ -129,7 +145,20 @@ function add_update_datetime_error(id) {
         error_box.html() +
         "<span class='error'>Invalid Date or Time format.</span>"
     );
-}
+};
+
+function add_invalid_group_name_error(id) {
+    /* Adds an 'invalid group name' error to the correct track on the page. */
+    var row = $('tr#' + id);
+    var error_box = get_or_create_error_box(row);
+
+    row.find(".group_input").css("background-color", "red");
+
+    error_box.html(
+        error_box.html() +
+        "<span class='error'>Invalid Group name.</span>"
+    );
+};
 
 function load_more() {
     /* Loads 20 more tracks and append them to the bottom of the page */

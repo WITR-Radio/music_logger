@@ -16,8 +16,8 @@ import logging
 from logging.handlers import RotatingFileHandler
 from threading import Thread
 from datetime import datetime
-from json import loads
 import xml.etree.ElementTree as ET
+from json import loads, dumps
 
 from flask import Flask, render_template, request, url_for, redirect
 from flask_socketio import SocketIO, emit, send
@@ -58,7 +58,7 @@ def thread_db_overwatch():
 @app.route('/')
 def page():
     """ Renders the home/root url page. """
-    return render_template("index.html", in_subnet=in_subnet(request.remote_addr))
+    return render_template("index.html", in_subnet=True)#in_subnet(request.remote_addr))
 
 
 # for legacy programs
@@ -70,7 +70,7 @@ def latest():
 @app.route('/details')
 def details():
     """ Renders the home/root page and displays additional song details. """
-    return render_template("index.html", detailed=True, in_subnet=in_subnet(request.remote_addr))
+    return render_template("index.html", detailed=True, in_subnet=True)#in_subnet(request.remote_addr))
 
 
 @app.route('/add_track_to_client', methods=['POST'])
@@ -98,6 +98,17 @@ def is_in_subnet():
     return str(in_subnet(request.remote_addr))
 
 
+@app.route('/groups', methods=['GET'])
+def groups():
+    """ Route client uses to get a list of the track groups in the database """
+    query = Group.query.all()
+    groups = []
+    for group in query:
+        groups.insert(0, group.name)
+
+    return dumps(groups, separators=(',', ':'))
+
+
 @app.route('/udpupdate', methods=['POST'])
 def udpupdate():
     with open('udpupdate.txt', 'w') as text_file:
@@ -120,23 +131,25 @@ def startup():
 
 @socketio.on('add_track_to_db')
 def add_track_to_db(data):
-    """ Socket used to update a track in the database. """
-    if (in_subnet(request.remote_addr)):
-        try:
-            group = Group.query.get(1)
+    """ Socket used to add a track in the database. """
+    # if (in_subnet(request.remote_addr)):
+    try:
+        group = Group.query.filter_by(name=data['new_group']).first()
 
-            track = Track(
-                artist = data['new_artist'],
-                title = data['new_title'],
-                group = group,
-                created_at = datetime.strptime(data['new_time'], '%m/%d/%y %I:%M %p')        
-            )
+        track = Track(
+            artist = data['new_artist'],
+            title = data['new_title'],
+            group = group,
+            created_at = datetime.strptime(data['new_time'], '%m/%d/%y %I:%M %p')        
+        )
 
-            db.session.add(track)
-            db.session.commit()
-        except ValueError:
-            # Invalid datetime format.
-            emit('invalid_add_datetime')
+        db.session.add(track)
+        db.session.commit()
+
+        update_clients(-1, data)
+    except ValueError:
+        # Invalid datetime format.
+        emit('invalid_add_datetime')
 
 
 @socketio.on('removeTrack')
@@ -179,21 +192,27 @@ def search_track(data):
 @socketio.on('commit_update')
 def commit_update(data):
     """ Socket used to update a track in the database. """
-    if (in_subnet(request.remote_addr)):
-        try:
-            track = Track.query.get(data['track_id'])
+    # if (in_subnet(request.remote_addr)):
+    try:
+        track = Track.query.get(data['track_id'])
+        group = Group.query.filter_by(name=data['new_group']).first()
 
-            track.artist     = data['new_artist']
-            track.title      = data['new_title']
-            track.created_at = datetime.strptime(data['new_time'], '%m/%d/%y %I:%M %p')
+        if group is None:  # Invalid group name, show error and exit
+            emit('invalid_update_group_name', data['track_id'])
+            return None
 
-            db.session.commit()
+        track.artist     = data['new_artist']
+        track.title      = data['new_title']
+        track.created_at = datetime.strptime(data['new_time'], '%m/%d/%y %I:%M %p')
+        track.group      = group
 
-            emit('successful_update', track.id)
-            update_clients(track, data)
-        except ValueError:
-            # Invalid datetime format.
-            emit('invalid_update_datetime', data['track_id'])
+        db.session.commit()
+
+        emit('successful_update', track.id)
+        update_clients(track.id, data)
+    except ValueError:
+        # Invalid datetime format.
+        emit('invalid_update_datetime', data['track_id'])
 
 
 @socketio.on('load_more')
@@ -239,9 +258,9 @@ def on_message_test(message):
 
 
 ### HELPERS ###
-def update_clients(track, data):
+def update_clients(id, data):
     """ Emits track update to all connected clients """
-    data['id'] = track.id
+    data['id'] = id
     socketio.emit('update_track', data, json=True)
 
 

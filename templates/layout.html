@@ -5,7 +5,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>WITR 89.7 almost endless music logger</title>
 
-        <!-- replace links with either nginx serving them or pulling from internet source -->
         <link rel="stylesheet" type="text/css" 
             href="{{ url_for('static', filename='logger/css/main.sass.css') }}"/>
 
@@ -15,27 +14,31 @@
         <script rel="socketIO" 
             src="{{ url_for('static', filename='socketIO/socket.io.min.js') }}"></script> 
             
-        <!-- The next 4 js files need to be included above the body because 'in_subnet.js'
-            needs to be run before the body loads, and the other 3 are dependecies of 'in_subnet.js'-->
+        <!-- The next 3 js files need to be included above the body because 'in_subnet.js'
+            and 'groups.js' needs to be run before the body loads, and they require jquery -->
         <script rel="jquery" 
             src="{{ url_for('static', filename='jQuery/jquery.js') }}"></script>
-            
-        <script rel="helpers" 
-            src="{{ url_for('static', filename='logger/js/helpers.js') }}"></script>
-
-        <script rel="sockets" 
-            src="{{ url_for('static', filename='logger/js/sockets.js') }}"></script>
 
         <script rel="in_subnet" 
-            src="{{ url_for('static', filename='logger/js/in_subnet.js') }}"></script>
+            src="{{ url_for('static', filename='logger/js/in_subnet.js') }}"></script>    
+            
+        <script rel="groups"
+            src="{{ url_for('static', filename='logger/js/groups.js') }}"></script>
 
         {% block head %}{% endblock %}
     </head>
     <body>
         {% block body %}{% endblock %}
-    </body>        
+    </body>
+    <script rel="helpers" 
+        src="{{ url_for('static', filename='logger/js/helpers.js') }}"></script>
+
+    <script rel="sockets" 
+        src="{{ url_for('static', filename='logger/js/sockets.js') }}"></script>
+
     <script rel="airdatepicker-js" 
         src="{{ url_for('static', filename='air-datepicker/js/datepicker.min.js') }}"></script>
+
     <script rel="airdatepicker-en-js" 
         src="{{ url_for('static', filename='air-datepicker/js/datepicker.en.js') }}"></script>
 

@@ -167,11 +167,11 @@ def search_track(data):
     """ Socket used to search the database using parameters in @data. """
     results = Track.query
     
-    if data['artist'] is not '':
+    if data['artist']:
         results = results.filter(Track.artist.like('%' + data['artist'] + '%'))
-    if data['title'] is not '':
+    if data['title']:
         results = results.filter(Track.title.like('%' + data['title'] + '%'))
-    if data['date'] is not '':
+    if data['date'] or data['start'] or data['end']:
         try:
             start = datetime.strptime(data['date'] + ' ' + data['start'], '%m/%d/%Y %I:%M %p') 
             end   = datetime.strptime(data['date'] + ' ' + data['end'  ], '%m/%d/%Y %I:%M %p')

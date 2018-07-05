@@ -17,6 +17,7 @@ from logging.handlers import RotatingFileHandler
 from threading import Thread
 from datetime import datetime
 from json import loads
+import xml.etree.ElementTree as ET
 
 from flask import Flask, render_template, request, url_for, redirect
 from flask_socketio import SocketIO, emit, send
@@ -31,7 +32,7 @@ from helper_modules.in_subnet import in_subnet
 # instance_relative_config=True tells app.config.from_pyfile to look in the instance
 # folder for the config.py file
 app = Flask(__name__, instance_relative_config=True)
-app.config.from_pyfile('development_config.py')
+app.config.from_pyfile('ferg_data_config.py')
 
 db.init_app(app)
 socketio = SocketIO(app)
@@ -100,7 +101,11 @@ def is_in_subnet():
 @app.route('/udpupdate', methods=['POST'])
 def udpupdate():
     with open('udpupdate.txt', 'w') as text_file:
-        print(request.form, file=text_file)
+        print(request.data, file=text_file)
+        root = ET.fromstring(request.data)
+        for child in root:
+            print(child.tag, file=text_file)
+            print(child.text, file=text_file)
 
     return 'success'
 
@@ -276,4 +281,4 @@ if __name__ == '__main__':
     # t.start()
     # print('Music Logger: UDP server threaded')
     print('Music Logger: starting socketio')
-    socketio.run(app, host='0.0.0.0', port='5000', debug=False)
+    socketio.run(app, host='0.0.0.0', port='5000', debug=True)

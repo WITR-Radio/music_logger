@@ -61,6 +61,12 @@ def page():
     return render_template("index.html", in_subnet=in_subnet(request.remote_addr))
 
 
+# @app.route('/underground')
+# def underground():
+#     """ Renders the underground home/root page. """
+#     return render_template("index.html", in_subnet=in_subnet(request.remote_addr))
+
+
 # for legacy programs
 @app.route('/latest.json')
 def latest():
@@ -192,24 +198,24 @@ def startup():
 @socketio.on('add_track_to_db')
 def add_track_to_db(data):
     """ Socket used to add a track in the database. """
-    # if (in_subnet(request.remote_addr)):
-    try:
-        group = MainGroup.query.filter_by(name=data['new_group']).first()
+    if (in_subnet(request.remote_addr)):
+        try:
+            group = MainGroup.query.filter_by(name=data['new_group']).first()
 
-        track = MainTrack(
-            artist = data['new_artist'],
-            title = data['new_title'],
-            group_id = data['group'],
-            created_at = datetime.strptime(data['new_time'], '%m/%d/%y %I:%M %p')        
-        )
+            track = MainTrack(
+                artist = data['new_artist'],
+                title = data['new_title'],
+                group_id = data['group'],
+                created_at = datetime.strptime(data['new_time'], '%m/%d/%y %I:%M %p')        
+            )
 
-        db.session.add(track)
-        db.session.commit()
+            db.session.add(track)
+            db.session.commit()
 
-        update_clients(-1, data)
-    except ValueError:
-        # Invalid datetime format.
-        emit('invalid_add_datetime')
+            update_clients(-1, data)
+        except ValueError:
+            # Invalid datetime format.
+            emit('invalid_add_datetime')
 
 
 @socketio.on('removeTrack')
@@ -252,27 +258,27 @@ def search_track(data):
 @socketio.on('commit_update')
 def commit_update(data):
     """ Socket used to update a track in the database. """
-    # if (in_subnet(request.remote_addr)):
-    try:
-        track = MainTrack.query.get(data['track_id'])
-        group = MainGroup.query.filter_by(name=data['new_group']).first()
+    if (in_subnet(request.remote_addr)):
+        try:
+            track = MainTrack.query.get(data['track_id'])
+            group = MainGroup.query.filter_by(name=data['new_group']).first()
 
-        if group is None:  # Invalid group name, show error and exit
-            emit('invalid_update_group_name', data['track_id'])
-            return None
+            if group is None:  # Invalid group name, show error and exit
+                emit('invalid_update_group_name', data['track_id'])
+                return None
 
-        track.artist     = data['new_artist']
-        track.title      = data['new_title']
-        track.created_at = datetime.strptime(data['new_time'], '%m/%d/%y %I:%M %p')
-        track.group      = group
+            track.artist     = data['new_artist']
+            track.title      = data['new_title']
+            track.created_at = datetime.strptime(data['new_time'], '%m/%d/%y %I:%M %p')
+            track.group      = group
 
-        db.session.commit()
+            db.session.commit()
 
-        emit('successful_update', track.id)
-        update_clients(track.id, data)
-    except ValueError:
-        # Invalid datetime format.
-        emit('invalid_update_datetime', data['track_id'])
+            emit('successful_update', track.id)
+            update_clients(track.id, data)
+        except ValueError:
+            # Invalid datetime format.
+            emit('invalid_update_datetime', data['track_id'])
 
 
 @socketio.on('load_more')

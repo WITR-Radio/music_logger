@@ -23,7 +23,7 @@ from flask import Flask, render_template, request, url_for, redirect
 from flask_socketio import SocketIO, emit, send
 from sqlalchemy import desc, asc
 from sassutils.wsgi import SassMiddleware
-from models import db, Group, Track
+from models import db, MainGroup, MainTrack
 
 from helper_modules.db_overwatch import start_db_overwatch, stop_db_overwatch
 from helper_modules.tracks_to_json import tracks_to_json
@@ -58,13 +58,13 @@ def thread_db_overwatch():
 @app.route('/')
 def page():
     """ Renders the home/root url page. """
-    return render_template("index.html", in_subnet=True)#in_subnet(request.remote_addr))
+    return render_template("index.html", in_subnet=in_subnet(request.remote_addr))
 
 
 # for legacy programs
 @app.route('/latest.json')
 def latest():
-    return tracks_to_json(Track.query.order_by(Track.created_at).first())
+    return tracks_to_json(MainTrack.query.order_by(MainTrack.created_at).first())
 
 
 @app.route('/details')
@@ -101,7 +101,7 @@ def is_in_subnet():
 @app.route('/groups', methods=['GET'])
 def groups():
     """ Route client uses to get a list of the track groups in the database """
-    query = Group.query.all()
+    query = MainGroup.query.all()
     groups = []
     for group in query:
         groups.insert(0, group.name)
@@ -111,7 +111,7 @@ def groups():
 
 @app.route('/udpupdate', methods=['POST'])
 def udpupdate():
-    """ Revendell posts to this route with an XML document containing
+    """ Rivendell posts to this route with an XML document containing
         a track. This function then parses that XML and 
         saves it to the database 
     """
@@ -132,11 +132,60 @@ def udpupdate():
 
     return 'Added track to logger database'
 
+
+@app.route('/rivendell_udg_update', methods=['POST'])
+def rivendell_udg_update():
+    """ Rivendell posts to this route with an XML document containing
+        a track. This function then parses that XML and 
+        saves it to the database 
+    """
+    root = ET.fromstring(request.data)
+    data = {}
+
+    for child in root:
+        data[child.tag] = child.text
+
+    track = UndergroundTrack(
+        artist = data['artist'],
+        title = data['title'],
+        group = Group.query.get(int(data['group'])),
+        created_at = datetime.now()
+    )
+    db.session.add(track)
+    db.session.commit()
+
+    return 'Added track to underground logger database'
+
+
+@app.route('/rivendell_update', methods=['POST'])
+def rivendell_update():
+    """ Rivendell posts to this route with an XML document containing a
+        track. This function then parses that XML and saves it to the
+        main logger database.
+    """
+    root = ET.fromstring(request.data)
+    data = {}
+
+    for child in root:
+        data[child.tag] = child.text
+
+    track = MainTrack(
+        artist = data['artist'],
+        title = data['title'],
+        group = Group.query.get(int(data['group'])),
+        created_at = datetime.now()
+    )
+    db.session.add(track)
+    db.session.commit()
+
+    return 'Added track to main logger database.'
+
+
 ### SOCKETS ###
 @socketio.on('connect')
 def startup():
     """ Socket hit once a client connects to the server. """
-    tracks = Track.query.order_by(desc(Track.created_at)).limit(20).all()
+    tracks = MainTrack.query.order_by(desc(MainTrack.created_at)).limit(20).all()
     emit('connected', tracks_to_json(tracks), json=True)
 
 
@@ -145,9 +194,9 @@ def add_track_to_db(data):
     """ Socket used to add a track in the database. """
     # if (in_subnet(request.remote_addr)):
     try:
-        group = Group.query.filter_by(name=data['new_group']).first()
+        group = MainGroup.query.filter_by(name=data['new_group']).first()
 
-        track = Track(
+        track = MainTrack(
             artist = data['new_artist'],
             title = data['new_title'],
             group_id = data['group'],
@@ -167,7 +216,7 @@ def add_track_to_db(data):
 def remove_track(track_id):
     """ Socket used to remove a track from the database. """
     if (in_subnet(request.remote_addr)):
-        track = Track.query.get(track_id)
+        track = MainTrack.query.get(track_id)
         db.session.delete(track)
         db.session.commit()
         emit('removeTrack', track_id, broadcast=True)
@@ -176,24 +225,24 @@ def remove_track(track_id):
 @socketio.on('search_track')
 def search_track(data):
     """ Socket used to search the database using parameters in @data. """
-    results = Track.query
+    results = MainTrack.query
     
     if data['artist']:
-        results = results.filter(Track.artist.like('%' + data['artist'] + '%'))
+        results = results.filter(MainTrack.artist.like('%' + data['artist'] + '%'))
     if data['title']:
-        results = results.filter(Track.title.like('%' + data['title'] + '%'))
+        results = results.filter(MainTrack.title.like('%' + data['title'] + '%'))
     if data['date'] or data['start'] or data['end']:
         try:
             start = datetime.strptime(data['date'] + ' ' + data['start'], '%m/%d/%Y %I:%M %p') 
             end   = datetime.strptime(data['date'] + ' ' + data['end'  ], '%m/%d/%Y %I:%M %p')
-            results = results.filter(Track.created_at.between(start, end))
+            results = results.filter(MainTrack.created_at.between(start, end))
         except ValueError:
             emit('invalid_search_datetime')
             return
 
     emit('search_results',
         {
-            'tracks': tracks_to_json(results.order_by(desc(Track.created_at)).limit(20).all()),
+            'tracks': tracks_to_json(results.order_by(desc(MainTrack.created_at)).limit(20).all()),
             'query':  data
         },
         json=True
@@ -205,8 +254,8 @@ def commit_update(data):
     """ Socket used to update a track in the database. """
     # if (in_subnet(request.remote_addr)):
     try:
-        track = Track.query.get(data['track_id'])
-        group = Group.query.filter_by(name=data['new_group']).first()
+        track = MainTrack.query.get(data['track_id'])
+        group = MainGroup.query.filter_by(name=data['new_group']).first()
 
         if group is None:  # Invalid group name, show error and exit
             emit('invalid_update_group_name', data['track_id'])
@@ -234,22 +283,22 @@ def load_more(data):
         search query. Server runs search query and slices result for next 20 tracks. 
     """
     
-    results = Track.query
+    results = MainTrack.query
 
     if data['artist'] is not '':
-        results = results.filter(Track.artist.like('%' + data['artist'] + '%'))
+        results = results.filter(MainTrack.artist.like('%' + data['artist'] + '%'))
     if data['title'] is not '':
-        results = results.filter(Track.title.like('%' + data['title'] + '%'))
+        results = results.filter(MainTrack.title.like('%' + data['title'] + '%'))
     if data['date'] is not '':
         start = datetime.strptime(data['date'] + ' ' + data['start'], '%m/%d/%Y %I:%M %p')
         end   = datetime.strptime(data['date'] + ' ' + data['end'  ], '%m/%d/%Y %I:%M %p')
-        results = results.filter(Track.created_at.between(start, end))
+        results = results.filter(MainTrack.created_at.between(start, end))
 
     num_t = data['n_tracks_shown']
 
     results = tracks_to_json(
         results.order_by(
-            desc(Track.created_at)
+            desc(MainTrack.created_at)
         )
         .slice(num_t, num_t + 20)
         .all()

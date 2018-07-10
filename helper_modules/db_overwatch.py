@@ -12,7 +12,7 @@ import requests
 
 from flask import url_for
 
-from models import Track
+from models import MainTrack
 from .tracks_to_json import tracks_to_json
 
 
@@ -39,7 +39,7 @@ def start_db_overwatch(app, db, socketio):
             session = db.create_scoped_session()  
             # Check the db for new tracks submitted in the last 3 seconds.
             new_tracks = \
-                session.query(Track).filter(Track.created_at.between(old_time, new_time)).all()
+                session.query(MainTrack).filter(MainTrack.created_at.between(old_time, new_time)).all()
             session.close()
 
             # If there are new tracks send a post request to the main Flask thread

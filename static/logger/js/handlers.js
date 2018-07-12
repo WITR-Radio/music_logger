@@ -243,7 +243,7 @@ $('table').on('click', '.dropdown_content > span', function() {
 $('table').on('click', '.delete_btn', function () {
     /* Tells the server to delete the clicked track from the database */
     var track_id = $(this).parent().parent().attr('id');
-    socket.emit('removeTrack', track_id);
+    socket.emit('removeTrack', {'track_id': track_id, 'is_main_logger': is_main_logger()});
 });
 
 

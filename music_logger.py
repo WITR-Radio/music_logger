@@ -196,7 +196,7 @@ def startup():
 
 @socketio.on('request_initial_tracks')
 def request_intitial_tracks(is_main_logger):
-    """ Based one whether data['main_logger'] is true emits
+    """ Based on whether data['main_logger'] is true emits
         either 20 most recent logger tracks or 20 most recent
         underground tracks. 
     """
@@ -235,13 +235,23 @@ def add_track_to_db(data):
 
 
 @socketio.on('removeTrack')
-def remove_track(track_id):
+def remove_track(data):
     """ Socket used to remove a track from the database. """
     if (in_subnet(request.remote_addr)):
-        track = MainTrack.query.get(track_id)
+        track_id = data['track_id']
+        is_main_logger = data['is_main_logger']
+
+        if is_main_logger == 'true':
+            track = MainTrack.query.get(track_id)
+        elif is_main_logger =='false':
+            track = UndergroundTrack.query.get(track_id)
+        else:
+            print('ERROR: in request_initial_tracks socket ' + str(is_main_logger), file=sys.stderr)
+            return
+
         db.session.delete(track)
         db.session.commit()
-        emit('removeTrack', track_id, broadcast=True)
+        emit('removeTrack', {'track_id': track_id, 'is_main_logger': is_main_logger}, broadcast=True)
 
 
 @socketio.on('search_track')

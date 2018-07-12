@@ -102,13 +102,15 @@ socket.on('invalid_search_datetime', function() {
     add_search_datetime_error();
 });
 
-socket.on('removeTrack', function(track) {
+socket.on('removeTrack', function(data) {
     /* Once the server has successfully deleted the track 
         from the database this socket is hit to remove the track
         from the page. */
-    $('#' + track).fadeOut( 400, function () {
-        update_row_highlights();
-    });
+    if (is_main_logger() == data['is_main_logger']) {  // Don't delete if not the same
+        $('#' + data['track_id']).fadeOut( 400, function () {
+            update_row_highlights();
+        });
+    }
 });
 
 socket.on('load_more_results', function(tracks) {

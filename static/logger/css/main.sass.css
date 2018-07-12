@@ -112,7 +112,7 @@ table {
   width: 100%;
   padding-left: 5px;
   padding-right: 5px;
-  /* Misc */ }
+  /* Load more button */ }
   table thead {
     background-color: #2A2C2D; }
     table thead th {
@@ -135,6 +135,17 @@ table {
     text-align: left; }
   table .artist_clmn, table .title_clmn, table .play_time_clmn, table .group_clmn {
     flex: 1; }
+
+#load_more {
+  width: 175px;
+  height: 50px;
+  background-color: white;
+  color: #18A5DE;
+  border: 1px solid #18A5DE;
+  margin: 30px auto 30px auto;
+  display: block;
+  font-size: 15px;
+  /* Misc */ }
 
 .has_datepicker:hover, .datepicker-here:hover, .time_input:hover {
   cursor: pointer; }

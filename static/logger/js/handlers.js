@@ -261,12 +261,15 @@ window.addEventListener('resize', function(event) {
     run_media_queries();
 });
 
+$('#load_more').click(function() {
+    load_more();
+});
 
 /* Infinite scrolling */
-$(window).scroll(function() {
-    /* Runs a function when the user scrolls to the bottom of the page */
-    if($(window).scrollTop() + $(window).height() >= $(document).height() - 100 &&
-        $('table#tracks').data('detect_scroll')) {
-        load_more();
-    }
-});
+// $(window).scroll(function() {
+//     /* Runs a function when the user scrolls to the bottom of the page */
+//     if($(window).scrollTop() + $(window).height() >= $(document).height() - 100 &&
+//         $('table#tracks').data('detect_scroll')) {
+//         load_more();
+//     }
+// });

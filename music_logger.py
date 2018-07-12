@@ -296,7 +296,7 @@ def search_track(data):
 @socketio.on('commit_update')
 def commit_update(data):
     """ Socket used to update a track in the database. """
-    if (in_subnet(request.remote_addr)):
+    if in_subnet(request.remote_addr):
         # Choose underground DB or main DB
         if data['is_main_logger'] == 'true':
             Track = MainTrack
@@ -337,24 +337,32 @@ def load_more(data):
         User sends how many tracks are on their client as well as the last used 
         search query. Server runs search query and slices result for next 20 tracks. 
     """
-    
-    results = MainTrack.query
+    # Choose underground DB or main DB
+    if data['is_main_logger'] == 'true':
+        Track = MainTrack
+        Group = MainGroup
+    elif data['is_main_logger'] == 'false':
+        Track = UndergroundTrack
+        Group = UndergroundGroup
+    else:
+        print('ERROR: in request_initial_tracks socket ' + data['is_main_logger'], file=sys.stderr)
+        return
+
+    results = Track.query
 
     if data['artist'] is not '':
-        results = results.filter(MainTrack.artist.like('%' + data['artist'] + '%'))
+        results = results.filter(Track.artist.like('%' + data['artist'] + '%'))
     if data['title'] is not '':
-        results = results.filter(MainTrack.title.like('%' + data['title'] + '%'))
+        results = results.filter(Track.title.like('%' + data['title'] + '%'))
     if data['date'] is not '':
         start = datetime.strptime(data['date'] + ' ' + data['start'], '%m/%d/%Y %I:%M %p')
         end   = datetime.strptime(data['date'] + ' ' + data['end'  ], '%m/%d/%Y %I:%M %p')
-        results = results.filter(MainTrack.created_at.between(start, end))
+        results = results.filter(Track.created_at.between(start, end))
 
     num_t = data['n_tracks_shown']
 
     results = tracks_to_json(
-        results.order_by(
-            desc(MainTrack.created_at)
-        )
+        results.order_by(desc(Track.created_at))
         .slice(num_t, num_t + 20)
         .all()
         [::-1]  # Reverse result query so tracks show up in correct order on page.

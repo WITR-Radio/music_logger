@@ -179,7 +179,8 @@ function load_more() {
             'date'  : date, 
             'start' : start, 
             'end'   : end,
-            'n_tracks_shown': document.getElementById('tracks').rows.length - 1
+            'n_tracks_shown': document.getElementById('tracks').rows.length - 1,
+            'is_main_logger': is_main_logger()
         });
     }
 };

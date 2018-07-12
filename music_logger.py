@@ -23,7 +23,7 @@ from flask import Flask, render_template, request, url_for, redirect
 from flask_socketio import SocketIO, emit, send
 from sqlalchemy import desc, asc
 from sassutils.wsgi import SassMiddleware
-from models import db, MainGroup, MainTrack
+from models import db, MainGroup, MainTrack, UndergroundGroup, UndergroundTrack
 
 from helper_modules.db_overwatch import start_db_overwatch, stop_db_overwatch
 from helper_modules.tracks_to_json import tracks_to_json
@@ -32,7 +32,7 @@ from helper_modules.in_subnet import in_subnet
 # instance_relative_config=True tells app.config.from_pyfile to look in the instance
 # folder for the config.py file
 app = Flask(__name__, instance_relative_config=True)
-app.config.from_pyfile('staging_config.py')
+app.config.from_pyfile('development_config.py')
 
 db.init_app(app)
 socketio = SocketIO(app)
@@ -61,10 +61,10 @@ def page():
     return render_template("index.html", in_subnet=in_subnet(request.remote_addr))
 
 
-# @app.route('/underground')
-# def underground():
-#     """ Renders the underground home/root page. """
-#     return render_template("index.html", in_subnet=in_subnet(request.remote_addr))
+@app.route('/underground')
+def underground():
+    """ Renders the underground home/root page. """
+    return render_template("index.html", in_subnet=in_subnet(request.remote_addr))
 
 
 # for legacy programs
@@ -143,7 +143,7 @@ def udpupdate():
 def rivendell_udg_update():
     """ Rivendell posts to this route with an XML document containing
         a track. This function then parses that XML and 
-        saves it to the database 
+        saves it to the underground database .
     """
     root = ET.fromstring(request.data)
     data = {}
@@ -154,7 +154,7 @@ def rivendell_udg_update():
     track = UndergroundTrack(
         artist = data['artist'],
         title = data['title'],
-        group = Group.query.get(int(data['group'])),
+        group = UndergroundGroup.query.get(int(data['group'])),
         created_at = datetime.now()
     )
     db.session.add(track)
@@ -178,7 +178,7 @@ def rivendell_update():
     track = MainTrack(
         artist = data['artist'],
         title = data['title'],
-        group = Group.query.get(int(data['group'])),
+        group = MainGroup.query.get(int(data['group'])),
         created_at = datetime.now()
     )
     db.session.add(track)
@@ -191,8 +191,24 @@ def rivendell_update():
 @socketio.on('connect')
 def startup():
     """ Socket hit once a client connects to the server. """
-    tracks = MainTrack.query.order_by(desc(MainTrack.created_at)).limit(20).all()
-    emit('connected', tracks_to_json(tracks), json=True)
+    emit('connected')
+
+
+@socketio.on('request_initial_tracks')
+def request_intitial_tracks(is_main_logger):
+    """ Based one whether data['main_logger'] is true emits
+        either 20 most recent logger tracks or 20 most recent
+        underground tracks. 
+    """
+    if is_main_logger == 'true':
+        tracks = MainTrack.query.order_by(desc(MainTrack.created_at)).limit(20).all()
+    elif is_main_logger == 'false':
+        tracks = UndergroundTrack.query.order_by(desc(UndergroundTrack.created_at)).limit(20).all()
+    else:
+        print('ERROR: in request_initial_tracks socket ' + str(is_main_logger), file=sys.stderr)
+        tracks = []
+
+    emit('handle_initial_tracks', tracks_to_json(tracks), json=True)
 
 
 @socketio.on('add_track_to_db')
@@ -317,12 +333,6 @@ def load_more(data):
         emit('no_more_results')
 
 
-@socketio.on('message')
-def on_message_test(message):
-    """ Used for testing sockets - simply sends the message back """
-    send(message)
-
-
 ### HELPERS ###
 def update_clients(id, data):
     """ Emits track update to all connected clients """
@@ -337,33 +347,7 @@ def signal_handler(signal, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 
-### UDP SERVER ###
-def udp_server():
-    """ Used to accept UDP packets from Rivendell containing the songs played on the
-        radio station, then log them in the music_logger database.
-        This function starts the server that listens for the UDP packets. 
-        Usually this function is threaded in the 'main' function of music_logger.py.
-    """
-
-    # Create a UDP socket
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
-    server_address = ('localhost', 5001)
-    print('ML UDP Server: UDP server starting up on ' + server_address[0] + ' port ' + str(server_address[1]))
-    sock.bind(server_address)
-
-    while True:
-        print('ML UDP Server: waiting to receive message')
-        data, address = sock.recvfrom(4096)
-
-        print('ML UDP Server: received ' + str(len(data)) + ' bytes from ' + str(address))
-        print('ML UDP Server: ' + str(data))
-
-
 if __name__ == '__main__':
     """ Starts the socketio production server and threads the UDP server """
-    # t = Thread(target = udp_server)
-    # t.start()
-    # print('Music Logger: UDP server threaded')
     print('Music Logger: starting socketio')
     socketio.run(app, host='0.0.0.0', port='5000', debug=True)

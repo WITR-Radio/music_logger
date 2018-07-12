@@ -3,6 +3,11 @@ var socket = io.connect(null, {port: location.port, rememberTransport: false});
 
 socket.on('connected', function (tracks) {
     /* Socket hit by the server once it has confirmed the client is connected. */
+    socket.emit('request_initial_tracks', is_main_logger());
+});
+
+socket.on('handle_initial_tracks', function(tracks) {
+    /* Socket which supplies the page with the initial tracks */
     JSON.parse(tracks).forEach(function(track) {
         add_track($('#column_headers'), 'after', track);
     });

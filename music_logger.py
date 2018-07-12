@@ -257,7 +257,6 @@ def remove_track(data):
 @socketio.on('search_track')
 def search_track(data):
     """ Socket used to search the database using parameters in @data. """
-    print(data)
     # Use underground DB or main DB
     if data['is_main_logger'] == 'true':
         Track = MainTrack
@@ -298,9 +297,20 @@ def search_track(data):
 def commit_update(data):
     """ Socket used to update a track in the database. """
     if (in_subnet(request.remote_addr)):
+        # Choose underground DB or main DB
+        if data['is_main_logger'] == 'true':
+            Track = MainTrack
+            Group = MainGroup
+        elif data['is_main_logger'] == 'false':
+            Track = UndergroundTrack
+            Group = UndergroundGroup
+        else:
+            print('ERROR: in request_initial_tracks socket ' + data['is_main_logger'], file=sys.stderr)
+            return
+
         try:
-            track = MainTrack.query.get(data['track_id'])
-            group = MainGroup.query.filter_by(name=data['new_group']).first()
+            track = Track.query.get(data['track_id'])
+            group = Group.query.filter_by(name=data['new_group']).first()
 
             if group is None:  # Invalid group name, show error and exit
                 emit('invalid_update_group_name', data['track_id'])

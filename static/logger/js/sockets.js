@@ -40,16 +40,16 @@ socket.on('update_track', function (data) {
         given by the client. In comparison to the 'successful_update' socket
         also in this file, this socket is emitted to all connected clients and
         updates everybodies track list to reflect the changes in the database. */
-    $("tr#" + data['id'].toString()).remove();
-    
-    insert_based_on_date(data);
+    if (is_main_logger() == data['is_main_logger']) {  // Client and server are same DB
+        $("tr#" + data['id'].toString()).remove();
+        insert_based_on_date(data);
+    }
 });
 
 socket.on('successful_update', function (id) {
     /* Socket hit once the server validates and accepts the datetime format given
         by the client. In comparison to the 'update_track' socket also in this 
         file, this socket is emitted only to the client which submitted the update.*/
-
     var row = $("tr#" + id.toString());
     var error_box = get_or_create_error_box(row);
     error_box.parent().parent().remove();

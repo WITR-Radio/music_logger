@@ -224,7 +224,8 @@ $('table').on('click', '.submit_update_btn', function () {
             'new_artist': row.find('.artist_input').val(),
             'new_title' : row.find('.title_input' ).val(),
             'new_time'  : row.find('.time_input'  ).val(),
-            'new_group' : row.find('.group_input' ).val()
+            'new_group' : row.find('.group_input' ).val(),
+            'is_main_logger': is_main_logger()
         })
     };
 

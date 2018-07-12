@@ -6,7 +6,7 @@
 
 var groups;
 
-$.get('/groups', function(groups) {
+$.get('/groups?is_main_logger=' + is_main_logger(), function(groups) {
     window.groups = groups;
 });
 

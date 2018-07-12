@@ -107,7 +107,16 @@ def is_in_subnet():
 @app.route('/groups', methods=['GET'])
 def groups():
     """ Route client uses to get a list of the track groups in the database """
-    query = MainGroup.query.all()
+    # Use underground DB or main DB
+    if request.args['is_main_logger'] == 'true':
+        Group = MainGroup
+    elif request.args['is_main_logger'] == 'false':
+        Group = UndergroundGroup
+    else:
+        print('ERROR: in request_initial_tracks socket ' + request.args['is_main_logger'], file=sys.stderr)
+        return
+
+    query = Group.query.all()
     groups = []
     for group in query:
         groups.insert(0, group.name)
@@ -215,13 +224,24 @@ def request_intitial_tracks(is_main_logger):
 def add_track_to_db(data):
     """ Socket used to add a track in the database. """
     if (in_subnet(request.remote_addr)):
+        # Use underground DB or main DB
+        if data['is_main_logger'] == 'true':
+            Track = MainTrack
+            Group = MainGroup
+        elif data['is_main_logger'] == 'false':
+            Track = UndergroundTrack
+            Group = UndergroundGroup
+        else:
+            print('ERROR: in request_initial_tracks socket ' + data['is_main_logger'], file=sys.stderr)
+            return
+        
         try:
-            group = MainGroup.query.filter_by(name=data['new_group']).first()
+            group = Group.query.filter_by(name=data['new_group']).first()
 
-            track = MainTrack(
+            track = Track(
                 artist = data['new_artist'],
                 title = data['new_title'],
-                group_id = data['group'],
+                group = group,
                 created_at = datetime.strptime(data['new_time'], '%m/%d/%y %I:%M %p')        
             )
 

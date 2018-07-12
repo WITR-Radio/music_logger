@@ -42,16 +42,16 @@ app.wsgi_app = SassMiddleware(app.wsgi_app, {
     'music_logger': ('static/logger/sass', 'static/logger/css', 'static/logger/css')
 })
 
-@app.before_first_request
-def thread_db_overwatch():
-    """ Threads the db_overwatch function BEFORE THE FIRST REQUEST. 
-        The app.before_first_request decorator will only run this function
-        no sooner than directly before the first request. 
-        So if the server is started and nobody connects, db_overwatch will
-        not be run. """
-    t = Thread(target = start_db_overwatch, args = (app, db, socketio))
-    t.start()
-    print('Music Logger: db_overwatch() threaded')
+# @app.before_first_request
+# def thread_db_overwatch():
+#     """ Threads the db_overwatch function BEFORE THE FIRST REQUEST. 
+#         The app.before_first_request decorator will only run this function
+#         no sooner than directly before the first request. 
+#         So if the server is started and nobody connects, db_overwatch will
+#         not be run. """
+#     t = Thread(target = start_db_overwatch, args = (app, db, socketio))
+#     t.start()
+#     print('Music Logger: db_overwatch() threaded')
 
 
 ### ROUTES ###
@@ -154,12 +154,15 @@ def rivendell_udg_update():
         a track. This function then parses that XML and 
         saves it to the underground database .
     """
+    # Get XML root
     root = ET.fromstring(request.data)
     data = {}
 
+    # Turn XML into dictionary
     for child in root:
         data[child.tag] = child.text
 
+    # Create the new track and save it to the DB
     track = UndergroundTrack(
         artist = data['artist'],
         title = data['title'],
@@ -168,6 +171,12 @@ def rivendell_udg_update():
     )
     db.session.add(track)
     db.session.commit()
+
+    # Update clients
+    socketio.emit('add_tracks', {
+        'tracks': tracks_to_json(track),
+        'is_main_logger': 'false'
+    }, json=True)
 
     return 'Added track to underground logger database'
 
@@ -178,12 +187,15 @@ def rivendell_update():
         track. This function then parses that XML and saves it to the
         main logger database.
     """
+    # Get XML root
     root = ET.fromstring(request.data)
     data = {}
 
+    # Turn XML into dictionary
     for child in root:
         data[child.tag] = child.text
 
+    # Create the new track and save it to the DB
     track = MainTrack(
         artist = data['artist'],
         title = data['title'],
@@ -192,6 +204,12 @@ def rivendell_update():
     )
     db.session.add(track)
     db.session.commit()
+
+    # Update clients
+    socketio.emit('add_tracks', {
+        'tracks': tracks_to_json(track),
+        'is_main_logger': 'true'
+    }, json=True)
 
     return 'Added track to main logger database.'
 

@@ -28,11 +28,13 @@ socket.on('handle_initial_tracks', function(tracks) {
     $('table#tracks').data('more_results', true);
 });
 
-socket.on('add_tracks', function (tracks) {
+socket.on('add_tracks', function (data) {
     /* Socket used to add a track to the currently displayed page. */
-    JSON.parse(tracks).forEach(function(track) {
-        add_track($('#column_headers'), 'after', track);
-    });
+    if (is_main_logger() == data['is_main_logger']) {  // Client and server are same DB
+        JSON.parse(data['tracks']).forEach(function(track) {
+            add_track($('#column_headers'), 'after', track);
+        });
+    }
 });
 
 socket.on('update_track', function (data) {

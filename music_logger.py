@@ -257,25 +257,38 @@ def remove_track(data):
 @socketio.on('search_track')
 def search_track(data):
     """ Socket used to search the database using parameters in @data. """
-    results = MainTrack.query
+    print(data)
+    # Use underground DB or main DB
+    if data['is_main_logger'] == 'true':
+        Track = MainTrack
+    elif data['is_main_logger'] == 'false':
+        Track = UndergroundTrack
+    else:
+        print('ERROR: in request_initial_tracks socket ' + data['is_main_logger'], file=sys.stderr)
+        return
+
+    # Get the query results
+    results = Track.query
     
     if data['artist']:
-        results = results.filter(MainTrack.artist.like('%' + data['artist'] + '%'))
+        results = results.filter(Track.artist.like('%' + data['artist'] + '%'))
     if data['title']:
-        results = results.filter(MainTrack.title.like('%' + data['title'] + '%'))
+        results = results.filter(Track.title.like('%' + data['title'] + '%'))
     if data['date'] or data['start'] or data['end']:
         try:
             start = datetime.strptime(data['date'] + ' ' + data['start'], '%m/%d/%Y %I:%M %p') 
             end   = datetime.strptime(data['date'] + ' ' + data['end'  ], '%m/%d/%Y %I:%M %p')
-            results = results.filter(MainTrack.created_at.between(start, end))
+            results = results.filter(Track.created_at.between(start, end))
         except ValueError:
             emit('invalid_search_datetime')
             return
 
+    # Send query results to client
     emit('search_results',
         {
-            'tracks': tracks_to_json(results.order_by(desc(MainTrack.created_at)).limit(20).all()),
-            'query':  data
+            'tracks': tracks_to_json(results.order_by(desc(Track.created_at)).limit(20).all()),
+            'query':  data,
+            'is_main_logger': data['is_main_logger']
         },
         json=True
     )

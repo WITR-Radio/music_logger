@@ -52,7 +52,8 @@ $('#search_btn').on('click', function () {
             'title' : title, 
             'date'  : date, 
             'start' : start, 
-            'end'   : end
+            'end'   : end,
+            'is_main_logger': is_main_logger()
         });
 
         // Allow page to ask server for more tracks

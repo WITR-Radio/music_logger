@@ -83,17 +83,19 @@ socket.on('invalid_update_group_name', function(id) {
 
 socket.on('search_results', function(data) {
     /* Socket hit once the server has our search results and is ready to display them. */
-    remove_all_tracks()
-    JSON.parse(data['tracks']).forEach((track) => {
-        add_track($('#column_headers'), 'after', track);
-    });
-    
-    $('table#tracks')
-        .data('lsq_date',       data['query']['date'])
-        .data('lsq_start_time', data['query']['start'])
-        .data('lsq_end_time',   data['query']['end'])
-        .data('lsq_artist',     data['query']['artist'])
-        .data('lsq_song',       data['query']['title']);
+    if (is_main_logger() == data['is_main_logger']) {  // Client and server are same DB
+        remove_all_tracks();
+        JSON.parse(data['tracks']).forEach((track) => {
+            add_track($('#column_headers'), 'after', track);
+        });
+        
+        $('table#tracks')
+            .data('lsq_date',       data['query']['date'])
+            .data('lsq_start_time', data['query']['start'])
+            .data('lsq_end_time',   data['query']['end'])
+            .data('lsq_artist',     data['query']['artist'])
+            .data('lsq_song',       data['query']['title']);
+    }
 });
 
 socket.on('invalid_search_datetime', function() {
@@ -106,7 +108,7 @@ socket.on('removeTrack', function(data) {
     /* Once the server has successfully deleted the track 
         from the database this socket is hit to remove the track
         from the page. */
-    if (is_main_logger() == data['is_main_logger']) {  // Don't delete if not the same
+    if (is_main_logger() == data['is_main_logger']) {  // Client and server are same DB
         $('#' + data['track_id']).fadeOut( 400, function () {
             update_row_highlights();
         });

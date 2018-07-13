@@ -42,19 +42,25 @@ $('#search_btn').on('click', function () {
     if (search_revealer.is(':visible')) {
         $('.search_error_box').html('');
 
+        // Get values from search fields
         var artist = $('#artist_search_input').val();
         var title  = $('#title_search_input').val();
         var date   = $('#date_search_input').val();
         var start  = $('#start_search_input').val();
-        var end    = $('#end_search_input').val();        
-        socket.emit('search_track', {
-            'artist': artist, 
-            'title' : title, 
-            'date'  : date, 
-            'start' : start, 
-            'end'   : end,
-            'is_main_logger': is_main_logger()
-        });
+        var end    = $('#end_search_input').val();
+
+        // If field is not blank add it to data dict
+        var data = {};
+        (artist ? data['artist'] = artist : null);
+        (title ? data['title'] = title : null);
+        (date ? data['date'] = date : null);
+        (start ? data['start'] = start : null);
+        (end ? data['end'] = end : null);
+        data['is_main_logger'] = is_main_logger()
+        data['push_state'] = 'true'  // Update window.history.state after tracks are loaded
+
+        // Send search query to server
+        socket.emit('search_track', data);
 
         // Allow page to ask server for more tracks
         $('table#tracks').data('more_results', true);
@@ -273,3 +279,13 @@ $('#load_more').click(function() {
 //         load_more();
 //     }
 // });
+
+window.addEventListener('popstate', function(event) {
+    /* Gets called when the user clicks the forward or backward buttons.
+        Loads tracks based on what the search query in the uri is.*/
+    var data = uri_search_dict();
+    data['is_main_logger'] = is_main_logger();
+    data['push_state'] = 'false'  // Don't update state after tracks are loaded
+    socket.emit('search_track', data);
+    console.log(event)
+});

@@ -79,23 +79,23 @@ def details():
     return render_template("index.html", detailed=True, in_subnet=True)#in_subnet(request.remote_addr))
 
 
-@app.route('/add_track_to_client', methods=['POST'])
-def add_track_to_client():
-    """ Handles a POST request to emit a message to all clients
-    telling them to add a new track to their page.
+# @app.route('/add_track_to_client', methods=['POST'])
+# def add_track_to_client():
+#     """ Handles a POST request to emit a message to all clients
+#     telling them to add a new track to their page.
 
-    Colin Reilly 2/11/2018:
-    Typically this route is hit by the db_overwatch thread
-    once it detects a change in the database and needs to update
-    the clients with new tracks.
+#     Colin Reilly 2/11/2018:
+#     Typically this route is hit by the db_overwatch thread
+#     once it detects a change in the database and needs to update
+#     the clients with new tracks.
 
-    Creating a route for emitting this kind of update to clients
-    keeps the socketio instance in the main Flask thread only. If we wanted
-    to emit to clients from background threads we would need a messaging queue
-    between the main thread and all other threads, something I think is best avoided.
-    """
-    socketio.emit('add_tracks', request.get_json(force=True), json=True)
-    return 'success'  # Flask doesn't like returning None.
+#     Creating a route for emitting this kind of update to clients
+#     keeps the socketio instance in the main Flask thread only. If we wanted
+#     to emit to clients from background threads we would need a messaging queue
+#     between the main thread and all other threads, something I think is best avoided.
+#     """
+#     socketio.emit('add_tracks', request.get_json(force=True), json=True)
+#     return 'success'  # Flask doesn't like returning None.
 
 
 @app.route('/is_in_subnet', methods=['GET'])
@@ -222,18 +222,38 @@ def startup():
 
 
 @socketio.on('request_initial_tracks')
-def request_intitial_tracks(is_main_logger):
+def request_intitial_tracks(data):
     """ Based on whether data['main_logger'] is true emits
-        either 20 most recent logger tracks or 20 most recent
-        underground tracks. 
+        either 20 most recent main logger tracks or 20 most recent
+        underground logger tracks.
     """
-    if is_main_logger == 'true':
-        tracks = MainTrack.query.order_by(desc(MainTrack.created_at)).limit(20).all()
-    elif is_main_logger == 'false':
-        tracks = UndergroundTrack.query.order_by(desc(UndergroundTrack.created_at)).limit(20).all()
+    # Check if main logger or underground logger
+    if data['is_main_logger'] == 'true':
+        Track = MainTrack
+    elif data['is_main_logger'] == 'false':
+        Track = UndergroundTrack
     else:
         print('ERROR: in request_initial_tracks socket ' + str(is_main_logger), file=sys.stderr)
         tracks = []
+
+    # Get the query results
+    results = Track.query
+    
+    if 'artist' in data['query']:
+        results = results.filter(Track.artist.like('%' + data['query']['artist'] + '%'))
+    if 'title' in data['query']:
+        results = results.filter(Track.title.like('%' + data['query']['title'] + '%'))
+    if 'data' in data['query'] or 'start' in data['query'] or 'end' in data['query']:
+        try:
+            start = datetime.strptime(data['query']['date'] + ' ' + data['query']['start'], '%m/%d/%Y %I:%M %p') 
+            end   = datetime.strptime(data['query']['date'] + ' ' + data['query']['end'  ], '%m/%d/%Y %I:%M %p')
+            results = results.filter(Track.created_at.between(start, end))
+        except ValueError:
+            emit('invalid_search_datetime')
+            return
+
+    # Send query results to client
+    tracks = results.order_by(desc(Track.created_at)).limit(20).all()
 
     emit('handle_initial_tracks', tracks_to_json(tracks), json=True)
 
@@ -307,11 +327,11 @@ def search_track(data):
     # Get the query results
     results = Track.query
     
-    if data['artist']:
+    if 'artist' in data:
         results = results.filter(Track.artist.like('%' + data['artist'] + '%'))
-    if data['title']:
+    if 'title' in data:
         results = results.filter(Track.title.like('%' + data['title'] + '%'))
-    if data['date'] or data['start'] or data['end']:
+    if 'date' in data or 'start' in data or 'end' in data:
         try:
             start = datetime.strptime(data['date'] + ' ' + data['start'], '%m/%d/%Y %I:%M %p') 
             end   = datetime.strptime(data['date'] + ' ' + data['end'  ], '%m/%d/%Y %I:%M %p')
@@ -320,15 +340,10 @@ def search_track(data):
             emit('invalid_search_datetime')
             return
 
+    data['tracks'] = tracks_to_json(results.order_by(desc(Track.created_at)).limit(20).all())
+
     # Send query results to client
-    emit('search_results',
-        {
-            'tracks': tracks_to_json(results.order_by(desc(Track.created_at)).limit(20).all()),
-            'query':  data,
-            'is_main_logger': data['is_main_logger']
-        },
-        json=True
-    )
+    emit('search_results', data, json=True)
 
 
 @socketio.on('commit_update')
@@ -388,11 +403,11 @@ def load_more(data):
 
     results = Track.query
 
-    if data['artist'] is not '':
+    if 'artist' in data:
         results = results.filter(Track.artist.like('%' + data['artist'] + '%'))
-    if data['title'] is not '':
+    if 'title' in data:
         results = results.filter(Track.title.like('%' + data['title'] + '%'))
-    if data['date'] is not '':
+    if 'date' in data or 'start' in data or 'end' in data:
         start = datetime.strptime(data['date'] + ' ' + data['start'], '%m/%d/%Y %I:%M %p')
         end   = datetime.strptime(data['date'] + ' ' + data['end'  ], '%m/%d/%Y %I:%M %p')
         results = results.filter(Track.created_at.between(start, end))

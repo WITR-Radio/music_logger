@@ -1,9 +1,13 @@
 /*** SOCKETS ***/
 var socket = io.connect(null, {port: location.port, rememberTransport: false});
 
-socket.on('connected', function (tracks) {
+socket.on('connected', function () {
     /* Socket hit by the server once it has confirmed the client is connected. */
-    socket.emit('request_initial_tracks', is_main_logger());
+    // Get search query from url
+    socket.emit('request_initial_tracks', {
+        'is_main_logger': is_main_logger(),
+        'query': uri_search_dict()
+    });
 });
 
 socket.on('handle_initial_tracks', function(tracks) {
@@ -14,12 +18,12 @@ socket.on('handle_initial_tracks', function(tracks) {
 
     // Set the 'last search query' to nothing
     // also used for infinite scrolling
-    $('table#tracks')
-        .data('lsq_date',       '')
-        .data('lsq_start_time', '')
-        .data('lsq_end_time',   '')
-        .data('lsq_artist',     '')
-        .data('lsq_song',       '');
+    // $('table#tracks')
+    //     .data('lsq_date',       '')
+    //     .data('lsq_start_time', '')
+    //     .data('lsq_end_time',   '')
+    //     .data('lsq_artist',     '')
+    //     .data('lsq_song',       '');
 
     // Unlock scrolling to bottom detection
     $('table#tracks').data('detect_scroll', true);
@@ -90,13 +94,16 @@ socket.on('search_results', function(data) {
         JSON.parse(data['tracks']).forEach((track) => {
             add_track($('#column_headers'), 'after', track);
         });
-        
-        $('table#tracks')
-            .data('lsq_date',       data['query']['date'])
-            .data('lsq_start_time', data['query']['start'])
-            .data('lsq_end_time',   data['query']['end'])
-            .data('lsq_artist',     data['query']['artist'])
-            .data('lsq_song',       data['query']['title']);
+
+    if (data['push_state'] == 'true')
+        window.history.pushState(null, null, create_uri_search(data));
+
+        // $('table#tracks')
+        //     .data('lsq_date',       data['query']['date'])
+        //     .data('lsq_start_time', data['query']['start'])
+        //     .data('lsq_end_time',   data['query']['end'])
+        //     .data('lsq_artist',     data['query']['artist'])
+        //     .data('lsq_song',       data['query']['title']);
     }
 });
 

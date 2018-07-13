@@ -168,20 +168,17 @@ function load_more() {
         $('table#tracks').data('detect_scroll', false);
 
         // Send search query and amount of tracks currently shown on the page
-        var artist = $('table#tracks').data('lsq_artist')
-        var title  = $('table#tracks').data('lsq_song')
-        var date   = $('table#tracks').data('lsq_date')
-        var start  = $('table#tracks').data('lsq_start_time')
-        var end    = $('table#tracks').data('lsq_end_time')
-        socket.emit('load_more', {
-            'artist': artist, 
-            'title' : title, 
-            'date'  : date, 
-            'start' : start, 
-            'end'   : end,
-            'n_tracks_shown': document.getElementById('tracks').rows.length - 1,
-            'is_main_logger': is_main_logger()
-        });
+        // var artist = $('table#tracks').data('lsq_artist')
+        // var title  = $('table#tracks').data('lsq_song')
+        // var date   = $('table#tracks').data('lsq_date')
+        // var start  = $('table#tracks').data('lsq_start_time')
+        // var end    = $('table#tracks').data('lsq_end_time')
+
+        var data = uri_search_dict();
+        data['n_tracks_shown'] = document.getElementById('tracks').rows.length - 1;
+        data['is_main_logger'] = is_main_logger();
+
+        socket.emit('load_more', data);
     }
 };
 
@@ -283,3 +280,33 @@ function insert_based_on_date(track) {
 
     return to_return;
 };
+
+function uri_search_dict() {
+    /* Returns a dictionary representing the uri search term,
+        i.e. if we have ?x=y&a=b, this function returns
+        {'x':'y','a':'b'} */
+    var query = window.location.search.substring(1);
+    var vars = query.split('&');
+    var d = {}
+    for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split('=');
+        d[pair[0]] = pair[1]
+    }
+    return d;
+}
+
+function create_uri_search(data) {
+    /* Converts the search query contained in @data
+        to a string formatted as a uri search parameter.
+        i.e. if data={'x':'y'} this function would return
+        '?x=y' */
+    var s = '?';
+    for (var key in data) {
+        // If key is a know search term add it to str
+        if (['artist', 'title', 'date', 'start', 'end'].indexOf(key) > -1
+                && data[key] != '') {
+            s = s + key + '=' + data[key];
+        }
+    }
+    return (s == '?' ? '' : s);
+}

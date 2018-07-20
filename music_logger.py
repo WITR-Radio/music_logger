@@ -42,17 +42,6 @@ app.wsgi_app = SassMiddleware(app.wsgi_app, {
     'music_logger': ('static/logger/sass', 'static/logger/css', 'static/logger/css')
 })
 
-# @app.before_first_request
-# def thread_db_overwatch():
-#     """ Threads the db_overwatch function BEFORE THE FIRST REQUEST. 
-#         The app.before_first_request decorator will only run this function
-#         no sooner than directly before the first request. 
-#         So if the server is started and nobody connects, db_overwatch will
-#         not be run. """
-#     t = Thread(target = start_db_overwatch, args = (app, db, socketio))
-#     t.start()
-#     print('Music Logger: db_overwatch() threaded')
-
 
 ### ROUTES ###
 @app.route('/')
@@ -77,25 +66,6 @@ def latest():
 def details():
     """ Renders the home/root page and displays additional song details. """
     return render_template("index.html", detailed=True, in_subnet=True)#in_subnet(request.remote_addr))
-
-
-# @app.route('/add_track_to_client', methods=['POST'])
-# def add_track_to_client():
-#     """ Handles a POST request to emit a message to all clients
-#     telling them to add a new track to their page.
-
-#     Colin Reilly 2/11/2018:
-#     Typically this route is hit by the db_overwatch thread
-#     once it detects a change in the database and needs to update
-#     the clients with new tracks.
-
-#     Creating a route for emitting this kind of update to clients
-#     keeps the socketio instance in the main Flask thread only. If we wanted
-#     to emit to clients from background threads we would need a messaging queue
-#     between the main thread and all other threads, something I think is best avoided.
-#     """
-#     socketio.emit('add_tracks', request.get_json(force=True), json=True)
-#     return 'success'  # Flask doesn't like returning None.
 
 
 @app.route('/is_in_subnet', methods=['GET'])
@@ -325,6 +295,7 @@ def search_track(data):
         return
 
     # Get the query results
+    print(data)
     results = Track.query
     
     if 'artist' in data:
@@ -340,8 +311,11 @@ def search_track(data):
             emit('invalid_search_datetime')
             return
 
+    print(results)
+
     data['tracks'] = tracks_to_json(results.order_by(desc(Track.created_at)).limit(20).all())
 
+    print(data['tracks'])
     # Send query results to client
     emit('search_results', data, json=True)
 

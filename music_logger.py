@@ -106,7 +106,7 @@ def udpupdate():
     for child in root:
         data[child.tag] = child.text
 
-    track = Track(
+    track = UndergroundTrack(
         artist = data['artist'],
         title = data['title'],
         group = Group.query.get(int(data['group'])),

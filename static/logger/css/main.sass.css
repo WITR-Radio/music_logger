@@ -6,10 +6,6 @@
   src: url("../../fonts/BebasNeue Bold.otf") format("opentype"); }
 
 @font-face {
-  font-family: alternate-gothic;
-  src: url("../../fonts/altgot2n-webfont.woff") format("woff"); }
-
-@font-face {
   font-family: century-gothic;
   src: url("../../fonts/CenturyGothicRegular.ttf"); }
 

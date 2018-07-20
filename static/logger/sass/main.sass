@@ -1,15 +1,27 @@
 /* Base Layout Module State Theme */
 
+/***** FONTS *****/
+@font-face
+    font-family: bebas-neue
+    font-weight: bold
+    src: url("../../fonts/BebasNeue Bold.otf") format("opentype")
+
+@font-face
+    font-family: century-gothic
+    src: url("../../fonts/CenturyGothicRegular.ttf")
+
 /***** VARIABLES *****/
 $witr_blue: #06a7e1
 $zebra_highlight: #fbfbfb;
+$header_font: bebas-neue
+$body_font: century-gothic;
 
 
 /***** BASE *****/
     /* Container */
 body
-    font-family: sans-serif
     margin: 0
+    font-family: $body_font
 
 button
     padding: 0
@@ -36,19 +48,22 @@ header
     margin: 20px
 
     h1 
-        font-size: 5em
+        font-family: $header_font
+        font-size: 5.5em
+        font-weight: 400
+        line-height: 1em
         width: 100%
         margin: 0
-        margin-bottom: 30px
+        margin-bottom: 20px
 
         img.signal_glyph
             width: 50px
             height: auto
-            margin: 0px 10px 0px 7px
+            margin: 0px 0px 0px 0px
 
     h2
         font-size: 1.1em
-        font-weight: 400
+        font-weight: 200
         width: 100%
         margin-top: 0
         margin-bottom: 20px
@@ -148,6 +163,9 @@ table
             position: relative
         
         h4
+            font-family: $header_font
+            letter-spacing: 2px
+            font-size: 1.5em
             margin: 0
             color: white
 
@@ -257,7 +275,7 @@ table
             img.signal_glyph
                 width: 61px
                 height: auto
-                margin: 0px 10px 0px 7px
+                margin: 0px 5px 0px 0px
 
         h2
             font-size: 1.5em
@@ -274,8 +292,8 @@ table
         padding: 0 50px 0 50px
 
         thead#column_headers tr
-            height: 20px
-            padding: 10px 30px 10px 30px
+            height: 28px
+            padding: 6px 30px 6px 30px
 
         tr
             padding: 15px 30px 15px 30px

@@ -1,10 +1,24 @@
 /* Base Layout Module State Theme */
+/***** FONTS *****/
+@font-face {
+  font-family: bebas-neue;
+  font-weight: bold;
+  src: url("../../fonts/BebasNeue Bold.otf") format("opentype"); }
+
+@font-face {
+  font-family: alternate-gothic;
+  src: url("../../fonts/altgot2n-webfont.woff") format("woff"); }
+
+@font-face {
+  font-family: century-gothic;
+  src: url("../../fonts/CenturyGothicRegular.ttf"); }
+
 /***** VARIABLES *****/
 /***** BASE *****/
 /* Container */
 body {
-  font-family: sans-serif;
-  margin: 0; }
+  margin: 0;
+  font-family: century-gothic; }
 
 button {
   padding: 0;
@@ -28,17 +42,20 @@ input {
 header {
   margin: 20px; }
   header h1 {
-    font-size: 5em;
+    font-family: bebas-neue;
+    font-size: 5.5em;
+    font-weight: 400;
+    line-height: 1em;
     width: 100%;
     margin: 0;
-    margin-bottom: 30px; }
+    margin-bottom: 20px; }
     header h1 img.signal_glyph {
       width: 50px;
       height: auto;
-      margin: 0px 10px 0px 7px; }
+      margin: 0px 0px 0px 0px; }
   header h2 {
     font-size: 1.1em;
-    font-weight: 400;
+    font-weight: 200;
     width: 100%;
     margin-top: 0;
     margin-bottom: 20px; }
@@ -120,6 +137,9 @@ table {
     table thead th:not(:first-of-type) {
       position: relative; }
     table thead h4 {
+      font-family: bebas-neue;
+      letter-spacing: 2px;
+      font-size: 1.5em;
       margin: 0;
       color: white; }
   table tr {
@@ -208,7 +228,7 @@ table {
       header h1 img.signal_glyph {
         width: 61px;
         height: auto;
-        margin: 0px 10px 0px 7px; }
+        margin: 0px 5px 0px 0px; }
     header h2 {
       font-size: 1.5em;
       margin-bottom: 0; }
@@ -220,8 +240,8 @@ table {
   table {
     padding: 0 50px 0 50px; }
     table thead#column_headers tr {
-      height: 20px;
-      padding: 10px 30px 10px 30px; }
+      height: 28px;
+      padding: 6px 30px 6px 30px; }
     table tr {
       padding: 15px 30px 15px 30px;
       font-size: 1.1em; } }

@@ -32,7 +32,7 @@ from helper_modules.in_subnet import in_subnet
 # instance_relative_config=True tells app.config.from_pyfile to look in the instance
 # folder for the config.py file
 app = Flask(__name__, instance_relative_config=True)
-app.config.from_pyfile('development_config.py')
+app.config.from_pyfile('staging_config.py')
 
 db.init_app(app)
 socketio = SocketIO(app)
@@ -109,7 +109,7 @@ def udpupdate():
     track = UndergroundTrack(
         artist = data['artist'],
         title = data['title'],
-        group = Group.query.get(int(data['group'])),
+        group = UndergroundGroup.query.get(int(data['group'])),
         created_at = datetime.now()
     )
     db.session.add(track)

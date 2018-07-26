@@ -271,15 +271,6 @@ $('#load_more').click(function() {
     load_more();
 });
 
-/* Infinite scrolling */
-// $(window).scroll(function() {
-//     /* Runs a function when the user scrolls to the bottom of the page */
-//     if($(window).scrollTop() + $(window).height() >= $(document).height() - 100 &&
-//         $('table#tracks').data('detect_scroll')) {
-//         load_more();
-//     }
-// });
-
 window.addEventListener('popstate', function(event) {
     /* Gets called when the user clicks the forward or backward buttons.
         Loads tracks based on what the search query in the uri is.*/
@@ -287,5 +278,4 @@ window.addEventListener('popstate', function(event) {
     data['is_main_logger'] = is_main_logger();
     data['push_state'] = 'false'  // Don't update state after tracks are loaded
     socket.emit('search_track', data);
-    console.log(event)
 });

@@ -215,6 +215,8 @@ def request_intitial_tracks(data):
         results = results.filter(Track.title.like('%' + data['query']['title'] + '%'))
     if 'data' in data['query'] or 'start' in data['query'] or 'end' in data['query']:
         try:
+            data['query']['start'] = data['query']['start'].replace('%20', ' ')
+            data['query']['end'] = data['query']['end'].replace('%20', ' ')
             start = datetime.strptime(data['query']['date'] + ' ' + data['query']['start'], '%m/%d/%Y %I:%M %p') 
             end   = datetime.strptime(data['query']['date'] + ' ' + data['query']['end'  ], '%m/%d/%Y %I:%M %p')
             results = results.filter(Track.created_at.between(start, end))
@@ -295,7 +297,6 @@ def search_track(data):
         return
 
     # Get the query results
-    print(data)
     results = Track.query
     
     if 'artist' in data:
@@ -311,11 +312,9 @@ def search_track(data):
             emit('invalid_search_datetime')
             return
 
-    print(results)
 
     data['tracks'] = tracks_to_json(results.order_by(desc(Track.created_at)).limit(20).all())
 
-    print(data['tracks'])
     # Send query results to client
     emit('search_results', data, json=True)
 
@@ -382,6 +381,8 @@ def load_more(data):
     if 'title' in data:
         results = results.filter(Track.title.like('%' + data['title'] + '%'))
     if 'date' in data or 'start' in data or 'end' in data:
+        data['start'] = data['start'].replace('%20', ' ')
+        data['end'] = data['end'].replace('%20', ' ')
         start = datetime.strptime(data['date'] + ' ' + data['start'], '%m/%d/%Y %I:%M %p')
         end   = datetime.strptime(data['date'] + ' ' + data['end'  ], '%m/%d/%Y %I:%M %p')
         results = results.filter(Track.created_at.between(start, end))

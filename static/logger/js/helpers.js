@@ -167,13 +167,6 @@ function load_more() {
         // Lock detection of scrolling to bottom of page
         $('table#tracks').data('detect_scroll', false);
 
-        // Send search query and amount of tracks currently shown on the page
-        // var artist = $('table#tracks').data('lsq_artist')
-        // var title  = $('table#tracks').data('lsq_song')
-        // var date   = $('table#tracks').data('lsq_date')
-        // var start  = $('table#tracks').data('lsq_start_time')
-        // var end    = $('table#tracks').data('lsq_end_time')
-
         var data = uri_search_dict();
         data['n_tracks_shown'] = document.getElementById('tracks').rows.length - 1;
         data['is_main_logger'] = is_main_logger();
@@ -298,15 +291,34 @@ function uri_search_dict() {
 function create_uri_search(data) {
     /* Converts the search query contained in @data
         to a string formatted as a uri search parameter.
-        i.e. if data={'x':'y'} this function would return
-        '?x=y' */
+        i.e. if data={'a':'b', 'x':'y'} this function would return
+        '?a=b&x=y' */
     var s = '?';
     for (var key in data) {
         // If key is a know search term add it to str
         if (['artist', 'title', 'date', 'start', 'end'].indexOf(key) > -1
                 && data[key] != '') {
-            s = s + key + '=' + data[key];
+            s = s + '&' + key + '=' + data[key];
         }
     }
-    return (s == '?' ? '' : s);
+    if (is_main_logger())
+        return (s == '?' ? '/' : s);
+    else
+        return(s == '?' ? '/underground' : s)
+}
+
+function url_to_search_bar() {
+    /* Looks at the GET parameters in the url and fills the 
+        search bar to match the parameters */
+    var data = uri_search_dict();
+    if (data['date'])
+        $('input#date_search_input').val(data['date']);
+    if (data['start'])
+        $('input#start_search_input').val(data['start'].replace('%20', ' '));
+    if (data['end'])
+        $('input#end_search_input').val(data['end'].replace('%20', ' '));
+    if (data['artist'])
+        $('input#artist_search_input').val(data['artist']);
+    if (data['title'])
+        $('input#title_search_input').val(data['title']);
 }

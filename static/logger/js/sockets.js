@@ -8,6 +8,8 @@ socket.on('connected', function () {
         'is_main_logger': is_main_logger(),
         'query': uri_search_dict()
     });
+
+    url_to_search_bar();
 });
 
 socket.on('handle_initial_tracks', function(tracks) {
@@ -15,15 +17,6 @@ socket.on('handle_initial_tracks', function(tracks) {
     JSON.parse(tracks).forEach(function(track) {
         add_track($('#column_headers'), 'after', track);
     });
-
-    // Set the 'last search query' to nothing
-    // also used for infinite scrolling
-    // $('table#tracks')
-    //     .data('lsq_date',       '')
-    //     .data('lsq_start_time', '')
-    //     .data('lsq_end_time',   '')
-    //     .data('lsq_artist',     '')
-    //     .data('lsq_song',       '');
 
     // Unlock scrolling to bottom detection
     $('table#tracks').data('detect_scroll', true);
@@ -97,13 +90,6 @@ socket.on('search_results', function(data) {
 
     if (data['push_state'] == 'true')
         window.history.pushState(null, null, create_uri_search(data));
-
-        // $('table#tracks')
-        //     .data('lsq_date',       data['query']['date'])
-        //     .data('lsq_start_time', data['query']['start'])
-        //     .data('lsq_end_time',   data['query']['end'])
-        //     .data('lsq_artist',     data['query']['artist'])
-        //     .data('lsq_song',       data['query']['title']);
     }
 });
 

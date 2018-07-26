@@ -14,8 +14,8 @@
         <script rel="socketIO" 
             src="{{ url_for('static', filename='socketIO/socket.io.min.js') }}"></script> 
             
-        <!-- The next 3 js files need to be included above the body because 'in_subnet.js'
-            and 'groups.js' needs to be run before the body loads, and they require jquery -->
+        <!-- The next 4 js files need to be included above the body because 'is_main_logger', 
+            'in_subnet.js', and 'groups.js' needs to be run before the body loads, and they require jquery -->
         <script rel="jquery" 
             src="{{ url_for('static', filename='jQuery/jquery.js') }}"></script>
 

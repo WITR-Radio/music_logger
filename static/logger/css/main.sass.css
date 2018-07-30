@@ -270,8 +270,14 @@ table {
 table .privileged_btn_clmn {
   width: 75px; }
   table .privileged_btn_clmn button {
-    width: 100%;
+    margin: auto auto;
+    display: block;
+    width: 90%;
     height: 100%; }
+  table .privileged_btn_clmn button:hover {
+    cursor: pointer; }
+  table .privileged_btn_clmn button.delete_btn {
+    background-color: #ff3232; }
 
 table .privileged_inpt_clmn {
   flex: 1; }
@@ -281,9 +287,6 @@ table .privileged_btn_clmn, table .privileged_inpt_clmn {
 
 table .update_clmn, table .delete_clmn {
   display: table-cell; }
-
-table .delete_btn {
-  background-color: red; }
 
 table input {
   margin: 0;

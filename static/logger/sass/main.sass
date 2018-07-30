@@ -331,8 +331,18 @@ table
         width: 75px
 
         button
-            width: 100%
+            margin: auto auto
+            display: block
+            width: 90%
             height: 100%
+
+        button:hover 
+            cursor: pointer
+
+        button.delete_btn
+            background-color: #ff3232
+
+        button.update_btn
         
     .privileged_inpt_clmn
         flex: 1
@@ -342,9 +352,6 @@ table
 
     .update_clmn, .delete_clmn
         display: table-cell
-
-    .delete_btn
-        background-color: red
 
     input 
         margin: 0

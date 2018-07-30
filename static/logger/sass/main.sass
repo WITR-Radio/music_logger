@@ -30,22 +30,56 @@ button
 
 #container
     margin: 0
+    position: relative
+    z-index: 1
 
     a.home_link
         display: inline-block
         height: 64px
         width: 64px
 
-input 
+input
     outline: none
 
-.transparent 
+.transparent
     color: transparent !important
+
+img.banner
+    position: absolute
+    width: auto
+    height: 400px
+    z-index: -10
+
+div.banner_tinter
+    position: absolute
+    width: 100%
+    height: 400px
+    background-color: $witr_blue
+    opacity: 0.8
+    z-index: -9
+
+div.white_block
+    background-color: white
+    position: absolute
+    width: calc(100% - 10px)
+    margin: 0 5px 0 5px
+    top: 285px
+    height: 300px
+    z-index: -8
+
+div.white_block_2
+    background-color: white
+    position: absolute
+    top: 335px
+    z-index: -7
+    width: 100%
+    height: 500px
 
 
 /***** LAYOUT *****/
-header 
+header
     margin: 20px
+    position: relative
 
     h1 
         font-family: $header_font
@@ -54,7 +88,8 @@ header
         line-height: 1em
         width: 100%
         margin: 0
-        margin-bottom: 20px
+        margin-bottom: 45px
+        color: white
 
         img.signal_glyph
             width: 50px
@@ -64,9 +99,10 @@ header
     h2
         font-size: 1.1em
         font-weight: 200
-        width: 100%
-        margin-top: 0
+        width: calc(100% - 20px)
+        margin: 0 0 20px 20px
         margin-bottom: 20px
+        background-color: white
 
 
 /***** MODULES *****/
@@ -104,6 +140,7 @@ header
     /* Search Bar */
 #search_container
     margin: 0px 20px 30px 20px
+    background-color: white
 
     .search_revealer 
         width: 100%
@@ -152,6 +189,8 @@ table
     width: 100%
     padding-left: 5px
     padding-right: 5px
+    background-color: white
+
 
     thead
         background-color: #2A2C2D
@@ -217,6 +256,13 @@ table
     margin-bottom: 10px
 
     /* Media Queries */
+@media (min-width: 394px)
+    div.white_block
+        top: 195px
+
+    div.white_block_2
+        top: 250px
+
 @media (min-width: 600px)
     #search_container
         position: relative
@@ -265,12 +311,20 @@ table
         .as_container, .ts_container
             flex: 1
 
-@media (min-width: 850px) 
+@media (min-width: 850px)
+    div.white_block
+        top: 250px
+        width: calc(100% - 100px)
+        margin: 0 50px 0 50px
+
+    div.white_block_2
+        top: 350px
+
     header
         margin: 40px 100px 40px 100px
 
         h1 
-            font-size: 6.5em
+            font-size: 9em
 
             img.signal_glyph
                 width: 61px
@@ -283,10 +337,10 @@ table
 
     #search_container
         padding: 0px
-        margin: 0px 100px 100px 100px
+        margin: 0px 100px 75px 100px
 
     #add_track_btn_container 
-        margin-top: -70px
+        margin-top: -40px
 
     table
         padding: 0 50px 0 50px
@@ -299,13 +353,33 @@ table
             padding: 15px 30px 15px 30px
             font-size: 1.1em
 
+@media (min-width: 1056px)
+    img.banner
+        width: 100%
+        height: auto
+
+    div.banner_tinter
+        width: 100%
+        height: 500px
+
 @media (min-width: 1240px)
+    div.white_block
+        width: 1100px
+        top: 250px
+        left: 50%
+        margin-left: -550px
+        height: 300px
+        z-index: -8
+
+    div.white_block_2
+        top: 400px
+
     header, #search_container
         width: 940px
         margin: 40px auto 40px auto
 
     #search_container
-        margin-bottom: 100px
+        margin: 60px auto 70px auto
 
 @media (min-width: 1340px)
     table

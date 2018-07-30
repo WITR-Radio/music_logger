@@ -10,9 +10,13 @@
 
 {% block body %}
 <div id="container">
+    <img class="banner" src='../static/images/bannerx2.png'>
+    <div class="banner_tinter"></div>
     <a class="home_link" href="https://witr.rit.edu">
         <img class="logo" src="{{ url_for('static', filename='images/WITR_logo.png') }}"/>
     </a>
+    <div class="white_block"></div>
+    <div class="white_block_2"></div>
     <header>
         <h1>FM PLAYLIST</h1>
         <h2>Crap, what was that song they played?</h2>
@@ -61,11 +65,11 @@
         </div>
         <input id="search_btn" type="submit" value="SEARCH">
     </div>
-        {% if in_subnet == true %}
-            <div id="add_track_btn_container">
-                <button id="add_track_btn">ADD TRACK</button>
-            </div>
-        {% endif %}
+    {% if in_subnet == true %}
+        <div id="add_track_btn_container">
+            <button id="add_track_btn">ADD TRACK</button>
+        </div>
+    {% endif %}
     <table id="tracks">
         <thead id="column_headers">
             <tr>

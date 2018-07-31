@@ -167,7 +167,9 @@ table {
   table thead {
     background-color: #2A2C2D; }
     table thead th {
-      padding: 0; }
+      padding: 0;
+      text-align: left;
+      line-height: 22px; }
     table thead th:not(:first-of-type) {
       position: relative; }
     table thead h4 {
@@ -185,10 +187,6 @@ table {
     padding: 0; }
   table tr:nth-child(even) {
     background-color: #fbfbfb; }
-  table th {
-    display: table-cell;
-    vertical-align: middle;
-    text-align: left; }
   table .artist_clmn, table .title_clmn, table .play_time_clmn, table .group_clmn {
     flex: 1; }
 

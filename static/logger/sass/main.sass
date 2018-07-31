@@ -191,12 +191,13 @@ table
     padding-right: 5px
     background-color: white
 
-
     thead
         background-color: #2A2C2D
        
         & th
-            padding: 0 
+            padding: 0
+            text-align: left
+            line-height: 22px
 
         & th:not(:first-of-type)
             position: relative
@@ -220,11 +221,6 @@ table
 
     tr:nth-child(even)
         background-color: $zebra_highlight
-
-    th
-        display: table-cell
-        vertical-align: middle
-        text-align: left
 
     .artist_clmn, .title_clmn, .play_time_clmn, .group_clmn
         flex: 1

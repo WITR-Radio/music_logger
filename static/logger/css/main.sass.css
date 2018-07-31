@@ -186,6 +186,8 @@ table {
   table tr:nth-child(even) {
     background-color: #fbfbfb; }
   table th {
+    display: table-cell;
+    vertical-align: inherit;
     text-align: left; }
   table .artist_clmn, table .title_clmn, table .play_time_clmn, table .group_clmn {
     flex: 1; }

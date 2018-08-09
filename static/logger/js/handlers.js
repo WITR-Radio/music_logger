@@ -268,6 +268,7 @@ window.addEventListener('resize', function(event) {
 });
 
 $('#load_more').click(function() {
+    show_loading_spinner();
     load_more();
 });
 

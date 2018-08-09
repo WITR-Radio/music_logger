@@ -12,6 +12,9 @@
 /***** VARIABLES *****/
 /***** BASE *****/
 /* Container */
+html, body {
+  overflow-x: hidden; }
+
 body {
   margin: 0;
   font-family: century-gothic; }
@@ -65,7 +68,7 @@ div.white_block_2 {
   top: 335px;
   z-index: -7;
   width: 100%;
-  height: 500px; }
+  height: 700px; }
 
 /***** LAYOUT *****/
 header {
@@ -168,8 +171,7 @@ table {
     background-color: #2A2C2D; }
     table thead th {
       padding: 0;
-      text-align: left;
-      line-height: 22px; }
+      text-align: left; }
     table thead th:not(:first-of-type) {
       position: relative; }
     table thead h4 {
@@ -198,7 +200,19 @@ table {
   border: 1px solid #18A5DE;
   margin: 30px auto 30px auto;
   display: block;
-  font-size: 15px;
+  font-size: 15px; }
+
+#load_more.loading {
+  background-image: url(../../images/rolling_loader.gif);
+  border: none;
+  background-repeat: no-repeat;
+  background-position: center; }
+
+#load_more:focus {
+  outline: 0; }
+
+#load_more:hover {
+  cursor: pointer;
   /* Misc */ }
 
 .has_datepicker:hover, .datepicker-here:hover, .time_input:hover {

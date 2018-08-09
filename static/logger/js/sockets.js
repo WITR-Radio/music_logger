@@ -10,6 +10,7 @@ socket.on('connected', function () {
     });
 
     url_to_search_bar();
+    show_loading_spinner();
 });
 
 socket.on('handle_initial_tracks', function(tracks) {
@@ -23,6 +24,8 @@ socket.on('handle_initial_tracks', function(tracks) {
 
     // Allows client to ask server for more tracks.
     $('table#tracks').data('more_results', true);
+
+    hide_loading_spinner();
 });
 
 socket.on('add_tracks', function (data) {
@@ -118,6 +121,9 @@ socket.on('load_more_results', function(tracks) {
 
     // Unlock scrolling to bottom detection
     $('table#tracks').data('detect_scroll', true);
+
+    // Show hide loading spinner
+    hide_loading_spinner();
 });
 
 socket.on('no_more_results', function() {

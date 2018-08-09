@@ -322,3 +322,19 @@ function url_to_search_bar() {
     if (data['title'])
         $('input#title_search_input').val(data['title']);
 }
+
+function show_loading_spinner() {
+    /* Shows the loading spinner gif in the load more
+        button for when tracks are loading */
+    $('#load_more')
+        .html('')
+        .addClass('loading')
+}
+
+function hide_loading_spinner() {
+    /* Hides the loading spinner gif in the load more
+        button for when tracks are done loading */
+    $('#load_more')
+        .html('Load More')
+        .removeClass('loading');
+}

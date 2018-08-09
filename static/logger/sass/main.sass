@@ -19,6 +19,9 @@ $body_font: century-gothic;
 
 /***** BASE *****/
     /* Container */
+html, body 
+    overflow-x: hidden
+
 body
     margin: 0
     font-family: $body_font
@@ -73,7 +76,7 @@ div.white_block_2
     top: 335px
     z-index: -7
     width: 100%
-    height: 500px
+    height: 700px
 
 
 /***** LAYOUT *****/
@@ -197,7 +200,7 @@ table
         & th
             padding: 0
             text-align: left
-            line-height: 22px
+            // line-height: 22px
 
         & th:not(:first-of-type)
             position: relative
@@ -235,6 +238,19 @@ table
     margin: 30px auto 30px auto
     display: block
     font-size: 15px
+
+
+#load_more.loading
+    background-image: url(../../images/rolling_loader.gif)
+    border: none
+    background-repeat: no-repeat
+    background-position: center
+
+#load_more:focus
+    outline: 0
+
+#load_more:hover
+    cursor: pointer
 
     /* Misc */
 .has_datepicker:hover, .datepicker-here:hover, .time_input:hover

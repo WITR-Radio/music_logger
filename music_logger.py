@@ -419,4 +419,4 @@ signal.signal(signal.SIGINT, signal_handler)
 if __name__ == '__main__':
     """ Starts the socketio production server and threads the UDP server """
     print('Music Logger: starting socketio')
-    socketio.run(app, host='0.0.0.0', port='5000', debug=True)
+    socketio.run(app, host='0.0.0.0', port='443', debug=False)

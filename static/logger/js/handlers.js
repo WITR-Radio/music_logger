@@ -85,7 +85,7 @@ $('#add_track_btn').on('click', function () {
     var new_col = $("<tr class='-1' >" +
         "<td class='artist_clmn'>   <input class='artist_input' name='artist' type='text'></td>" +
         "<td class='title_clmn'>    <input class='title_input'  name='title'  type='text'></td>" +
-        "<td class='play_time_clmn'><input class='time_input'   name='time'   type='text' readonly></td>" +
+        "<td class='play_time_clmn'><input class='time_input' id='add_time_input'  name='time'   type='text' readonly></td>" +
         "<td class='group_clmn'>" +
             "<div class='group_dropdown dropdown'>" +
                 "<input class='group_input' type='text' readonly>" +
@@ -108,6 +108,9 @@ $('#add_track_btn').on('click', function () {
         timepicker: true,
         dateFormat: 'mm/dd/yy'
     });
+	var dp = $('#add_time_input').datepicker().data('datepicker');
+
+	dp.selectDate(new Date());
 });
 
 $('table').on('click', '.cancel_add_btn', function () {

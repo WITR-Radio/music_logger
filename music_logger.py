@@ -18,8 +18,9 @@ from threading import Thread
 from datetime import datetime
 import xml.etree.ElementTree as ET
 from json import loads, dumps
+from werkzeug.contrib.fixers import ProxyFix
 
-from flask import Flask, render_template, request, url_for, redirect
+from flask import Flask, render_template, request, url_for, redirect, make_response
 from flask_socketio import SocketIO, emit, send
 from sqlalchemy import desc, asc
 from sassutils.wsgi import SassMiddleware
@@ -32,34 +33,45 @@ from helper_modules.in_subnet import in_subnet
 # instance_relative_config=True tells app.config.from_pyfile to look in the instance
 # folder for the config.py file
 app = Flask(__name__, instance_relative_config=True)
-app.config.from_pyfile('development_config.py')
+app.config.from_pyfile('staging_config.py')
 
 db.init_app(app)
 socketio = SocketIO(app)
 
 # Tells sass to recompile css every time the server refreshes
-app.wsgi_app = SassMiddleware(app.wsgi_app, {
+app.wsgi_app = ProxyFix(SassMiddleware(app.wsgi_app, {
     'music_logger': ('static/logger/sass', 'static/logger/css', 'static/logger/css')
-})
+}))
 
 
 ### ROUTES ###
 @app.route('/')
 def page():
     """ Renders the home/root url page. """
-    return render_template("index.html", in_subnet=in_subnet(request.remote_addr))
+    return render_template("index.html", in_subnet=in_subnet(request.remote_addr), stream_type="FM")
 
 
 @app.route('/underground')
 def underground():
     """ Renders the underground home/root page. """
-    return render_template("index.html", in_subnet=in_subnet(request.remote_addr))
+    return render_template("index.html", in_subnet=in_subnet(request.remote_addr), stream_type="UDG")
 
 
 # for legacy programs
 @app.route('/latest.json')
 def latest():
-    return tracks_to_json(MainTrack.query.order_by(MainTrack.created_at).first())
+    data = loads(tracks_to_json(MainTrack.query.order_by(MainTrack.created_at.desc()).first()))
+    resp = make_response(dumps(data[0]))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
+
+@app.route('/latest_udg.json')
+def latest_udg():
+    data = loads(tracks_to_json(UndergroundTrack.query.order_by(UndergroundTrack.created_at.desc()).first()))
+    resp = make_response(dumps(data[0]))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 
 @app.route('/details')
@@ -100,22 +112,25 @@ def udpupdate():
         a track. This function then parses that XML and 
         saves it to the database 
     """
-    root = ET.fromstring(request.data)
-    data = {}
+    if in_subnet(request.remote_addr):
+        root = ET.fromstring(request.data)
+        data = {}
+    
+        for child in root:
+            data[child.tag] = child.text
+    
+        track = UndergroundTrack(
+            artist = data['artist'],
+            title = data['title'],
+            group = UndergroundGroup.query.get(int(data['group'])),
+            created_at = datetime.now()
+        )
+        db.session.add(track)
+        db.session.commit()
 
-    for child in root:
-        data[child.tag] = child.text
-
-    track = UndergroundTrack(
-        artist = data['artist'],
-        title = data['title'],
-        group = UndergroundGroup.query.get(int(data['group'])),
-        created_at = datetime.now()
-    )
-    db.session.add(track)
-    db.session.commit()
-
-    return 'Added track to logger database'
+        return 'Added track to logger database'
+    else:
+        return 'Access Denied'
 
 
 @app.route('/rivendell_udg_update', methods=['POST'])
@@ -124,31 +139,34 @@ def rivendell_udg_update():
         a track. This function then parses that XML and 
         saves it to the underground database .
     """
-    # Get XML root
-    root = ET.fromstring(request.data)
-    data = {}
+    if in_subnet(request.remote_addr):
+        # Get XML root
+        root = ET.fromstring(request.data)
+        data = {}
+    
+        # Turn XML into dictionary
+        for child in root:
+            data[child.tag] = child.text
+    
+        # Create the new track and save it to the DB
+        track = UndergroundTrack(
+            artist = data['artist'],
+            title = data['title'],
+            group = UndergroundGroup.query.get(int(data['group'])),
+            created_at = datetime.now()
+        )
+        db.session.add(track)
+        db.session.commit()
 
-    # Turn XML into dictionary
-    for child in root:
-        data[child.tag] = child.text
+        # Update clients
+        socketio.emit('add_tracks', {
+            'tracks': tracks_to_json(track),
+            'is_main_logger': 'false'
+        }, json=True)
 
-    # Create the new track and save it to the DB
-    track = UndergroundTrack(
-        artist = data['artist'],
-        title = data['title'],
-        group = UndergroundGroup.query.get(int(data['group'])),
-        created_at = datetime.now()
-    )
-    db.session.add(track)
-    db.session.commit()
-
-    # Update clients
-    socketio.emit('add_tracks', {
-        'tracks': tracks_to_json(track),
-        'is_main_logger': 'false'
-    }, json=True)
-
-    return 'Added track to underground logger database'
+        return 'Added track to underground logger database'
+    else:
+        return 'Access Denied'
 
 
 @app.route('/rivendell_update', methods=['POST'])
@@ -157,31 +175,34 @@ def rivendell_update():
         track. This function then parses that XML and saves it to the
         main logger database.
     """
-    # Get XML root
-    root = ET.fromstring(request.data)
-    data = {}
+    if in_subnet(request.remote_addr):
+        # Get XML root
+        root = ET.fromstring(request.data)
+        data = {}
+    
+        # Turn XML into dictionary
+        for child in root:
+            data[child.tag] = child.text
 
-    # Turn XML into dictionary
-    for child in root:
-        data[child.tag] = child.text
+        # Create the new track and save it to the DB
+        track = MainTrack(
+            artist = data['artist'],
+            title = data['title'],
+            group = MainGroup.query.get(int(data['group'])),
+            created_at = datetime.now()
+        )
+        db.session.add(track)
+        db.session.commit()
 
-    # Create the new track and save it to the DB
-    track = MainTrack(
-        artist = data['artist'],
-        title = data['title'],
-        group = MainGroup.query.get(int(data['group'])),
-        created_at = datetime.now()
-    )
-    db.session.add(track)
-    db.session.commit()
+        # Update clients
+        socketio.emit('add_tracks', {
+            'tracks': tracks_to_json(track),
+            'is_main_logger': 'true'
+        }, json=True)
 
-    # Update clients
-    socketio.emit('add_tracks', {
-        'tracks': tracks_to_json(track),
-        'is_main_logger': 'true'
-    }, json=True)
-
-    return 'Added track to main logger database.'
+        return 'Added track to main logger database.'
+    else:
+        return 'Access Denied'
 
 
 ### SOCKETS ###
@@ -419,4 +440,5 @@ signal.signal(signal.SIGINT, signal_handler)
 if __name__ == '__main__':
     """ Starts the socketio production server and threads the UDP server """
     print('Music Logger: starting socketio')
-    socketio.run(app, host='0.0.0.0', port='443', debug=False)
+    socketio.run(app, host='0.0.0.0', port='5000', debug=False)
+

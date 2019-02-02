@@ -1,4 +1,4 @@
 #!/bin/sh
-
-. ../logger-env/bin/activate
-nohup python music_logger.py &
+/usr/bin/cd /home/logger/music_logger &&
+/bin/sh /home/logger/logger-env/bin/activate &&
+/usr/bin/nohup /home/logger/logger-env/bin/python /home/logger/music_logger/music_logger.py &

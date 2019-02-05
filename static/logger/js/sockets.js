@@ -1,5 +1,5 @@
 /*** SOCKETS ***/
-var socket = io.connect(null, {port: location.port, rememberTransport: false});
+const socket = io({transports: ['polling']}, upgrade = false);
 
 socket.on('connected', function () {
     /* Socket hit by the server once it has confirmed the client is connected. */

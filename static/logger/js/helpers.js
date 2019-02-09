@@ -34,7 +34,28 @@ function add_track_before(row, data) {
 }
 
 function add_track(row, where, track) {
-    var new_row = $("<tr id='" + track.id + "' >" +
+    var color = "white";
+
+    if(in_subnet) {
+        switch (track.group) {
+            case "Feature":
+                color = "#91B599";
+                break;
+            case "Specialty Show":
+                color = "#9B6B8E";
+                break;
+            case "New Bin":
+                color = "#0FEE0F";
+                break;
+            case "Recurrent":
+                color = "#E7732F";
+                break;
+            case "Library":
+                color = "#6897BB";
+                break;
+        }
+    }
+    var new_row = $("<tr id='" + track.id + "' style='background-color: " + color +";'>" +
         "<td class='artist_clmn'>"    + track.artist + "</td>" +
         "<td class='title_clmn'>"     + track.title  + "</td>" +
         "<td class='play_time_clmn'>" + track.time   + "</td>" +
@@ -72,7 +93,7 @@ function add_track(row, where, track) {
 
 function remove_all_tracks() {
     /* Removes all tracks from the page */
-    $('tr:not(:first)').remove();
+    $("tr:not(.noremove)").remove();
 };
 
 function has_no_blank_inputs(row) {

@@ -16,7 +16,7 @@ socket.on('connected', function () {
 socket.on('handle_initial_tracks', function(tracks) {
     /* Socket which supplies the page with the initial tracks */
     JSON.parse(tracks).forEach(function(track) {
-        add_track($('#column_headers'), 'after', track);
+        add_track($('.noremove').last(), 'after', track);
     });
 
     // Unlock scrolling to bottom detection

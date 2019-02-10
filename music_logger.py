@@ -224,7 +224,7 @@ def request_intitial_tracks(data):
     elif data['is_main_logger'] == 'false':
         Track = UndergroundTrack
     else:
-        print('ERROR: in request_initial_tracks socket ' + str(is_main_logger), file=sys.stderr)
+        # print('ERROR: in request_initial_tracks socket ' + str(is_main_logger), file=sys.stderr)
         tracks = []
 
     # Get the query results

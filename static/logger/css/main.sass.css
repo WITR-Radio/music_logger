@@ -37,7 +37,7 @@ input {
   outline: none; }
 
 .transparent {
-  color: transparent !important; }
+  color: transparent; }
 
 img.banner {
   position: absolute;
@@ -189,6 +189,8 @@ table {
     padding: 0; }
   table tr:nth-child(even) {
     background-color: #fbfbfb; }
+  table tr:nth-child(odd) {
+    background-color: lightgray; }
   table .artist_clmn, table .title_clmn, table .play_time_clmn, table .group_clmn {
     flex: 1; }
 
@@ -299,7 +301,7 @@ table {
     margin-top: -40px; }
   table {
     padding: 0 50px 0 50px; }
-    table thead#column_headers tr {
+    table thead #column_headers {
       height: 28px;
       padding: 4px 30px 6px 30px; }
     table tr {

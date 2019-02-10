@@ -103,12 +103,13 @@ socket.on('invalid_search_datetime', function() {
 });
 
 socket.on('removeTrack', function(data) {
+    /*
     /* Once the server has successfully deleted the track 
         from the database this socket is hit to remove the track
         from the page. */
+
     if (is_main_logger() == data['is_main_logger']) {  // Client and server are same DB
         $('#' + data['track_id']).fadeOut( 400, function () {
-            update_row_highlights();
         });
     }
 });

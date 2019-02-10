@@ -241,7 +241,12 @@ $('table').on('click', '.submit_update_btn', function () {
             'is_main_logger': is_main_logger()
         })
     }
-    ;
+
+    remove_all_tracks();
+    socket.emit('request_initial_tracks', {
+            'is_main_logger': is_main_logger(),
+            'query': uri_search_dict()
+    });
 
     // ***Sequence continues through server into 'successful_update' socket
 });

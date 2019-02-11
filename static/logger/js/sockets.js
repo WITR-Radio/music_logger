@@ -1,5 +1,5 @@
 /*** SOCKETS ***/
-var socket = io.connect(null, {port: location.port, rememberTransport: false});
+const socket = io({transports: ['polling']}, upgrade = false);
 
 socket.on('connected', function () {
     /* Socket hit by the server once it has confirmed the client is connected. */
@@ -16,7 +16,7 @@ socket.on('connected', function () {
 socket.on('handle_initial_tracks', function(tracks) {
     /* Socket which supplies the page with the initial tracks */
     JSON.parse(tracks).forEach(function(track) {
-        add_track($('#column_headers'), 'after', track);
+        add_track($('.noremove').last(), 'after', track);
     });
 
     // Unlock scrolling to bottom detection
@@ -103,12 +103,13 @@ socket.on('invalid_search_datetime', function() {
 });
 
 socket.on('removeTrack', function(data) {
+    /*
     /* Once the server has successfully deleted the track 
         from the database this socket is hit to remove the track
         from the page. */
+
     if (is_main_logger() == data['is_main_logger']) {  // Client and server are same DB
         $('#' + data['track_id']).fadeOut( 400, function () {
-            update_row_highlights();
         });
     }
 });

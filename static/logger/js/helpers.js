@@ -4,7 +4,28 @@ var table_highlight = '#fbfbfb';
 function add_track_before(row, data) {
     /* Takes JSON dictionary @track
         and puts the track stored in it before the specified @row */
-    $("<tr id='" + data['id'] + "' >" +
+    var color = ""
+
+    if(in_subnet) {
+        switch (track.group) {
+            case "Feature":
+                color = "style='background-color: #91B599 !important;'";
+                break;
+            case "Specialty Show":
+                color = "style='background-color: #9B6B8E !important;'";
+                break;
+            case "New Bin":
+                color = "style='background-color: #0FEE0F !important;'";
+                break;
+            case "Recurrent":
+                color = "style='background-color: #E7732F !important;'";
+                break;
+            case "Library":
+                color = "style='background-color: #6897BB !important;'";
+                break;
+        }
+    }
+    $("<tr id='" + data['id'] + "' "+ color + ">" +
         "<td class='artist_clmn'>"    + data['new_artist'] + "</td>" +
         "<td class='title_clmn'>"     + data['new_title']  + "</td>" +
         "<td class='play_time_clmn'>" + data['new_time']   + "</td>" +
@@ -34,7 +55,28 @@ function add_track_before(row, data) {
 }
 
 function add_track(row, where, track) {
-    var new_row = $("<tr id='" + track.id + "' >" +
+    var color = "";
+
+    if(in_subnet) {
+        switch (track.group) {
+            case "Feature":
+                color = "style='background-color: #91B599 !important;'";
+                break;
+            case "Specialty Show":
+                color = "style='background-color: #9B6B8E !important;'";
+                break;
+            case "New Bin":
+                color = "style='background-color: #0FEE0F !important;'";
+                break;
+            case "Recurrent":
+                color = "style='background-color: #E7732F !important;'";
+                break;
+            case "Library":
+                color = "style='background-color: #6897BB !important;'";
+                break;
+        }
+    }
+    var new_row = $("<tr id='" + track.id + "' "+ color + ">" +
         "<td class='artist_clmn'>"    + track.artist + "</td>" +
         "<td class='title_clmn'>"     + track.title  + "</td>" +
         "<td class='play_time_clmn'>" + track.time   + "</td>" +
@@ -72,7 +114,7 @@ function add_track(row, where, track) {
 
 function remove_all_tracks() {
     /* Removes all tracks from the page */
-    $('tr:not(:first)').remove();
+    $("tr:not(.noremove)").remove();
 };
 
 function has_no_blank_inputs(row) {

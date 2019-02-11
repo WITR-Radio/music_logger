@@ -12,9 +12,9 @@
 
 /***** VARIABLES *****/
 $witr_blue: #06a7e1
-$zebra_highlight: #fbfbfb;
+$zebra_highlight: #fbfbfb
 $header_font: bebas-neue
-$body_font: century-gothic;
+$body_font: century-gothic
 
 
 /***** BASE *****/
@@ -45,7 +45,7 @@ input
     outline: none
 
 .transparent
-    color: transparent !important
+    color: transparent
 
 img.banner
     position: absolute
@@ -225,6 +225,9 @@ table
     tr:nth-child(even)
         background-color: $zebra_highlight
 
+    tr:nth-child(odd)
+        background-color: lightgray
+
     .artist_clmn, .title_clmn, .play_time_clmn, .group_clmn
         flex: 1
 
@@ -359,7 +362,7 @@ table
     table
         padding: 0 50px 0 50px
 
-        thead#column_headers tr
+        thead #column_headers
             height: 28px
             padding: 4px 30px 6px 30px
 
